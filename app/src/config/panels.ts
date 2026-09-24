@@ -807,47 +807,21 @@ const HAPPY_MOBILE_MAP_LAYERS: MapLayers = {
 // ============================================
 // COMMODITY VARIANT (Mining, Metals, Energy)
 // ============================================
+// Lodestar: the commodity variant is taken over as the supply-chain command
+// centre. Panel set per docs/BUILD_BRIEF.md §3e (OEM panels are added later).
 const COMMODITY_PANELS: Record<string, PanelConfig> = {
-  map: { name: 'Commodity Map', enabled: true, priority: 1 },
-  'live-news': { name: 'Commodity Headlines', enabled: true, priority: 1 },
-  insights: { name: 'AI Commodity Insights', enabled: true, priority: 1 },
-  'commodity-news': { name: 'Commodity News', enabled: true, priority: 1 },
-  'liquidity-shifts': { name: 'Liquidity Shifts', enabled: true, priority: 1 },
-  'news-market-correlation': { name: 'News ↔ Markets', enabled: true, priority: 1 },
-  'positioning-247': { name: '24/7 Positioning', enabled: true, priority: 1 },
-  'gold-silver': { name: 'Gold & Silver', enabled: true, priority: 1 },
-  energy: { name: 'Energy Markets', enabled: true, priority: 1 },
-  'mining-news': { name: 'Mining News', enabled: true, priority: 1 },
-  'critical-minerals': { name: 'Critical Minerals', enabled: true, priority: 1 },
-  'base-metals': { name: 'Base Metals', enabled: true, priority: 1 },
-  'mining-companies': { name: 'Mining Companies', enabled: true, priority: 1 },
+  map: { name: 'Supply Network Map', enabled: true, priority: 1 },
+  'chokepoint-strip': { name: 'Chokepoint Status', enabled: true, priority: 1 },
   'supply-chain': { name: 'Supply Chain & Logistics', enabled: true, priority: 1 },
-  'china-corridors': { name: 'China Logistics Corridors', enabled: false, priority: 2 },
-  'china-activity-nowcast': { name: 'China Activity Nowcast', enabled: false, priority: 2 },
-  'commodity-regulation': { name: 'Regulation & Policy', enabled: true, priority: 1 },
-  markets: { name: 'Commodity Markets', enabled: true, priority: 1 },
-  commodities: { name: 'Live Metals & Materials', enabled: true, priority: 1 },
-  'energy-complex': { name: 'Energy Complex', enabled: true, priority: 1 },
-  // Required for commodity variant's pipeline-click path — see FINANCE_PANELS
-  // for the same rationale: `pipelines: true` + unified Redis-backed layer +
-  // energy:open-pipeline-detail dispatch means the listener must be present
-  // for the click to do anything. Codex P1.
+  'hormuz-tracker': { name: 'Strait of Hormuz Tracker', enabled: true, priority: 1 },
+  commodities: { name: 'Metals & Materials', enabled: true, priority: 1 },
+  'critical-minerals': { name: 'Critical Minerals News', enabled: true, priority: 1 },
+  'commodity-news': { name: 'Supply-Chain News', enabled: true, priority: 1 },
+  'security-advisories': { name: 'Security Advisories', enabled: true, priority: 2 },
+  'disaster-correlation': { name: 'Disaster Cascade', enabled: true, priority: 2 },
+  'commodity-regulation': { name: 'Regulation & Trade News', enabled: true, priority: 2 },
+  // Kept disabled: the pipelines map layer's click path expects the listener.
   'pipeline-status': { name: 'Oil & Gas Pipeline Status', enabled: false, priority: 2 },
-  'oil-inventories': { name: 'Oil Inventories', enabled: true, priority: 60 },
-  'gold-intelligence': { name: 'Gold Intelligence', enabled: true, priority: 60 },
-  heatmap: { name: 'Sector Heatmap', enabled: true, priority: 1 },
-  'macro-signals': { name: 'Market Regime', enabled: true, priority: 1 },
-  'trade-policy': { name: 'Trade Policy', enabled: true, priority: 1, premium: 'locked' as const },
-  'sanctions-pressure': { name: 'Sanctions Pressure', enabled: true, priority: 1 },
-  economic: { name: 'Macro Stress', enabled: true, priority: 1 },
-  'gulf-economies': { name: 'Gulf & OPEC Economies', enabled: true, priority: 1 },
-  'gcc-investments': { name: 'GCC Resource Investments', enabled: true, priority: 2 },
-  'consumer-prices': { name: 'Consumer Prices', enabled: true, priority: 2 },
-  'airline-intel': { name: 'Airline Intelligence', enabled: true, priority: 2 },
-  polymarket: { name: 'Commodity Predictions', enabled: true, priority: 2 },
-  'world-clock': { name: 'World Clock', enabled: true, priority: 2 },
-  monitors: { name: 'My Monitors', enabled: true, priority: 2 },
-  'latest-brief': { name: 'Latest Brief', enabled: true, priority: 1, premium: 'locked' as const },
 };
 
 const COMMODITY_MAP_LAYERS: MapLayers = {
@@ -870,7 +844,7 @@ const COMMODITY_MAP_LAYERS: MapLayers = {
   economic: true,
   waterways: true,
   outages: true,
-  cyberThreats: false,
+  cyberThreats: true,
   datacenters: false,
   protests: false,
   flights: false,

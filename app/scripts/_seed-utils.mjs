@@ -24,6 +24,42 @@ async function exitAfterTelemetryFlush(code) {
 
 const CHROME_UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36';
 const MAX_PAYLOAD_BYTES = 5 * 1024 * 1024; // 5MB per key
+
+// Lodestar: seeders run every couple of hours from CI, not every few minutes
+// from always-on services, so short upstream TTLs would leave panels empty
+// between runs. SEED_MIN_TTL_SECONDS raises any shorter EX/EXPIRE on requests
+// to our Upstash URL. Values keep their own fetchedAt, so the UI still shows
+// their true age.
+const SEED_MIN_TTL_SECONDS = Number(process.env.SEED_MIN_TTL_SECONDS) || 0;
+if (SEED_MIN_TTL_SECONDS > 0 && process.env.UPSTASH_REDIS_REST_URL && !globalThis.__lodestarTtlFloor) {
+  globalThis.__lodestarTtlFloor = true;
+  const redisBase = process.env.UPSTASH_REDIS_REST_URL.replace(/\/+$/, '');
+  const floorCommand = (cmd) => {
+    if (!Array.isArray(cmd) || typeof cmd[0] !== 'string') return cmd;
+    const op = cmd[0].toUpperCase();
+    const out = [...cmd];
+    if (op === 'SET') {
+      const i = out.findIndex((x, j) => j > 2 && typeof x === 'string' && x.toUpperCase() === 'EX');
+      if (i > 0 && Number(out[i + 1]) < SEED_MIN_TTL_SECONDS) out[i + 1] = SEED_MIN_TTL_SECONDS;
+    } else if (op === 'EXPIRE' && Number(out[2]) < SEED_MIN_TTL_SECONDS) {
+      out[2] = SEED_MIN_TTL_SECONDS;
+    }
+    return out;
+  };
+  const nativeFetch = globalThis.fetch;
+  globalThis.fetch = (input, init) => {
+    const target = typeof input === 'string' ? input : input?.url ?? String(input);
+    if (target.startsWith(redisBase) && typeof init?.body === 'string') {
+      try {
+        const body = JSON.parse(init.body);
+        const floored = Array.isArray(body) && Array.isArray(body[0]) ? body.map(floorCommand) : floorCommand(body);
+        init = { ...init, body: JSON.stringify(floored) };
+      } catch { /* not a JSON command body; send unchanged */ }
+    }
+    return nativeFetch(input, init);
+  };
+}
+
 export const SEED_REDIS_COMMAND_TIMEOUT_MS = 15_000;
 export const SEED_REDIS_RETRY_ATTEMPTS = 3;
 export const SEED_REDIS_RETRY_BASE_MS = 1_000;

@@ -159,6 +159,9 @@ function rssProxyUrl(feedUrl) {
     console.warn(`  Skipping disallowed domain: ${domain}`);
     return null;
   }
+  // Lodestar: RELAY_URL=direct fetches the feed itself (CI runners need no
+  // proxy) instead of routing through upstream's public relay.
+  if (RELAY_URL === 'direct') return feedUrl;
   return `${RELAY_URL}/rss?url=${encodeURIComponent(feedUrl)}`;
 }
 

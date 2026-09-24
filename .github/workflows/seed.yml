@@ -1,0 +1,59 @@
+name: Seed live data
+
+# Fills Upstash with the external data the Lodestar panels read.
+# Two cadences keep Actions usage inside the free tier (see docs/SEEDERS.md).
+on:
+  schedule:
+    - cron: '23 */2 * * *'  # fast group: short-lived keys
+    - cron: '47 */6 * * *'  # slow group: long-lived keys
+  workflow_dispatch:
+    inputs:
+      group:
+        description: 'Seeder group'
+        type: choice
+        options: [all, fast, slow]
+        default: all
+
+permissions:
+  contents: read
+
+concurrency:
+  group: seed
+  cancel-in-progress: false
+
+jobs:
+  seed:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install seeder dependency
+        working-directory: app/scripts
+        run: npm install --no-save --no-package-lock --no-audit --no-fund undici@7.29.0
+
+      - name: Check secrets are present
+        env:
+          UPSTASH_REDIS_REST_URL: ${{ secrets.UPSTASH_REDIS_REST_URL }}
+          UPSTASH_REDIS_REST_TOKEN: ${{ secrets.UPSTASH_REDIS_REST_TOKEN }}
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+          NASA_FIRMS_API_KEY: ${{ secrets.NASA_FIRMS_API_KEY || secrets.NASA_FIRMS_KEY }}
+        run: |
+          missing=0
+          for v in UPSTASH_REDIS_REST_URL UPSTASH_REDIS_REST_TOKEN FRED_API_KEY NASA_FIRMS_API_KEY; do
+            if [ -z "${!v}" ]; then echo "::error::repo secret for $v is not set"; missing=1; fi
+          done
+          exit $missing
+
+      - name: Run seeders
+        env:
+          UPSTASH_REDIS_REST_URL: ${{ secrets.UPSTASH_REDIS_REST_URL }}
+          UPSTASH_REDIS_REST_TOKEN: ${{ secrets.UPSTASH_REDIS_REST_TOKEN }}
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+          NASA_FIRMS_API_KEY: ${{ secrets.NASA_FIRMS_API_KEY || secrets.NASA_FIRMS_KEY }}
+          GROUP: ${{ github.event_name == 'workflow_dispatch' && inputs.group || (github.event.schedule == '47 */6 * * *' && 'slow' || 'fast') }}
+        run: bash scripts/run-seeders.sh "$GROUP"
