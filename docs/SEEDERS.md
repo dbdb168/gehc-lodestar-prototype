@@ -32,16 +32,20 @@ GitHub Actions instead (`.github/workflows/seed.yml` → `scripts/run-seeders.sh
 
 ## Cadence and budget
 
-- **Fast group, every 2h:** commodities, earthquakes, fires, advisories, cyber,
-  correlation.
-- **Slow group, every 6h:** shipping/trade, Hormuz, natural events, PortWatch,
-  chokepoint baselines and flows.
+- **Fast group, every 2h:** commodities, earthquakes, advisories, cyber,
+  correlation. About 1 minute including setup.
+- **Slow group, every 6h:** shipping/trade, Hormuz, natural events, fires,
+  PortWatch, chokepoint baselines and flows. About 4 minutes; fires alone is
+  ~3 minutes (three NASA FIRMS satellites).
 - Upstream TTLs assume minute-level refresh (commodities 30 min, correlation
   20 min), so the runner sets `SEED_MIN_TTL_SECONDS` (default 7h) to keep values
   between runs. Values keep their own `fetchedAt`; the UI shows true age.
-- Budget: a private repo gets 2,000 free Actions minutes a month. Estimated use
-  is ~1,400 (360 fast runs × ~2 min + 120 slow runs × ~6 min). Check actual run
-  times in the Actions tab and adjust the crons if they're higher.
+- Budget: a private repo gets 2,000 free Actions minutes a month. Measured on
+  the first full run (24 Sep 2026): ~850/month (360 fast runs × ~1 min + 120
+  slow runs × ~4 min). Billing rounds each job up to the whole minute.
+- First full run: all 12 seeders OK in ~3.5 min. Advisories: 106 stored from
+  329 fetched; 14 US embassy feeds fail when fetched directly. Correlation: 13
+  disaster cards (military/escalation/economic have no inputs seeded).
 - Scheduled workflows only run from the default branch.
 
 ## Run by hand
