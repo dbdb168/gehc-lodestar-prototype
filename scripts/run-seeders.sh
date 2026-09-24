@@ -16,6 +16,26 @@ group="${1:-all}"
 : "${UPSTASH_REDIS_REST_URL:?UPSTASH_REDIS_REST_URL is not set}"
 : "${UPSTASH_REDIS_REST_TOKEN:?UPSTASH_REDIS_REST_TOKEN is not set}"
 
+# Secrets pasted with surrounding quotes or whitespace are a common slip.
+# Strip them, then check the URL's shape without ever printing it.
+clean() { local v="$1"; v="${v#"${v%%[![:space:]]*}"}"; v="${v%"${v##*[![:space:]]}"}"; v="${v#[\"\']}"; v="${v%[\"\']}"; printf '%s' "$v"; }
+for v in UPSTASH_REDIS_REST_URL UPSTASH_REDIS_REST_TOKEN FRED_API_KEY NASA_FIRMS_API_KEY; do
+  [ -n "${!v:-}" ] && export "$v=$(clean "${!v}")"
+done
+case "$UPSTASH_REDIS_REST_URL" in
+  https://*.upstash.io|https://*.upstash.io/) ;;
+  *)
+    hint="does not look like https://<name>.upstash.io"
+    case "$UPSTASH_REDIS_REST_URL" in
+      http://*) hint="uses http:// (needs https://)";;
+      https://*) hint="starts with https:// but is not an *.upstash.io host";;
+      *upstash.io*) hint="is missing the https:// prefix";;
+    esac
+    echo "UPSTASH_REDIS_REST_URL $hint (length ${#UPSTASH_REDIS_REST_URL}). Fix the repo secret." >&2
+    exit 1
+    ;;
+esac
+
 # Seeders run every 2-6h here rather than every few minutes upstream; keep
 # values alive until the next run (see _seed-utils.mjs).
 export SEED_MIN_TTL_SECONDS="${SEED_MIN_TTL_SECONDS:-25200}"
