@@ -955,6 +955,10 @@ const HAPPY_FEEDS: Record<string, Feed[]> = {
 
 // Commodity variant feeds (from commodity.ts)
 const COMMODITY_FEEDS: Record<string, Feed[]> = {
+  // Lodestar: geopolitical context for the command centre.
+  politics: FULL_FEEDS.politics!,
+  middleeast: FULL_FEEDS.middleeast!,
+  asia: FULL_FEEDS.asia!,
   'commodity-news': [
     // Kitco shut down their public RSS feeds in 2025 (every /rss/*, /news/feed,
     // /news/category/*/feed path now returns an HTML SPA page, not XML). Fall

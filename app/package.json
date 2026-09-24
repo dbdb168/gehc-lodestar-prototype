@@ -219,7 +219,7 @@
     "docs:dates": "node scripts/generate-docs-page-dates.mjs",
     "docs:dates:check": "node scripts/generate-docs-page-dates.mjs --check",
     "freeze:github-stars": "node scripts/freeze-github-stars.mjs",
-    "build:lodestar": "npm run security:vite-env-secrets -- --strict-local && cross-env-shell VITE_VARIANT=commodity VITE_LODESTAR=true VITE_ENABLE_CYBER_LAYER=true VITE_DISABLE_PAYWALL=true VITE_DISABLE_ANALYTICS=true \"tsc && vite build\""
+    "build:lodestar": "node scripts/lodestar-sync-data.mjs && npm run security:vite-env-secrets -- --strict-local && cross-env-shell VITE_VARIANT=commodity VITE_LODESTAR=true VITE_ENABLE_CYBER_LAYER=true VITE_DISABLE_PAYWALL=true VITE_DISABLE_ANALYTICS=true \"tsc && vite build\""
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
@@ -263,6 +263,7 @@
     "@anthropic-ai/sdk": "^0.91.1",
     "@aws-sdk/client-s3": "^3.1009.0",
     "@clerk/clerk-js": "^6.13.0",
+    "@deck.gl/aggregation-layers": "^9.4.0",
     "@deck.gl/core": "^9.4.0",
     "@deck.gl/layers": "^9.4.0",
     "@deck.gl/maplibre": "^9.4.0",

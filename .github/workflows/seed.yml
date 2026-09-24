@@ -6,12 +6,13 @@ on:
   schedule:
     - cron: '23 */2 * * *'  # fast group: short-lived keys
     - cron: '47 */6 * * *'  # slow group: long-lived keys
+    - cron: '11 4 * * *'    # daily group: sanctions lists
   workflow_dispatch:
     inputs:
       group:
         description: 'Seeder group'
         type: choice
-        options: [all, fast, slow]
+        options: [all, fast, slow, daily]
         default: all
 
 permissions:
@@ -24,7 +25,7 @@ concurrency:
 jobs:
   seed:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
 
@@ -34,7 +35,7 @@ jobs:
 
       - name: Install seeder dependency
         working-directory: app/scripts
-        run: npm install --no-save --no-package-lock --no-audit --no-fund undici@7.29.0
+        run: npm install --no-save --no-package-lock --no-audit --no-fund undici@7.29.0 sax@1.6.0
 
       - name: Check secrets are present
         env:
@@ -55,5 +56,5 @@ jobs:
           UPSTASH_REDIS_REST_TOKEN: ${{ secrets.UPSTASH_REDIS_REST_TOKEN }}
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
           NASA_FIRMS_API_KEY: ${{ secrets.NASA_FIRMS_API_KEY || secrets.NASA_FIRMS_KEY }}
-          GROUP: ${{ github.event_name == 'workflow_dispatch' && inputs.group || (github.event.schedule == '47 */6 * * *' && 'slow' || 'fast') }}
+          GROUP: ${{ github.event_name == 'workflow_dispatch' && inputs.group || (github.event.schedule == '47 */6 * * *' && 'slow' || (github.event.schedule == '11 4 * * *' && 'daily' || 'fast')) }}
         run: bash scripts/run-seeders.sh "$GROUP"

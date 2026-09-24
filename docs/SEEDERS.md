@@ -19,7 +19,13 @@ GitHub Actions instead (`.github/workflows/seed.yml` → `scripts/run-seeders.sh
 | Map: natural events | `natural:events:v1` | `seed-natural-events.mjs` | – |
 | Map: fires | `wildfire:fires(-bootstrap):v1` | `seed-fire-detections.mjs` | `NASA_FIRMS_API_KEY` |
 | Map: cyber threats | `cyber:threats(-bootstrap):v2` | `seed-cyber-threats.mjs` | optional free keys |
-| News panels | – | none (RSS fetched live at the edge) | – |
+| Map: conflict zones, intel hotspots | – | none (static; hotspot activity from loaded news) | – |
+| GDELT live intelligence; map: protests/unrest | `intelligence:gdelt-intel:v1`, `gdelt:bulk:*`, `unrest:events:v1` | `seed-gdelt-bulk-materializer.mjs` → `seed-unrest-events.mjs` (same run; unrest needs a snapshot under 3h old) | – |
+| Armed conflict events (UCDP) + map layer | `conflict:ucdp-events:v1` | `seed-ucdp-events.mjs` | `UCDP_ACCESS_TOKEN` optional (free) |
+| Country instability (CII) + choropleth | `risk:scores:sebuf:*` (computed at the edge) | no seeder; inputs from UCDP, advisories, fires, cyber, quakes, sanctions, displacement | – |
+| Displacement (CII input) | `displacement:summary:v1:<year>` | `seed-displacement-summary.mjs` (UNHCR) | – |
+| Sanctions pressure | `sanctions:pressure:v1` | `seed-sanctions-pressure.mjs` (OFAC SDN + consolidated, Canada SEMA; heavy) | – |
+| News panels (incl. world, Middle East, Asia-Pacific) | – | none (RSS fetched live at the edge) | – |
 | Trade routes, waterways, ports, sanctions layers | – | none (static) | – |
 
 ## Not seeded (and what that costs)
@@ -37,8 +43,12 @@ GitHub Actions instead (`.github/workflows/seed.yml` → `scripts/run-seeders.sh
 - **Fast group, every 2h:** commodities, earthquakes, advisories, cyber,
   correlation. About 1 minute including setup.
 - **Slow group, every 6h:** shipping/trade, Hormuz, natural events, fires,
-  PortWatch, chokepoint baselines and flows. About 4 minutes; fires alone is
-  ~3 minutes (three NASA FIRMS satellites).
+  PortWatch, transit summaries, chokepoint baselines and flows, GDELT bulk,
+  unrest, UCDP, displacement. Fires alone is ~3 minutes (three NASA FIRMS
+  satellites).
+- **Daily group:** sanctions pressure (OFAC ~120 MB XML, up to ~7 min).
+- TTL floor: 7h for the fast group, 30h for slow and daily (one failed run of
+  slack).
 - Upstream TTLs assume minute-level refresh (commodities 30 min, correlation
   20 min), so the runner sets `SEED_MIN_TTL_SECONDS` (default 7h) to keep values
   between runs. Values keep their own `fetchedAt`; the UI shows true age.
@@ -52,4 +62,4 @@ GitHub Actions instead (`.github/workflows/seed.yml` → `scripts/run-seeders.sh
 
 ## Run by hand
 
-Actions → "Seed live data" → Run workflow (group: all / fast / slow).
+Actions → "Seed live data" → Run workflow (group: all / fast / slow / daily).

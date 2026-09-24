@@ -31,7 +31,11 @@ files = [f for f in open(os.path.join(work, 'files.z')).read().split('\0') if f 
 man = []
 for f in files:
     data = open(os.path.join('app', f), 'rb').read()
-    man.append({'file': f, 'sha': hashlib.sha1(data).hexdigest(), 'size': len(data)})
+    man.append({'file': f, 'sha': hashlib.sha1(data).hexdigest(), 'size': len(data), 'src': os.path.join('app', f)})
+# The OEM network lives outside app/ (data/network.json is the single source);
+# ship it where the app fetches it at runtime.
+data = open('data/network.json', 'rb').read()
+man.append({'file': 'public/data/network.json', 'sha': hashlib.sha1(data).hexdigest(), 'size': len(data), 'src': 'data/network.json'})
 json.dump(man, open(os.path.join(work, 'manifest.json'), 'w'))
 print(f'{len(man)} files', file=sys.stderr)
 if not man:
@@ -43,7 +47,7 @@ import sys, json, os
 work, target, sha = sys.argv[1:4]
 body = {
     'name': 'lodestar-command',
-    'files': json.load(open(os.path.join(work, 'manifest.json'))),
+    'files': [{k: v for k, v in m.items() if k != 'src'} for m in json.load(open(os.path.join(work, 'manifest.json')))],
     'projectSettings': {
         'framework': None,
         'installCommand': 'npm install',
@@ -65,10 +69,10 @@ create() {
 
 upload() { # sha
   local sha="$1" file
-  file="$(python3 -c 'import json,sys;m=json.load(open(sys.argv[1]));print(next(x["file"] for x in m if x["sha"]==sys.argv[2]))' "$work/manifest.json" "$sha")"
+  file="$(python3 -c 'import json,sys;m=json.load(open(sys.argv[1]));print(next(x["src"] for x in m if x["sha"]==sys.argv[2]))' "$work/manifest.json" "$sha")"
   curl -sS -o /dev/null -w '%{http_code}' --retry 3 -X POST "$api/v2/files?$team" \
     -H "x-vercel-digest: $sha" -H 'Content-Type: application/octet-stream' \
-    --data-binary @"app/$file"
+    --data-binary @"$file"
 }
 
 # Vercel answers missing_files with the SHAs it doesn't have; upload those and retry.

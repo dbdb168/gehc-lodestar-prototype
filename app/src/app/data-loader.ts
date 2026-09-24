@@ -1161,7 +1161,8 @@ export class DataLoaderManager implements AppModule {
       });
     }
 
-    if (SITE_VARIANT === 'full') {
+    // Lodestar: the command centre (commodity variant) uses CII too.
+    if (SITE_VARIANT === 'full' || SITE_VARIANT === 'commodity') {
       try {
         const cached = await fetchCachedRiskScores().catch(() => null);
         if (cached && cached.cii.length > 0) {

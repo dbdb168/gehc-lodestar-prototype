@@ -820,6 +820,14 @@ const COMMODITY_PANELS: Record<string, PanelConfig> = {
   'security-advisories': { name: 'Security Advisories', enabled: true, priority: 2 },
   'disaster-correlation': { name: 'Disaster Cascade', enabled: true, priority: 2 },
   'commodity-regulation': { name: 'Regulation & Trade News', enabled: true, priority: 2 },
+  // Geopolitical signals (keyless sources; see docs/SEEDERS.md).
+  cii: { name: 'Country Instability', enabled: true, priority: 1 },
+  'gdelt-intel': { name: 'Live Intelligence (GDELT)', enabled: true, priority: 1 },
+  'sanctions-pressure': { name: 'Sanctions Pressure', enabled: true, priority: 2 },
+  'ucdp-events': { name: 'Armed Conflict Events (UCDP)', enabled: true, priority: 2 },
+  politics: { name: 'World News', enabled: true, priority: 2 },
+  middleeast: { name: 'Middle East', enabled: true, priority: 2 },
+  asia: { name: 'Asia-Pacific', enabled: true, priority: 2 },
   // Kept disabled: the pipelines map layer's click path expects the listener.
   'pipeline-status': { name: 'Oil & Gas Pipeline Status', enabled: false, priority: 2 },
 };
@@ -829,24 +837,24 @@ const COMMODITY_MAP_LAYERS: MapLayers = {
   satellites: false,
 
 
-  conflicts: false,
+  conflicts: true,
   bases: false,
   cables: false,
-  pipelines: true,
-  hotspots: false,
-  ais: true,
+  pipelines: false,
+  hotspots: true,
+  ais: false,
   nuclear: false,
   irradiators: false,
-  sanctions: true,
-  weather: true,
+  sanctions: false,
+  weather: false,
   canadaRoads: false,
   canadaAlerts: false,
-  economic: true,
+  economic: false,
   waterways: true,
-  outages: true,
+  outages: false,
   cyberThreats: true,
   datacenters: false,
-  protests: false,
+  protests: true,
   flights: false,
   military: false,
   natural: true,
@@ -854,9 +862,9 @@ const COMMODITY_MAP_LAYERS: MapLayers = {
   minerals: true,
   fires: true,
   // Data source layers
-  ucdpEvents: false,
+  ucdpEvents: true,
   displacement: false,
-  climate: true,         // Climate events disrupt supply chains
+  climate: false,         // Climate events disrupt supply chains
   // Tech layers (disabled)
   startupHubs: false,
   cloudRegions: false,
@@ -867,7 +875,7 @@ const COMMODITY_MAP_LAYERS: MapLayers = {
   stockExchanges: false,
   financialCenters: false,
   centralBanks: false,
-  commodityHubs: true,
+  commodityHubs: false,
   gulfInvestments: false,
   // Happy variant layers (disabled)
   positiveEvents: false,
@@ -877,11 +885,11 @@ const COMMODITY_MAP_LAYERS: MapLayers = {
   renewableInstallations: false,
   tradeRoutes: true,
   iranAttacks: false,
-  ciiChoropleth: false,
+  ciiChoropleth: true,
   resilienceScore: false,
   dayNight: false,
   // Commodity layers (enabled)
-  miningSites: true,
+  miningSites: false,
   processingPlants: true,
   commodityPorts: true,
   webcams: false,

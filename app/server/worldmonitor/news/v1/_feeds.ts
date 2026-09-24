@@ -758,6 +758,12 @@ export const VARIANT_FEEDS: Record<string, Record<string, ServerFeed[]>> = {
   },
 };
 
+// Lodestar: the command centre (commodity variant) also carries world,
+// Middle East and Asia-Pacific news for geopolitical context.
+for (const cat of ['politics', 'middleeast', 'asia'] as const) {
+  VARIANT_FEEDS.commodity![cat] = VARIANT_FEEDS.full![cat]!;
+}
+
 export const INTEL_SOURCES: ServerFeed[] = [
   { name: 'Defense One', url: 'https://www.defenseone.com/rss/all/' },
   { name: 'The War Zone', url: 'https://www.twz.com/feed' },

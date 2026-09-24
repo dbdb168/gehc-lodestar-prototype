@@ -4248,8 +4248,8 @@ export class App {
       () => this.isPanelNearViewport('news-market-correlation')
     );
 
-    // Refresh intelligence signals for CII (geopolitical variant only)
-    if (SITE_VARIANT === 'full') {
+    // Refresh intelligence signals for CII (geopolitical variant; Lodestar's commodity too)
+    if (SITE_VARIANT === 'full' || SITE_VARIANT === 'commodity') {
       this.refreshScheduler.scheduleRefresh('intelligence', () => {
         const { military, iranEvents } = this.state.intelligenceCache;
         this.state.intelligenceCache = {};

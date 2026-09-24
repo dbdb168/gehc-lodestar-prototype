@@ -4,6 +4,7 @@
 #
 #   scripts/run-seeders.sh fast   # short-lived keys (every 2h)
 #   scripts/run-seeders.sh slow   # long-lived keys (every 6h)
+#   scripts/run-seeders.sh daily  # heavy, slow-changing keys (daily)
 #   scripts/run-seeders.sh all
 #
 # Env: UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN (required);
@@ -36,22 +37,30 @@ case "$UPSTASH_REDIS_REST_URL" in
     ;;
 esac
 
-# Seeders run every 2-6h here rather than every few minutes upstream; keep
-# values alive until the next run (see _seed-utils.mjs).
-export SEED_MIN_TTL_SECONDS="${SEED_MIN_TTL_SECONDS:-25200}"
+# Seeders run every 2h-24h here rather than every few minutes upstream; keep
+# values alive past the next run, with slack for one failed run
+# (see _seed-utils.mjs). Fast group: 7h; slow and daily groups: 30h.
+case "$group" in
+  fast) default_ttl=25200 ;;
+  *)    default_ttl=108000 ;;
+esac
+export SEED_MIN_TTL_SECONDS="${SEED_MIN_TTL_SECONDS:-$default_ttl}"
 # Fetch advisory feeds directly rather than through upstream's public relay.
 export RELAY_URL=direct
 
-# Order matters: earthquakes before correlation; portwatch and baselines
-# before chokepoint flows.
+# Order matters: earthquakes before correlation; portwatch before transit
+# summaries; portwatch and baselines before chokepoint flows; the GDELT bulk
+# materializer right before unrest (it needs a snapshot under 3h old).
 fast=(seed-commodity-quotes seed-earthquakes seed-security-advisories seed-cyber-threats seed-correlation)
-slow=(seed-supply-chain-trade seed-hormuz seed-natural-events seed-fire-detections seed-portwatch seed-lodestar-transit-summaries seed-chokepoint-baselines seed-chokepoint-flows)
+slow=(seed-supply-chain-trade seed-hormuz seed-natural-events seed-fire-detections seed-portwatch seed-lodestar-transit-summaries seed-chokepoint-baselines seed-chokepoint-flows seed-gdelt-bulk-materializer seed-unrest-events seed-ucdp-events seed-displacement-summary)
+daily=(seed-sanctions-pressure)
 
 case "$group" in
   fast) list=("${fast[@]}") ;;
   slow) list=("${slow[@]}") ;;
-  all)  list=("${slow[@]}" "${fast[@]}") ;;
-  *) echo "usage: $0 fast|slow|all" >&2; exit 2 ;;
+  daily) list=("${daily[@]}") ;;
+  all)  list=("${slow[@]}" "${daily[@]}" "${fast[@]}") ;;
+  *) echo "usage: $0 fast|slow|daily|all" >&2; exit 2 ;;
 esac
 
 failed=()
