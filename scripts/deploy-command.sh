@@ -93,7 +93,12 @@ fi
 echo "deployment $id building..." >&2
 
 for _ in $(seq 1 60); do
-  state="$(curl -sS "$api/v13/deployments/$id?$team" | python3 -c 'import sys,json;d=json.load(sys.stdin);print(d.get("readyState",""), d.get("url",""), d.get("errorMessage") or "")')"
+  # Tolerate transient non-JSON replies (proxy hiccups) while polling.
+  state="$(curl -sS "$api/v13/deployments/$id?$team" 2>/dev/null | python3 -c 'import sys,json
+try:
+    d=json.load(sys.stdin); print(d.get("readyState",""), d.get("url",""), d.get("errorMessage") or "")
+except Exception:
+    print("POLL_ERROR")')"
   case "$state" in READY*|ERROR*|CANCELED*) break;; esac
   sleep 10
 done

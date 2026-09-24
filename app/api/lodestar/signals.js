@@ -19,7 +19,7 @@ import { scrubDeep, scrubReady } from './_scrub.js';
 
 export const config = { runtime: 'edge' };
 
-const CACHE_KEY = 'lodestar:signals:v1';
+const CACHE_KEY = 'lodestar:signals:v2';
 const CACHE_TTL_S = 1800;
 const DAY = 86_400_000;
 let memo = null;
@@ -49,11 +49,15 @@ async function federalRegister(term) {
   for (const f of ['title', 'html_url', 'publication_date', 'type', 'abstract']) params.append('fields[]', f);
   for (const a of ['agencies']) params.append('fields[]', a);
   const d = await getJson(`https://www.federalregister.gov/api/v1/documents.json?${params}`);
-  // Keep rules, proposed rules and presidential documents; keep notices only
-  // when the title itself carries the term (drops unrelated FTZ notices).
-  const key = term.toLowerCase().split(/\s+/).filter((w) => w.length > 2 && !['section', 'medical'].includes(w));
+  // The term search matches anywhere in a document's full text, so keep only
+  // documents whose title or abstract carries every key word of the term
+  // (e.g. "232" and "medical" for "section 232 medical").
+  const key = term.toLowerCase().split(/\s+/).filter((w) => w.length > 2 && w !== 'section');
   return (d.results ?? [])
-    .filter((r) => r.type !== 'Notice' || key.every((w) => r.title.toLowerCase().includes(w)))
+    .filter((r) => {
+      const text = `${r.title} ${r.abstract ?? ''}`.toLowerCase();
+      return key.every((w) => text.includes(w));
+    })
     .slice(0, 5)
     .map((r) => ({
       title: r.title,
@@ -66,14 +70,16 @@ async function federalRegister(term) {
 }
 
 async function openFda() {
-  const applicant = String(process.env.OEM_FDA_APPLICANT || '').trim();
-  if (!applicant) return { configured: false, recalls: [], clearances: [] };
+  // OEM_FDA_APPLICANT may list several registered names separated by '|'.
+  const names = String(process.env.OEM_FDA_APPLICANT || '').split('|').map((n) => n.trim()).filter(Boolean);
+  if (!names.length) return { configured: false, recalls: [], clearances: [] };
   const q = (s) => encodeURIComponent(s).replace(/%20/g, '+');
+  const anyOf = (field) => `(${names.map((n) => `${field}:%22${q(n)}%22`).join('+')})`;
   const from = iso(Date.now() - 120 * DAY).replaceAll('-', '');
   const to = iso(Date.now()).replaceAll('-', '');
   const [recalls, k510] = await Promise.all([
-    getJson(`https://api.fda.gov/device/recall.json?search=recalling_firm:"${q(applicant)}"+AND+event_date_initiated:[${from}+TO+${to}]&limit=10`).catch((e) => ({ error: e.message })),
-    getJson(`https://api.fda.gov/device/510k.json?search=applicant:"${q(applicant)}"+AND+decision_date:[${from}+TO+${to}]&limit=10`).catch((e) => ({ error: e.message })),
+    getJson(`https://api.fda.gov/device/recall.json?search=${anyOf('recalling_firm')}+AND+event_date_initiated:[${from}+TO+${to}]&limit=10`).catch((e) => ({ error: e.message })),
+    getJson(`https://api.fda.gov/device/510k.json?search=${anyOf('applicant')}+AND+decision_date:[${from}+TO+${to}]&limit=10`).catch((e) => ({ error: e.message })),
   ]);
   const notFound = (x) => x?.error === 'HTTP 404'; // openFDA answers 404 for "no matches"
   return {
