@@ -15,7 +15,7 @@ import {
 } from './network';
 
 export interface Evidence {
-  signal: 'chokepoint' | 'quake' | 'natural' | 'advisory' | 'country-risk' | 'export-control';
+  signal: 'chokepoint' | 'quake' | 'natural' | 'advisory' | 'country-risk' | 'export-control' | 'regulatory' | 'device-regulatory' | 'news' | 'commodity';
   text: string;
   source: string;
   url?: string;
@@ -25,7 +25,7 @@ export interface Evidence {
   prov: 'live' | 'S' | 'est' | 'synth';
 }
 
-export type HotspotKind = 'site' | 'input' | 'chokepoint';
+export type HotspotKind = 'site' | 'input' | 'chokepoint' | 'regulatory';
 
 export interface Hotspot {
   id: string;
@@ -50,7 +50,7 @@ export interface ProductExposure {
   drivers: Hotspot[];
 }
 
-export interface FeedStatus { name: string; ok: boolean; at: string; detail?: string }
+export interface FeedStatus { name: string; ok: boolean; at: string; detail?: string; stale?: boolean }
 
 export interface ExposureResult {
   computedAt: string;
@@ -74,6 +74,14 @@ interface HistoryPoint { date: string; total: number }
 interface Quake { id: string; place: string; magnitude: number; location: { latitude: number; longitude: number }; occurredAt: number; sourceUrl?: string }
 interface NaturalEvent { id: string; title: string; category: string; categoryTitle?: string; lat: number; lon: number; date: number; sourceUrl?: string; sourceName?: string; closed?: boolean; windKt?: number }
 interface Advisory { title: string; link: string; pubDate: string; source: string; level: string; country: string }
+interface FrItem { title: string; url: string; date: string; type: string; agencies: string[] }
+interface Signals {
+  federalRegister: Array<{ term: string; inputs: string[]; items: FrItem[]; error?: boolean }>;
+  fda: { configured: boolean; recalls: Array<{ product: string; reason: string; status?: string; initiated?: string; url?: string }>; clearances: Array<{ device: string; kNumber?: string; date?: string; url?: string }> };
+  newsPulse: { inputs: Record<string, { query: string; z: number | null; recentAvg: number | null; baselineAvg: number | null; articles: Array<{ title: string; url: string; domain?: string; seendate?: string }> }>; fetchedAt: number } | null;
+  errors: string[];
+}
+interface Quote { symbol: string; price: number; change: number }
 
 const R_EARTH_KM = 6371;
 function distanceKm(aLat: number, aLon: number, bLat: number, bLon: number): number {
@@ -222,6 +230,44 @@ function exportControlEvidence(controls: string | undefined): Evidence | null {
   };
 }
 
+function frEvidence(it: FrItem, term: string, points: number): Evidence {
+  return {
+    signal: 'regulatory',
+    text: `Federal Register (${it.type}${it.agencies[0] ? `, ${it.agencies[0]}` : ''}): ${it.title}`,
+    source: `Federal Register · watch term "${term}"`,
+    url: it.url, at: it.date, points, prov: 'live',
+  };
+}
+
+/** Federal Register items, GDELT volume spikes and commodity moves for one input. */
+function inputSignalEvidence(inputId: string, yahoo: string | undefined, signals: Signals | null, quotes: Quote[]): Evidence[] {
+  const out: Evidence[] = [];
+  for (const g of signals?.federalRegister ?? []) {
+    if (!g.inputs.includes(inputId)) continue;
+    g.items.slice(0, 2).forEach((it, k) => out.push(frEvidence(it, g.term, k === 0 ? 22 : 10)));
+  }
+  const p = signals?.newsPulse?.inputs?.[inputId];
+  if (p && p.z != null && p.z >= 2) {
+    const top = p.articles[0];
+    out.push({
+      signal: 'news',
+      text: `News volume on "${p.query}" is ${p.z.toFixed(1)} standard deviations above its 4-week norm.${top ? ` Top story: ${top.title}` : ''}`,
+      source: `GDELT${top?.domain ? ` · ${top.domain}` : ''}`,
+      url: top?.url, points: Math.round(clamp(10 + p.z * 5, 0, 35)), prov: 'live',
+    });
+  }
+  const q = yahoo ? quotes.find((x) => x.symbol === yahoo) : undefined;
+  if (q && Number.isFinite(q.change) && Math.abs(q.change) >= 1) {
+    out.push({
+      signal: 'commodity',
+      text: `${yahoo} ${q.change > 0 ? 'up' : 'down'} ${Math.abs(q.change).toFixed(2)}% today at ${q.price}. A cost signal, not a supply one (daily move).`,
+      source: 'Yahoo Finance (via commodity quotes)',
+      points: Math.round(clamp(Math.abs(q.change) * 3, 0, 15)), prov: 'live',
+    });
+  }
+  return out;
+}
+
 function combine(evidence: Evidence[]): number {
   // Max signal, plus a smaller share of the rest: two independent live signals
   // agreeing should rank above either one alone, without runaway sums.
@@ -236,13 +282,29 @@ function combine(evidence: Evidence[]): number {
 export async function computeExposure(ix: Indexed): Promise<ExposureResult> {
   const feeds: FeedStatus[] = [];
   const now = new Date().toISOString();
+  // Each feed's last good payload is kept per browser, so a feed that dies
+  // mid-demo falls back to real data with its real (older) timestamp, and the
+  // panel says so. Map values are stored as entry arrays.
   const track = async <T>(name: string, fn: () => Promise<T>, fallback: T): Promise<T> => {
+    const storeKey = `lodestar-last-good:${name}`;
     try {
       const v = await fn();
       feeds.push({ name, ok: true, at: now });
+      try {
+        const payload = v instanceof Map ? { map: [...v.entries()] } : { value: v };
+        localStorage.setItem(storeKey, JSON.stringify({ at: now, ...payload }));
+      } catch { /* storage full or unavailable: live data still used */ }
       return v;
     } catch (err) {
-      feeds.push({ name, ok: false, at: now, detail: err instanceof Error ? err.message : String(err) });
+      const detail = err instanceof Error ? err.message : String(err);
+      try {
+        const saved = JSON.parse(localStorage.getItem(storeKey) ?? 'null');
+        if (saved?.at) {
+          feeds.push({ name, ok: false, at: saved.at, detail: `${detail}; showing last good data from ${saved.at.slice(0, 16).replace('T', ' ')} UTC`, stale: true });
+          return (saved.map ? new Map(saved.map) : saved.value) as T;
+        }
+      } catch { /* no usable last-good copy */ }
+      feeds.push({ name, ok: false, at: now, detail });
       return fallback;
     }
   };
@@ -259,7 +321,7 @@ export async function computeExposure(ix: Indexed): Promise<ExposureResult> {
     if (cp) historyIds.add(cp.id);
   }
 
-  const [status, quakes, natural, advisories, cii] = await Promise.all([
+  const [status, quakes, natural, advisories, cii, signals, quotes] = await Promise.all([
     track('Chokepoint status (NGA)', () => getJson<{ chokepoints: ChokepointStatus[] }>('/api/supply-chain/v1/get-chokepoint-status').then((d) => d.chokepoints ?? []), [] as ChokepointStatus[]),
     track('Earthquakes (USGS)', () => getJson<{ earthquakes: Quake[] }>('/api/seismology/v1/list-earthquakes').then((d) => d.earthquakes ?? []), [] as Quake[]),
     track('Natural events (EONET/GDACS/NHC)', () => getJson<{ events: NaturalEvent[] }>('/api/natural/v1/list-natural-events').then((d) => d.events ?? []), [] as NaturalEvent[]),
@@ -269,6 +331,8 @@ export async function computeExposure(ix: Indexed): Promise<ExposureResult> {
       if (!r) throw new Error('no scores');
       return new Map(r.cii.map((c) => [c.code, { name: c.name, score: c.score, level: c.level, trend: c.trend }]));
     }, new Map<string, { name: string; score: number; level: string; trend: string }>()),
+    track('Federal Register, openFDA, GDELT pulse', () => getJson<Signals>('/api/lodestar/signals'), null as Signals | null),
+    track('Commodity quotes (Yahoo)', () => getJson<{ quotes: Quote[] }>('/api/market/v1/list-commodity-quotes').then((d) => d.quotes ?? []), [] as Quote[]),
   ]);
 
   const histories = new Map<string, HistoryPoint[]>();
@@ -352,12 +416,39 @@ export async function computeExposure(ix: Indexed): Promise<ExposureResult> {
         const traffic = cp ? chokepointTrafficEvidence(cp.displayName, histories.get(cp.id) ?? []) : null;
         if (traffic) ev.push(traffic);
       }
+      if (i === 0) ev.push(...inputSignalEvidence(input.id, input.live?.yahoo, signals, quotes));
       hotspots.push({
         id: `input:${input.id}:${i}`, kind: 'input', title: `${input.name}`,
         subtitle: o.place,
         lat: o.lat, lon: o.lon, score: combine(ev), evidence: ev,
         products: input.used_in, families: familiesOf(input.used_in),
       });
+    });
+  }
+
+  // Trade/regulatory watch terms not tied to one input, and device regulatory.
+  const allProducts = ix.net.products.map((p) => p.id);
+  const general = (signals?.federalRegister ?? []).filter((g) => g.inputs.length === 0 && g.items.length);
+  if (general.length) {
+    const ev: Evidence[] = general.flatMap((g) => g.items.slice(0, 2).map((it) => frEvidence(it, g.term, 18)));
+    hotspots.push({
+      id: 'reg:us-trade', kind: 'regulatory', title: 'US trade & tariff actions',
+      subtitle: `Federal Register, last 14 days: ${general.map((g) => g.term).join(', ')}`,
+      lat: 38.9, lon: -77.03, score: combine(ev), evidence: ev, products: allProducts, families: familiesOf(allProducts),
+    });
+  }
+  if (signals?.fda?.configured) {
+    const ev: Evidence[] = [
+      ...signals.fda.recalls.slice(0, 5).map((r) => ({
+        signal: 'device-regulatory' as const,
+        text: `FDA recall (${r.status ?? 'status n/a'}): ${r.product}${r.reason ? ` — ${r.reason}` : ''}`,
+        source: 'openFDA device recalls', url: r.url, at: r.initiated, points: 25, prov: 'live' as const,
+      })),
+    ];
+    if (ev.length) hotspots.push({
+      id: 'reg:fda', kind: 'regulatory', title: 'Device regulatory (FDA)',
+      subtitle: 'Recalls initiated in the last 120 days',
+      lat: 39.03, lon: -76.98, score: combine(ev), evidence: ev, products: allProducts, families: familiesOf(allProducts),
     });
   }
 

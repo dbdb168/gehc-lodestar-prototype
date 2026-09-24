@@ -26,6 +26,8 @@ GitHub Actions instead (`.github/workflows/seed.yml` → `scripts/run-seeders.sh
 | Displacement (CII input) | `displacement:summary:v1:<year>` | `seed-displacement-summary.mjs` (UNHCR) | – |
 | Sanctions pressure | `sanctions:pressure:v1` | `seed-sanctions-pressure.mjs` (OFAC SDN + consolidated, Canada SEMA; heavy) | – |
 | News panels (incl. world, Middle East, Asia-Pacific) | – | none (RSS fetched live at the edge) | – |
+| Exposure engine: GDELT news pulse per input | `lodestar:news-pulse:v1` | `seed-lodestar-news-pulse.mjs` (GDELT DOC API, 6 s spacing) | – |
+| Exposure engine: Federal Register, openFDA | `lodestar:signals:v1` (30-min cache) | none: live in `api/lodestar/signals.js` (applicant server-side only; text scrubbed of `BANNED_TERMS`) | `OEM_FDA_APPLICANT`, `BANNED_TERMS` (Vercel) |
 | Trade routes, waterways, ports, sanctions layers | – | none (static) | – |
 
 ## Not seeded (and what that costs)

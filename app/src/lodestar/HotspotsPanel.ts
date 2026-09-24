@@ -14,9 +14,13 @@ const SIGNAL_LABEL: Record<Evidence['signal'], string> = {
   advisory: 'Travel advisory',
   'country-risk': 'Country risk',
   'export-control': 'Export control',
+  regulatory: 'Regulatory / tariff',
+  'device-regulatory': 'Device regulatory',
+  news: 'News pulse',
+  commodity: 'Commodity price',
 };
 const PROV_LABEL: Record<Evidence['prov'], string> = { live: 'live', S: 'sourced', est: 'estimate', synth: 'synthetic' };
-const KIND_LABEL: Record<Hotspot['kind'], string> = { site: 'Site', input: 'Input origin', chokepoint: 'Chokepoint' };
+const KIND_LABEL: Record<Hotspot['kind'], string> = { site: 'Site', input: 'Input origin', chokepoint: 'Chokepoint', regulatory: 'Regulatory' };
 
 const rgb = (score: number) => { const [r, g, b] = scoreColor(score); return `rgb(${r},${g},${b})`; };
 
@@ -65,7 +69,8 @@ export class LodestarHotspotsPanel extends Panel {
         list,
         h('div', { className: 'lodestar-feed-status' },
           `Scored ${new Date(r.computedAt).toUTCString().replace(' GMT', ' UTC')} from ${r.feeds.length - failed.length}/${r.feeds.length} live feeds.`,
-          failed.length ? h('span', { className: 'lodestar-feed-failed' }, ` Unavailable: ${failed.map((f) => f.name).join(', ')}.`) : null,
+          ...failed.map((f) => h('span', { className: 'lodestar-feed-failed' },
+            f.stale ? ` ${f.name}: feed unavailable, ${f.detail?.split('; ').pop()}.` : ` ${f.name}: feed unavailable.`)),
         ),
       ),
     );

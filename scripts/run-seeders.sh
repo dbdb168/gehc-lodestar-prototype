@@ -52,7 +52,7 @@ export RELAY_URL=direct
 # summaries; portwatch and baselines before chokepoint flows; the GDELT bulk
 # materializer right before unrest (it needs a snapshot under 3h old).
 fast=(seed-commodity-quotes seed-earthquakes seed-security-advisories seed-cyber-threats seed-correlation)
-slow=(seed-supply-chain-trade seed-hormuz seed-natural-events seed-fire-detections seed-portwatch seed-lodestar-transit-summaries seed-chokepoint-baselines seed-chokepoint-flows seed-gdelt-bulk-materializer seed-unrest-events seed-ucdp-events seed-displacement-summary)
+slow=(seed-supply-chain-trade seed-hormuz seed-natural-events seed-fire-detections seed-portwatch seed-lodestar-transit-summaries seed-chokepoint-baselines seed-chokepoint-flows seed-gdelt-bulk-materializer seed-unrest-events seed-ucdp-events seed-displacement-summary seed-lodestar-news-pulse)
 daily=(seed-sanctions-pressure)
 
 case "$group" in
