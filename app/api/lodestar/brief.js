@@ -68,7 +68,7 @@ const SCHEMA = {
 const SYSTEM = `You write the morning command brief for the supply-chain team of a medical imaging OEM (MR, CT, PET/CT, SPECT/CT, ultrasound, mammography/X-ray).
 Rules:
 - Use only the evidence items provided. Do not add facts, numbers, dates or events that are not in them.
-- Numbers tagged synth are synthetic demo values: when you use one, write "(synth)" after it. Never present them as company data.
+- Only the numbers inside an item's "oem" block are synthetic demo values (time to survive/recover, installs). When you use one, write "(synth)" after it and never present it as company data. Numbers in evidence are real public data: do not mark them synth.
 - Recommend; don't decide. Decisions are options for people to choose between.
 - Use medtech operations language where it fits: S&OP, SQDCI, QMSR / 510(k) change control, site readiness, time to survive vs time to recover.
 - Never name a company or a person. Say "the OEM" for the manufacturer. Owners are functions (Procurement, Install PMO, S&OP council, Quality/RA, Logistics, Trade compliance, Commercial).
@@ -91,8 +91,10 @@ function plain(s) {
 
 function firstSentences(s, n) {
   const body = String(s ?? '').replace(/^\s*(#{1,6}\s.*|\|.*\|)\s*$/gm, '');
-  const parts = plain(body).match(/[^.!?]+[.!?]+(\s|$)/g) ?? [plain(s)];
-  return parts.slice(0, n).join('').trim().slice(0, 600);
+  // Split only where a stop is followed by whitespace and a new sentence, so
+  // decimals ("9.5/day") and dates stay intact.
+  const parts = plain(body).split(/(?<=[.!?])\s+(?=[A-Z0-9"“(])/);
+  return parts.slice(0, n).join(' ').trim().slice(0, 600);
 }
 
 function tidy(brief) {
@@ -175,7 +177,7 @@ async function callModel(model, userContent) {
 
 async function briefFor(model, items, filter, date, regenerate) {
   const userContent = JSON.stringify({ date, product_filter: filter, items });
-  const cacheKey = `lodestar:brief:v2:${await sha(`${model}|${userContent}`)}`;
+  const cacheKey = `lodestar:brief:v3:${await sha(`${model}|${userContent}`)}`;
   if (!regenerate) {
     try {
       const hit = await readJsonFromUpstash(cacheKey, 2000);
