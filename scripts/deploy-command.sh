@@ -23,16 +23,19 @@ work="$(mktemp -d)"
 trap 'rm -rf "$work"' EXIT
 
 # Manifest of committed files under app/ (paths relative to app/).
-(cd app && git ls-files -z) | python3 - "$work" <<'EOF'
+(cd app && git ls-files -z) > "$work/files.z"
+python3 - "$work" <<'EOF'
 import sys, os, json, hashlib
 work = sys.argv[1]
-files = [f for f in sys.stdin.read().split('\0') if f and os.path.isfile(os.path.join('app', f))]
+files = [f for f in open(os.path.join(work, 'files.z')).read().split('\0') if f and os.path.isfile(os.path.join('app', f))]
 man = []
 for f in files:
     data = open(os.path.join('app', f), 'rb').read()
     man.append({'file': f, 'sha': hashlib.sha1(data).hexdigest(), 'size': len(data)})
 json.dump(man, open(os.path.join(work, 'manifest.json'), 'w'))
 print(f'{len(man)} files', file=sys.stderr)
+if not man:
+    sys.exit('empty manifest')
 EOF
 
 python3 - "$work" "$target" "$(git rev-parse --short HEAD)" <<'EOF'
