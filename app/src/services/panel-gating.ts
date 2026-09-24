@@ -110,6 +110,10 @@ export function getPanelGateReason(
   // Non-premium panels are never gated
   if (!isPremium) return PanelGateReason.NONE;
 
+  // Lodestar: no accounts, billing or paywall. Never show sign-in or upgrade
+  // gates; a panel whose data is unavailable renders its own empty state.
+  if (import.meta.env.VITE_DISABLE_PAYWALL === 'true') return PanelGateReason.NONE;
+
   // API key, tester key, or Clerk Pro: always unlocked
   if (hasPremiumAccess(authState)) return PanelGateReason.NONE;
 

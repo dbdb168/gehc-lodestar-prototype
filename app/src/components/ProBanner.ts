@@ -208,6 +208,8 @@ function resolveEffectiveBannerPremium(): EffectiveBannerPremium {
 }
 
 export function showProBanner(container: HTMLElement): void {
+  // Lodestar: no upgrade banner.
+  if (import.meta.env.VITE_DISABLE_PAYWALL === 'true') return;
   // Cache container even on early-return paths so the entitlement-change
   // listener can re-mount on a downgrade. App.ts calls this once at init
   // regardless of premium state, so caching here covers both "initially

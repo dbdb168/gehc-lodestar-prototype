@@ -22,6 +22,12 @@ export class AuthHeaderWidget {
     this.container = document.createElement('div');
     this.container.className = 'auth-header-widget';
 
+    // Lodestar: no accounts, so no sign-in or sign-up buttons.
+    if (import.meta.env.VITE_DISABLE_PAYWALL === 'true') {
+      this.container.hidden = true;
+      return;
+    }
+
     this.unsubscribeAuth = subscribeAuthState((state: AuthSession) => {
       if (state.isPending) {
         this.renderPending();

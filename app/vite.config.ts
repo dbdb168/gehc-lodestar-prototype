@@ -266,7 +266,8 @@ function htmlVariantPlugin(activeMeta: VariantMeta, activeVariant: string, isDes
       if (activeVariant !== 'full') {
         result = result.replace(
           /if\(v\)document\.documentElement\.dataset\.variant=v;/,
-          `v='${activeVariant}';document.documentElement.dataset.variant=v;`
+          // Lodestar: keep an `if` so the script's trailing `else` stays valid.
+          `if((v='${activeVariant}'))document.documentElement.dataset.variant=v;`
         );
       }
 

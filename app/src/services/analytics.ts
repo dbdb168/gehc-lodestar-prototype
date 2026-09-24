@@ -636,6 +636,8 @@ export function trackContentHandoff(): void {
 }
 
 export function initAnalytics(): void {
+  // Lodestar: no third-party analytics.
+  if (import.meta.env.VITE_DISABLE_ANALYTICS === 'true') return;
   if (umamiLoadScheduled || typeof window === 'undefined' || typeof document === 'undefined') return;
   umamiLoadScheduled = true;
   scheduleAfterFirstPaint(loadUmamiScript, 3000);

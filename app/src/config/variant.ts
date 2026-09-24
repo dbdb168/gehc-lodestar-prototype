@@ -38,6 +38,10 @@ export const SITE_VARIANT: string = (() => {
     return buildVariant;
   }
 
+  // Lodestar: a variant fixed at build time wins on any host, so a
+  // *.vercel.app deploy doesn't fall through to 'full'.
+  if (import.meta.env.VITE_VARIANT && isSiteVariant(buildVariant)) return buildVariant;
+
   // window.location, not bare `location`: node-based tests stub `window`
   // without a global `location`, and this module must stay importable there.
   const h = window.location?.hostname;
