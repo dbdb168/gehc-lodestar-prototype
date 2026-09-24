@@ -2,7 +2,7 @@
 
 - [x] Day 0: prototype live at https://lodestar-prototype.vercel.app (Vercel project `lodestar-prototype`, team "David's projects"). Sends `X-Robots-Tag: noindex, nofollow` and the robots meta tag; page and all assets return 200. Not yet checked in a real browser (headless Chromium here rejects the proxy CA).
 - [x] Day 1: shell live at https://lodestar-command.vercel.app (Vercel project `lodestar-command`). World Monitor v2.10.0 vendored at `29227565`; rebranded; noindex (meta, header on every path, disallow-all robots.txt); commodity variant fixed at build; paywall, Pro banner, sign-in, variant switcher and upstream analytics removed; AGPL credit in header, footer and mobile menu. Checked locally in headless Chromium: 32 panels, no gates, no page errors.
-- [ ] Day 1–2: Upstash + seeder cron, no empty panels
+- [x] Day 1–2: Upstash + seeder cron. `.github/workflows/seed.yml` runs 12 seeders (fast group every 2h, slow every 6h; see `docs/SEEDERS.md`). First full run 24 Sep: all OK. Panel set trimmed to the brief's list; every panel endpoint returns live data. Not yet eyeballed in a real browser.
 - [ ] Day 2–3: network.json overlay layers + product filter
 - [ ] Day 3–4: exposure engine + proxies + evidence
 - [ ] Day 4: brief API + Compare toggle
@@ -10,7 +10,7 @@
 - [ ] Day 6: polish, snapshot fallback, demo script
 
 Deployed URL: prototype https://lodestar-prototype.vercel.app · command centre https://lodestar-command.vercel.app
-Feeds live / failing: API reachable from the browser; Redis connected. Chokepoint status and bootstrap return live data. Most other caches are empty until seeders run (health: 226 of 312 checks critical).
+Feeds live / failing: live: chokepoints (NGA + PortWatch flows), Hormuz (WTO), shipping rates (FRED/SCFI/CCFI/BDI), commodities & FX (Yahoo), security advisories (106), earthquakes (USGS), natural events (EONET/GDACS), fires (NASA FIRMS), cyber threats (C2Intel), disaster correlation (13 cards), news digest (RSS). Failing/empty: 14 US-embassy advisory feeds; chokepoint transit history and shipping stress (need upstream's always-on AIS relay). `/api/health` reports UNHEALTHY because it counts all 312 upstream keys, most of which Lodestar doesn't seed.
 
 ## How deploys work in this environment
 - Vercel, OpenRouter and Upstash credentials are **API credentials**: the proxy injects them on requests to those hosts, and the session never sees them. `VERCEL_TOKEN` is not an env var here.
@@ -23,7 +23,7 @@ Feeds live / failing: API reachable from the browser; Redis connected. Chokepoin
 - The API accepts browser calls only from `lodestar-command.vercel.app` and this team's `lodestar-command-*` deployment URLs (`api/_cors.js`, `server/cors.ts`).
 
 ## Open issues
-- **Seeders:** not running yet. Seed only what the kept panels read; GitHub Actions (2,000 free min/month on a private repo) can't afford all 217 seeders every 30 min.
+- **Seeder schedule runs from the default branch only.** Today the only branch is `claude/busy-hamilton-1ve9ec`, so it is the default. If a `main` is created and made default, the workflow must be on it.
 - **Live AIS:** upstream's AIS relay can't run on Vercel, so `AISSTREAM_API_KEY` is unused (optional per the brief).
 - **Onboarding modal** ("Choose Workspace") shows on first load; remove or preset it when the panels are reworked.
 - **Upstream static fetches remain:** country-boundary overrides from maps.worldmonitor.app and the widget relay at proxy.worldmonitor.app.
