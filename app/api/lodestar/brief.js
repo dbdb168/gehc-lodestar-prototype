@@ -1,0 +1,207 @@
+// Lodestar: model-written command brief (docs/BUILD_BRIEF.md §3d).
+//
+//   POST /api/lodestar/brief
+//   body: { items: [...top scored hotspots with evidence], filter, date, compare?, regenerate? }
+//   → { brief, model, usage, cost, cached, generatedAt } (+ compare: same for LLM_MODEL_COMPARE)
+//
+// Calls OpenRouter with a JSON-schema response format. Guards: allowed origins
+// and a valid browser session only; payload validated and size-capped; results
+// cached 30 min per (payload, model); a daily call cap bounds spend. Output text
+// is scrubbed of BANNED_TERMS as a last line of defence.
+
+import { getCorsHeaders, isDisallowedOrigin } from '../_cors.js';
+import { jsonResponse } from '../_json-response.js';
+import { validateApiKey } from '../_api-key.js';
+import { readJsonFromUpstash, setCachedData, redisPipeline } from '../_upstash-json.js';
+import { scrubDeep, scrubReady } from './_scrub.js';
+
+export const config = { runtime: 'edge' };
+
+const CACHE_TTL_S = 1800;
+const DAILY_CAP = Number(process.env.LODESTAR_BRIEF_DAILY_CAP || 200);
+const MAX_ITEMS = 10;
+
+const SCHEMA = {
+  type: 'object',
+  additionalProperties: false,
+  required: ['headline', 'brief', 'decisions', 'watch'],
+  properties: {
+    headline: { type: 'string', description: 'One line, under 110 characters.' },
+    brief: { type: 'string', description: 'Exactly three sentences.' },
+    decisions: {
+      type: 'array',
+      maxItems: 3,
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        required: ['title', 'why', 'owner_function', 'decide_by', 'evidence_ids', 'options'],
+        properties: {
+          title: { type: 'string' },
+          why: { type: 'string' },
+          owner_function: { type: 'string', description: 'A function, never a person: Procurement, Install PMO, S&OP council, Quality/RA, Logistics, Trade compliance, Commercial.' },
+          decide_by: { type: 'string', description: 'ISO date (YYYY-MM-DD).' },
+          evidence_ids: { type: 'array', items: { type: 'string' }, description: 'ids of the items this decision rests on' },
+          options: {
+            type: 'array',
+            minItems: 2,
+            maxItems: 3,
+            items: {
+              type: 'object',
+              additionalProperties: false,
+              required: ['action', 'cost', 'protects', 'regulatory_time', 'confidence'],
+              properties: {
+                action: { type: 'string' },
+                cost: { type: 'string' },
+                protects: { type: 'string' },
+                regulatory_time: { type: 'string', description: 'e.g. "None", "Letter to file", "510(k) change: 6-9 months"' },
+                confidence: { type: 'string', enum: ['High', 'Medium', 'Low'] },
+              },
+            },
+          },
+        },
+      },
+    },
+    watch: { type: 'array', maxItems: 5, items: { type: 'string' } },
+  },
+};
+
+const SYSTEM = `You write the morning command brief for the supply-chain team of a medical imaging OEM (MR, CT, PET/CT, SPECT/CT, ultrasound, mammography/X-ray).
+Rules:
+- Use only the evidence items provided. Do not add facts, numbers, dates or events that are not in them.
+- Numbers tagged synth are synthetic demo values: when you use one, write "(synth)" after it. Never present them as company data.
+- Recommend; don't decide. Decisions are options for people to choose between.
+- Use medtech operations language where it fits: S&OP, SQDCI, QMSR / 510(k) change control, site readiness, time to survive vs time to recover.
+- Never name a company or a person. Say "the OEM" for the manufacturer. Owners are functions (Procurement, Install PMO, S&OP council, Quality/RA, Logistics, Trade compliance, Commercial).
+- If the evidence is calm for the selected product line, say so plainly: telling the team what not to worry about is part of the job.
+- decide_by must be a date within the next 21 days of the given date.`;
+
+function clip(s, n) { return String(s ?? '').slice(0, n); }
+
+function sanitizeItems(items) {
+  if (!Array.isArray(items)) return null;
+  return items.slice(0, MAX_ITEMS).map((it) => ({
+    id: clip(it.id, 60),
+    title: clip(it.title, 120),
+    kind: clip(it.kind, 20),
+    subtitle: clip(it.subtitle, 160),
+    score: Math.max(0, Math.min(100, Number(it.score) || 0)),
+    products: Array.isArray(it.products) ? it.products.slice(0, 8).map((p) => clip(p, 60)) : [],
+    oem: it.oem && typeof it.oem === 'object' ? {
+      tts_days: Number(it.oem.tts_days) || undefined,
+      ttr_days: Number(it.oem.ttr_days) || undefined,
+      installs_next_90d: Number(it.oem.installs_next_90d) || undefined,
+      prov: 'synth',
+    } : undefined,
+    evidence: Array.isArray(it.evidence) ? it.evidence.slice(0, 5).map((e) => ({
+      text: clip(e.text, 300), source: clip(e.source, 80), at: clip(e.at, 20), prov: clip(e.prov, 8),
+    })) : [],
+  }));
+}
+
+async function sha(text) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return [...new Uint8Array(buf)].slice(0, 12).map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function underDailyCap() {
+  const key = `lodestar:brief:calls:${new Date().toISOString().slice(0, 10)}`;
+  try {
+    const res = await redisPipeline([['INCR', key], ['EXPIRE', key, 90000]]);
+    const n = Number(res?.[0]?.result ?? res?.[0]);
+    return !Number.isFinite(n) || n <= DAILY_CAP;
+  } catch {
+    return true; // Redis down: the per-payload cache still limits repeat calls
+  }
+}
+
+async function callModel(model, userContent) {
+  const key = process.env.OPENROUTER_API_KEY;
+  if (!key) throw new Error('OPENROUTER_API_KEY not set');
+  const r = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${key}`,
+      'Content-Type': 'application/json',
+      'X-Title': 'Lodestar',
+    },
+    body: JSON.stringify({
+      model,
+      messages: [{ role: 'system', content: SYSTEM }, { role: 'user', content: userContent }],
+      response_format: { type: 'json_schema', json_schema: { name: 'command_brief', strict: true, schema: SCHEMA } },
+      temperature: 0.2,
+      max_tokens: 2500,
+      usage: { include: true },
+    }),
+    signal: AbortSignal.timeout(55_000),
+  });
+  const body = await r.json().catch(() => null);
+  if (!r.ok || !body) throw new Error(`OpenRouter HTTP ${r.status}${body?.error?.message ? `: ${body.error.message}` : ''}`);
+  const text = body.choices?.[0]?.message?.content;
+  let brief;
+  try { brief = typeof text === 'string' ? JSON.parse(text) : text; } catch { throw new Error('model returned invalid JSON'); }
+  if (!brief?.headline || !brief?.brief) throw new Error('model returned an incomplete brief');
+  return {
+    brief: scrubDeep(brief),
+    model: body.model || model,
+    usage: body.usage ? { prompt: body.usage.prompt_tokens, completion: body.usage.completion_tokens, total: body.usage.total_tokens } : null,
+    cost: typeof body.usage?.cost === 'number' ? body.usage.cost : null,
+  };
+}
+
+async function briefFor(model, items, filter, date, regenerate) {
+  const userContent = JSON.stringify({ date, product_filter: filter, items });
+  const cacheKey = `lodestar:brief:v1:${await sha(`${model}|${userContent}`)}`;
+  if (!regenerate) {
+    try {
+      const hit = await readJsonFromUpstash(cacheKey, 2000);
+      if (hit?.brief) return { ...hit, cached: true };
+    } catch { /* cache miss */ }
+  }
+  if (!(await underDailyCap())) throw Object.assign(new Error('daily brief limit reached'), { status: 429 });
+  const out = { ...(await callModel(model, userContent)), generatedAt: new Date().toISOString() };
+  await setCachedData(cacheKey, out, CACHE_TTL_S).catch(() => {});
+  return { ...out, cached: false };
+}
+
+export default async function handler(req) {
+  const cors = getCorsHeaders(req, 'POST, OPTIONS');
+  if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
+  if (req.method !== 'POST') return jsonResponse({ error: 'POST only' }, 405, cors);
+  if (isDisallowedOrigin(req)) return jsonResponse({ error: 'Origin not allowed' }, 403, cors);
+  if (!scrubReady()) return jsonResponse({ error: 'BANNED_TERMS not configured' }, 503, cors);
+  const auth = await validateApiKey(req);
+  if (!auth.valid) return jsonResponse({ error: auth.error || 'session required' }, 401, cors);
+
+  let body;
+  try { body = await req.json(); } catch { return jsonResponse({ error: 'invalid JSON' }, 400, cors); }
+  const items = sanitizeItems(body?.items);
+  if (!items) return jsonResponse({ error: 'items required' }, 400, cors);
+  const filter = ['ALL', 'MR', 'CT', 'MI', 'US', 'XR'].includes(body?.filter) ? body.filter : 'ALL';
+  const date = /^\d{4}-\d{2}-\d{2}$/.test(body?.date ?? '') ? body.date : new Date().toISOString().slice(0, 10);
+  const regenerate = body?.regenerate === true;
+
+  const primary = process.env.LLM_MODEL_BRIEF || 'z-ai/glm-5.3';
+  const compareModel = process.env.LLM_MODEL_COMPARE;
+  const work = Promise.all([
+    briefFor(primary, items, filter, date, regenerate),
+    body?.compare === true && compareModel
+      ? briefFor(compareModel, items, filter, date, regenerate).catch((e) => ({ error: e.message || 'compare failed' }))
+      : Promise.resolve(null),
+  ]).then(([main, compare]) => ({ ...main, compare }), (e) => ({ error: e.message || 'brief failed', status: e.status || 502 }));
+
+  // Edge functions must start responding within ~25 s; a reasoning model can
+  // take longer. Send headers now and the JSON when it's ready (errors go in
+  // the body as { error }).
+  const enc = new TextEncoder();
+  const stream = new ReadableStream({
+    async start(controller) {
+      controller.enqueue(enc.encode(' '));
+      controller.enqueue(enc.encode(JSON.stringify(await work)));
+      controller.close();
+    },
+  });
+  return new Response(stream, {
+    status: 200,
+    headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', ...cors },
+  });
+}

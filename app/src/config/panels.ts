@@ -811,6 +811,7 @@ const HAPPY_MOBILE_MAP_LAYERS: MapLayers = {
 // centre. Panel set per docs/BUILD_BRIEF.md §3e (OEM panels are added later).
 const COMMODITY_PANELS: Record<string, PanelConfig> = {
   map: { name: 'Supply Network Map', enabled: true, priority: 1 },
+  'lodestar-brief': { name: 'Command brief', enabled: true, priority: 1 },
   'lodestar-hotspots': { name: 'Hotspots worth diving into', enabled: true, priority: 1 },
   'chokepoint-strip': { name: 'Chokepoint Status', enabled: true, priority: 1 },
   'supply-chain': { name: 'Supply Chain & Logistics', enabled: true, priority: 1 },

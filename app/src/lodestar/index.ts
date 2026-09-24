@@ -8,6 +8,7 @@ import { loadNetwork, indexNetwork, type FamilyFilter, type Indexed, FAMILIES, F
 import { computeExposure, type ExposureResult, type Hotspot } from './exposure';
 import { buildOverlay, type OverlayState } from './overlay';
 import type { LodestarHotspotsPanel } from './HotspotsPanel';
+import type { LodestarBriefPanel } from './BriefPanel';
 import './lodestar.css';
 
 const REFRESH_MS = 5 * 60 * 1000;
@@ -58,6 +59,7 @@ export async function startLodestar(ctx: AppContext): Promise<void> {
       p.setFocusHandler(focus);
       p.update(state.result, state.filter, state.selectedId);
     }
+    (ctx.panels['lodestar-brief'] as LodestarBriefPanel | undefined)?.update(ix, state.result, state.filter);
     for (const fn of listeners) fn({ filter: state.filter, result: state.result, ix });
     syncFilterButtons();
   };
@@ -104,6 +106,6 @@ export async function startLodestar(ctx: AppContext): Promise<void> {
   setInterval(() => { if (!document.hidden) void refresh(); }, REFRESH_MS);
   // The hotspots panel is lazily created; hand it the current result when it appears.
   const waitForPanel = setInterval(() => {
-    if (panel() && state.result) { render(); clearInterval(waitForPanel); }
+    if (panel() && ctx.panels['lodestar-brief'] && state.result) { render(); clearInterval(waitForPanel); }
   }, 1000);
 }
