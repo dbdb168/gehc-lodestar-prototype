@@ -1,0 +1,7 @@
+{
+  "name": "lodestar-command-center",
+  "private": true,
+  "scripts": {
+    "lint:names": "bash scripts/lint-names.sh"
+  }
+}
