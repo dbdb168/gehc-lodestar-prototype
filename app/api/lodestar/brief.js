@@ -27,7 +27,7 @@ const SCHEMA = {
   required: ['headline', 'brief', 'decisions', 'watch'],
   properties: {
     headline: { type: 'string', description: 'One line, under 110 characters.' },
-    brief: { type: 'string', description: 'Exactly three sentences.' },
+    brief: { type: 'string', description: 'Plain text, exactly three sentences, no markdown, under 450 characters. Actions belong in decisions, not here.' },
     decisions: {
       type: 'array',
       maxItems: 3,
@@ -73,9 +73,34 @@ Rules:
 - Use medtech operations language where it fits: S&OP, SQDCI, QMSR / 510(k) change control, site readiness, time to survive vs time to recover.
 - Never name a company or a person. Say "the OEM" for the manufacturer. Owners are functions (Procurement, Install PMO, S&OP council, Quality/RA, Logistics, Trade compliance, Commercial).
 - If the evidence is calm for the selected product line, say so plainly: telling the team what not to worry about is part of the job.
-- decide_by must be a date within the next 21 days of the given date.`;
+- decide_by must be a date within the next 21 days of the given date.
+- Format: every field is plain text (no markdown, no headings, no bullet characters, no tables). "brief" is exactly three sentences.`;
 
 function clip(s, n) { return String(s ?? '').slice(0, n); }
+
+/** Plain text only: models sometimes return markdown despite the instruction. */
+function plain(s) {
+  return String(s ?? '')
+    .replace(/^#{1,6}\s*/gm, '')
+    .replace(/\*\*|__|`/g, '')
+    .replace(/^\s*[-*•]\s+/gm, '')
+    .replace(/^\|.*\|\s*$/gm, '')
+    .replace(/\s*\n+\s*/g, ' ')
+    .trim();
+}
+
+function firstSentences(s, n) {
+  const body = String(s ?? '').replace(/^\s*(#{1,6}\s.*|\|.*\|)\s*$/gm, '');
+  const parts = plain(body).match(/[^.!?]+[.!?]+(\s|$)/g) ?? [plain(s)];
+  return parts.slice(0, n).join('').trim().slice(0, 600);
+}
+
+function tidy(brief) {
+  const deep = (v) => (typeof v === 'string' ? plain(v) : Array.isArray(v) ? v.map(deep) : v && typeof v === 'object' ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, deep(x)])) : v);
+  const out = deep(brief);
+  out.brief = firstSentences(brief.brief, 3);
+  return out;
+}
 
 function sanitizeItems(items) {
   if (!Array.isArray(items)) return null;
@@ -141,7 +166,7 @@ async function callModel(model, userContent) {
   try { brief = typeof text === 'string' ? JSON.parse(text) : text; } catch { throw new Error('model returned invalid JSON'); }
   if (!brief?.headline || !brief?.brief) throw new Error('model returned an incomplete brief');
   return {
-    brief: scrubDeep(brief),
+    brief: scrubDeep(tidy(brief)),
     model: body.model || model,
     usage: body.usage ? { prompt: body.usage.prompt_tokens, completion: body.usage.completion_tokens, total: body.usage.total_tokens } : null,
     cost: typeof body.usage?.cost === 'number' ? body.usage.cost : null,
@@ -150,7 +175,7 @@ async function callModel(model, userContent) {
 
 async function briefFor(model, items, filter, date, regenerate) {
   const userContent = JSON.stringify({ date, product_filter: filter, items });
-  const cacheKey = `lodestar:brief:v1:${await sha(`${model}|${userContent}`)}`;
+  const cacheKey = `lodestar:brief:v2:${await sha(`${model}|${userContent}`)}`;
   if (!regenerate) {
     try {
       const hit = await readJsonFromUpstash(cacheKey, 2000);
