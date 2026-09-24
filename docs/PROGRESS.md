@@ -10,7 +10,7 @@
 - [ ] Day 6: polish, snapshot fallback, demo script
 
 Deployed URL: prototype https://lodestar-prototype.vercel.app · command centre https://lodestar-command.vercel.app
-Feeds live / failing: none yet. APIs return 'Redis not configured' and 'API key required' (see Open issues).
+Feeds live / failing: API reachable from the browser; Redis connected. Chokepoint status and bootstrap return live data. Most other caches are empty until seeders run (health: 226 of 312 checks critical).
 
 ## How deploys work in this environment
 - Vercel, OpenRouter and Upstash credentials are **API credentials**: the proxy injects them on requests to those hosts, and the session never sees them. `VERCEL_TOKEN` is not an env var here.
@@ -18,10 +18,13 @@ Feeds live / failing: none yet. APIs return 'Redis not configured' and 'API key 
 - Run `npm run lint:names` before every deploy.
 - Command centre deploys upload `app/`'s committed files by SHA (`POST /v2/files`), then create the deployment with that manifest and `projectSettings` (`framework: null`, `installCommand: npm install`, `buildCommand: npm run build:lodestar`, `outputDirectory: dist`, `nodeVersion: 22.x`). Vercel runs the build (~4 min).
 - `middleware.ts` must keep `runtime: 'edge'`; without it Vercel runs it as unbundled Node and every page 500s.
+- Deploy the command centre with `npm run deploy:command` (production) or `npm run deploy:command -- preview`. It runs `lint:names`, uploads only files Vercel is missing, and waits for the build. Commit first: it deploys committed files only.
+- Vercel env vars on `lodestar-command` (set by the owner): Upstash, OpenRouter, FRED, `LLM_MODEL_*`, NASA FIRMS, AISStream, `OEM_FDA_APPLICANT`, `BANNED_TERMS`. Added by the session: `WM_SESSION_SECRET` (random; signs anonymous browser sessions) and `NASA_FIRMS_API_KEY` (the name upstream reads; same value as `NASA_FIRMS_KEY`). Env changes need a redeploy.
+- The API accepts browser calls only from `lodestar-command.vercel.app` and this team's `lodestar-command-*` deployment URLs (`api/_cors.js`, `server/cors.ts`).
 
 ## Open issues
-- **Vercel env vars for `lodestar-command`:** the project has none, so the API reports "Redis not configured". Add `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`, `OPENROUTER_API_KEY`, `FRED_API_KEY` (and the `LLM_MODEL_*` values) in the Vercel project settings. The session can't copy the hidden tokens itself.
-- **API origin allowlist:** upstream only serves browser requests from its own domains without an API key ("API key required"). Add the Lodestar domains to the allowlist (`api/_cors.js`, `server/cors.ts`, API-key gate). Next task.
+- **Seeders:** not running yet. Seed only what the kept panels read; GitHub Actions (2,000 free min/month on a private repo) can't afford all 217 seeders every 30 min.
+- **Live AIS:** upstream's AIS relay can't run on Vercel, so `AISSTREAM_API_KEY` is unused (optional per the brief).
 - **Onboarding modal** ("Choose Workspace") shows on first load; remove or preset it when the panels are reworked.
 - **Upstream static fetches remain:** country-boundary overrides from maps.worldmonitor.app and the widget relay at proxy.worldmonitor.app.
 - **Non-English locales** still carry upstream branding; only English is rebranded.
