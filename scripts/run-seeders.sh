@@ -45,7 +45,7 @@ export RELAY_URL=direct
 # Order matters: earthquakes before correlation; portwatch and baselines
 # before chokepoint flows.
 fast=(seed-commodity-quotes seed-earthquakes seed-security-advisories seed-cyber-threats seed-correlation)
-slow=(seed-supply-chain-trade seed-hormuz seed-natural-events seed-fire-detections seed-portwatch seed-chokepoint-baselines seed-chokepoint-flows)
+slow=(seed-supply-chain-trade seed-hormuz seed-natural-events seed-fire-detections seed-portwatch seed-lodestar-transit-summaries seed-chokepoint-baselines seed-chokepoint-flows)
 
 case "$group" in
   fast) list=("${fast[@]}") ;;

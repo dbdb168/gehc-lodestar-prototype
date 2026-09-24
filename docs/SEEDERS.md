@@ -10,7 +10,7 @@ GitHub Actions instead (`.github/workflows/seed.yml` → `scripts/run-seeders.sh
 |---|---|---|---|
 | Supply chain: shipping rates | `supply_chain:shipping:v2` | `seed-supply-chain-trade.mjs` | `FRED_API_KEY` |
 | Supply chain: critical minerals (HHI) | – | none (static data, computed live) | – |
-| Chokepoint status + trade-route colour | `supply_chain:chokepoints:v4` (route cache) | computed live from NGA warnings; enriched by `seed-portwatch` → `seed-chokepoint-baselines` → `seed-chokepoint-flows` | – |
+| Chokepoint status + trade-route colour | `supply_chain:chokepoints:v4` (route cache) | computed live from NGA warnings; enriched by `seed-portwatch` → `seed-lodestar-transit-summaries` (+ per-chokepoint history), `seed-chokepoint-baselines` → `seed-chokepoint-flows` | – |
 | Hormuz tracker | `supply_chain:hormuz_tracker:v1` | `seed-hormuz.mjs` | – |
 | Metals & materials (commodities) | `market:commodities-bootstrap:v1` | `seed-commodity-quotes.mjs` | – |
 | Security advisories | `intelligence:advisories(-bootstrap):v1` | `seed-security-advisories.mjs` (`RELAY_URL=direct`) | – |
@@ -25,9 +25,11 @@ GitHub Actions instead (`.github/workflows/seed.yml` → `scripts/run-seeders.sh
 ## Not seeded (and what that costs)
 
 - **`scripts/ais-relay.cjs`** is a long-running process that Vercel and Actions
-  can't host. It is the only writer of chokepoint transit summaries, shipping
-  stress and card history, so those sub-views stay empty. Live AIS is optional
-  in the brief; PortWatch counts carry the chokepoint story.
+  can't host. Upstream it writes chokepoint transit summaries, card history and
+  shipping stress. Lodestar replaces the PortWatch half with
+  `seed-lodestar-transit-summaries.mjs` (week-on-week change, traffic-drop
+  anomaly, history chart). Live "today" AIS counts and shipping stress stay
+  empty; the cards withhold today's count rather than show a lagged one.
 - `seed-internet-outages.mjs` needs `CLOUDFLARE_API_TOKEN` (not set).
 
 ## Cadence and budget
