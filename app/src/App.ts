@@ -3048,6 +3048,11 @@ export class App {
 
     // Phase 7: Refresh scheduling
     this.setupRefreshIntervals();
+
+    // Lodestar: OEM network overlay, exposure engine and hotspots.
+    if (import.meta.env.VITE_LODESTAR === 'true') {
+      void import('@/lodestar').then((m) => m.startLodestar(this.state)).catch((e) => console.warn('[Lodestar] start failed', e));
+    }
     this.eventHandlers.setupSnapshotSaving();
     cleanOldSnapshots().catch((e) => console.warn('[Storage] Snapshot cleanup failed:', e));
 

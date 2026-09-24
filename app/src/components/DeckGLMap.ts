@@ -671,6 +671,8 @@ export class DeckGLMap {
   private happinessSource = '';
   private speciesRecoveryZones: Array<SpeciesRecovery & { recoveryZone: { name: string; lat: number; lon: number } }> = [];
   private renewableInstallations: RenewableInstallation[] = [];
+  // Lodestar: OEM overlay layers + their tooltip/click (src/lodestar/overlay.ts).
+  private lodestarOverlay: import('@/lodestar/overlay').LodestarOverlay | null = null;
   private webcamData: WebcamMarker[] = [];
   private countriesGeoJsonData: FeatureCollection<Geometry> | null = null;
   private conflictZoneGeoJson: GeoJSON.FeatureCollection | null = null;
@@ -2389,6 +2391,9 @@ export class DeckGLMap {
     if (this.newsLocations.length > 0) {
       layers.push(...this.createNewsLocationsLayer());
     }
+
+    // Lodestar overlay draws on top of the upstream layers.
+    if (this.lodestarOverlay) layers.push(...this.lodestarOverlay.layers);
 
     const result = layers.filter(Boolean) as LayersList;
     const elapsed = performance.now() - startTime;
@@ -4936,6 +4941,11 @@ export class DeckGLMap {
       return Number.isFinite(number) ? text(digits == null ? number.toLocaleString() : number.toFixed(digits)) : '—';
     };
 
+    if (layerId.startsWith('lodestar-') && this.lodestarOverlay) {
+      const html = this.lodestarOverlay.tooltip(info);
+      return html ? { html: `<div class="deckgl-tooltip">${html}</div>` } : null;
+    }
+
     switch (layerId) {
       case 'hotspots-layer':
         return { html: `<div class="deckgl-tooltip"><strong>${text(obj.name)}</strong><br/>${text(obj.subtext)}</div>` };
@@ -5256,6 +5266,7 @@ export class DeckGLMap {
   ]);
 
   private handleClick(info: PickingInfo): void {
+    if (info.layer?.id?.startsWith('lodestar-') && this.lodestarOverlay?.click(info)) return;
     const isChoropleth = info.layer?.id ? DeckGLMap.CHOROPLETH_LAYER_IDS.has(info.layer.id) : false;
     if (!info.object || isChoropleth) {
       if (info.coordinate && this.onCountryClick) {
@@ -7482,6 +7493,11 @@ export class DeckGLMap {
 
   public setRenewableInstallations(installations: RenewableInstallation[]): void {
     this.renewableInstallations = installations;
+    this.render();
+  }
+
+  public setLodestarOverlay(overlay: import('@/lodestar/overlay').LodestarOverlay | null): void {
+    this.lodestarOverlay = overlay;
     this.render();
   }
 

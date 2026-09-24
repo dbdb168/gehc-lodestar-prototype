@@ -2871,6 +2871,7 @@ export class PanelLayoutManager implements AppModule {
       p.setMapNavigateHandler((lat, lon) => { this.ctx.map?.setCenter(lat, lon, 4); });
       return p;
     });
+    this.lazyDefaultPanel('lodestar-hotspots', () => import('@/lodestar/HotspotsPanel'), 'LodestarHotspotsPanel');
     this.lazyImportedPanel('disaster-correlation', () => import('@/components/DisasterCorrelationPanel'), 'DisasterCorrelationPanel', (DisasterCorrelationPanel) => {
       const p = new DisasterCorrelationPanel();
       p.setMapNavigateHandler((lat, lon) => { this.ctx.map?.setCenter(lat, lon, 5); });

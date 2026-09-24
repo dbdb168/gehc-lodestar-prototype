@@ -831,6 +831,7 @@ export class MapContainer {
     if (this.cachedResilienceRanking) this.setResilienceRanking(this.cachedResilienceRanking, this.cachedResilienceGreyedOut);
     if (this.cachedSpeciesRecovery) this.setSpeciesRecoveryZones(this.cachedSpeciesRecovery);
     if (this.cachedRenewableInstallations) this.setRenewableInstallations(this.cachedRenewableInstallations);
+    if (this.cachedLodestarOverlay) this.setLodestarOverlay(this.cachedLodestarOverlay);
     if (this.cachedHotspotActivity) this.updateHotspotActivity(this.cachedHotspotActivity);
     if (this.cachedEscalationFlights && this.cachedEscalationVessels) this.updateMilitaryForEscalation(this.cachedEscalationFlights, this.cachedEscalationVessels);
     if (this.cachedImageryScenes) this.setImageryScenes(this.cachedImageryScenes);
@@ -1388,6 +1389,13 @@ export class MapContainer {
       this.deckGLMap?.setSpeciesRecoveryZones(species);
     }
     // SVG map does not support species recovery layer
+  }
+
+  // Lodestar: OEM overlay (deck.gl renderer only; globe and SVG skip it).
+  private cachedLodestarOverlay: import('@/lodestar/overlay').LodestarOverlay | null = null;
+  public setLodestarOverlay(overlay: import('@/lodestar/overlay').LodestarOverlay | null): void {
+    this.cachedLodestarOverlay = overlay;
+    if (this.useDeckGL) this.deckGLMap?.setLodestarOverlay(overlay);
   }
 
   public setRenewableInstallations(installations: RenewableInstallation[]): void {
