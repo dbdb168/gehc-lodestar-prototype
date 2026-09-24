@@ -2,6 +2,7 @@
   "name": "lodestar-command-center",
   "private": true,
   "scripts": {
-    "lint:names": "bash scripts/lint-names.sh"
+    "lint:names": "bash scripts/lint-names.sh",
+    "deploy:command": "bash scripts/deploy-command.sh"
   }
 }
