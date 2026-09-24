@@ -436,6 +436,9 @@ async function proxyDocsLocaleHtml(request: Request, url: URL, host: string): Pr
 }
 
 export const config = {
+  // Lodestar: pin the edge runtime. Deployed without it, Vercel ran this as
+  // unbundled Node ESM and the extensionless imports failed to resolve.
+  runtime: 'edge',
   matcher: [
     '/mcp',
     '/api/:path*',
