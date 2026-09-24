@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Fails if any term in $BANNED_TERMS (comma-separated, case-insensitive) appears
-# in tracked files. Fails closed: an unset list is an error, not a pass.
+# as a whole word in tracked files or their paths. Whole-word matching stops short
+# terms (e.g. two-letter acronyms) matching inside ordinary words. Fails closed: an unset list is an error, not a pass.
 # The list itself lives only in the environment, never in the repo.
 set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
@@ -16,10 +17,10 @@ for raw in "${terms[@]}"; do
   term="$(echo "$raw" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
   [ -z "$term" ] && continue
   # Search tracked + untracked-but-not-ignored files; also check paths.
-  if git ls-files -co --exclude-standard -z | xargs -0 grep -I -n -i -F -- "$term" 2>/dev/null; then
+  if git ls-files -co --exclude-standard -z | xargs -0 grep -I -n -i -w -F -- "$term" 2>/dev/null; then
     hits=1
   fi
-  if git ls-files -co --exclude-standard | grep -i -F -- "$term"; then
+  if git ls-files -co --exclude-standard | grep -i -w -F -- "$term"; then
     hits=1
   fi
 done

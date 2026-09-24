@@ -50,5 +50,5 @@
 - **Service parts:** flow through a Singapore DHL hub, and arrive at LA/LB, NY/NJ and Tacoma.
 - **China export controls:**
   - Still in force: tungsten, tellurium, bismuth, molybdenum and indium; also Gd, Lu, Y, Sm, Tb, Dy and Sc.
-  - Suspended until about 10–27 Nov 2026: the Oct 2025 rare-earth expansion and the Ga/Ge ban.
+  - Suspended until about 10–27 Nov 2026: the Oct 2025 rare-earth expansion and the gallium/germanium ban.
 - **Sector cost drivers named in 2026:** memory chips, oil, freight. Tariff regime churn: IEEPA refunds, Section 301 (24 Jul 2026), and a Section 232 decision on medical devices that is still pending.
