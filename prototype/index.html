@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Lodestar · Supply Intelligence</title>
+<meta name="description" content="Prototype: supply-chain intelligence for a medical imaging OEM.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27%3E%3Cpath d=%27M12 1.5 14.2 9.8 22.5 12 14.2 14.2 12 22.5 9.8 14.2 1.5 12 9.8 9.8Z%27 fill=%27%23f2b53a%27/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M12 1.5 14.2 9.8 22.5 12 14.2 14.2 12 22.5 9.8 14.2 1.5 12 9.8 9.8Z" fill="currentColor"/></svg></span>
+    <span class="name">Lodestar</span>
+    <span class="scope">Supply intelligence · Medical imaging</span>
+  </div>
+  <nav class="products" id="productNav" aria-label="Product line"></nav>
+  <div class="meta">
+    <span class="asof" id="asof">Thu 24 Sep 2026 · 06:00 ET</span>
+    <div class="viewtoggle" role="group" aria-label="Map view">
+      <button data-view="globe" class="on">Globe</button><button data-view="flat">Flat</button>
+    </div>
+  </div>
+</header>
+
+<main class="grid">
+  <aside class="brief" id="brief"></aside>
+
+  <section class="stage" id="stage">
+    <svg id="map" role="img" aria-label="World map of supply flows and risk hotspots"></svg>
+    <div class="legend" id="legend">
+      <div class="lg-row"><span class="lg-line raw"></span>Raw material</div>
+      <div class="lg-row"><span class="lg-line comp"></span>Component</div>
+      <div class="lg-row"><span class="lg-line fin"></span>Finished system</div>
+      <div class="lg-row"><span class="lg-line air"></span>Air freight</div>
+      <div class="lg-sep"></div>
+      <div class="lg-row"><span class="lg-dot plant"></span>Plant</div>
+      <div class="lg-row"><span class="lg-dot customer"></span>Install site</div>
+    </div>
+    <div class="tooltip" id="tip" hidden></div>
+    <div class="horizon" id="horizon"></div>
+  </section>
+
+  <aside class="panel" id="panel"></aside>
+</main>
+
+<footer class="foot">
+  <span>Prototype by BuildFirst for discussion.</span>
+  <span>External events, dates and sources are public reporting as of 24 Sep 2026. Internal figures (inventory, installs, revenue at risk, suppliers marked “representative”) are <b>illustrative</b>, not company data.</span>
+</footer>
+
+<div class="modal" id="modal" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-head">
+      <div>
+        <div class="modal-kicker">Drafted by agent · needs your approval · nothing has been sent</div>
+        <h3 id="modalTitle"></h3>
+        <div class="modal-to" id="modalTo"></div>
+      </div>
+      <button class="x" id="modalClose" aria-label="Close">×</button>
+    </div>
+    <pre class="modal-body" id="modalBody"></pre>
+    <div class="modal-actions">
+      <button class="btn ghost" id="modalCopy">Copy</button>
+      <button class="btn" id="modalApprove">Approve &amp; route</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

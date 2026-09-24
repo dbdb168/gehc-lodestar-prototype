@@ -1,0 +1,1460 @@
+{
+  "meta": {
+    "name": "Medical imaging OEM: synthetic supply network (demo seed)",
+    "as_of": "2026-09-24",
+    "provenance_legend": {
+      "S": "Sourced from public reporting (URL in `src`)",
+      "est": "Estimate from public information; the basis is given in `basis`",
+      "synth": "Synthetic demo value, not company data. Plausible and internally consistent only"
+    },
+    "rule": "The UI must show provenance for every internal number. External live feeds are real. Never present `synth` as company data."
+  },
+  "products": [
+    {
+      "id": "mr_conv",
+      "name": "MR 1.5T / 3T (conventional magnet)",
+      "family": "MR",
+      "final_assembly": [
+        "waukesha",
+        "tianjin"
+      ],
+      "subassembly": [
+        "florence",
+        "aurora"
+      ],
+      "helium_l_per_fill": 1500,
+      "helium_prov": "S",
+      "price_usd": [
+        1000000,
+        3500000
+      ],
+      "price_prov": "est",
+      "order_to_install_months": [
+        9,
+        15
+      ],
+      "lead_prov": "S",
+      "lead_src": "https://www.qualityshielding.com/knowledge-base/mri-suite-project-planning-budget",
+      "ship_mode": "sea (magnet), air (electronics)",
+      "magnet_weight_lb": [
+        8000,
+        18000
+      ],
+      "installs_next_90d": 112,
+      "backlog_units": 410,
+      "installs_prov": "synth",
+      "inputs": [
+        "helium",
+        "nbti",
+        "copper",
+        "cryocooler",
+        "fpga",
+        "memory",
+        "gpu"
+      ]
+    },
+    {
+      "id": "mr_sealed",
+      "name": "MR 1.5T sealed low-helium magnet",
+      "family": "MR",
+      "final_assembly": [
+        "waukesha"
+      ],
+      "subassembly": [
+        "florence"
+      ],
+      "helium_l_per_fill": 15,
+      "helium_prov": "S",
+      "helium_note": "under 1% of a conventional fill; no quench pipe; FDA-cleared Feb 2026",
+      "price_usd": [
+        1000000,
+        1800000
+      ],
+      "price_prov": "est",
+      "installs_next_90d": 24,
+      "backlog_units": 60,
+      "installs_prov": "synth",
+      "inputs": [
+        "nbti",
+        "copper",
+        "cryocooler",
+        "fpga",
+        "memory"
+      ]
+    },
+    {
+      "id": "ct_main",
+      "name": "CT (premium and value)",
+      "family": "CT",
+      "final_assembly": [
+        "waukesha",
+        "beijing",
+        "buc",
+        "bengaluru"
+      ],
+      "subassembly": [
+        "west_milwaukee",
+        "ohio_anode",
+        "hino",
+        "beijing"
+      ],
+      "price_usd": [
+        300000,
+        1500000
+      ],
+      "price_prov": "est",
+      "order_to_install_months": [
+        3,
+        6
+      ],
+      "lead_prov": "est",
+      "installs_next_90d": 164,
+      "backlog_units": 520,
+      "installs_prov": "synth",
+      "inputs": [
+        "tungsten",
+        "gadolinium",
+        "photodiode",
+        "slipring",
+        "memory",
+        "fpga",
+        "gpu"
+      ]
+    },
+    {
+      "id": "ct_pcct",
+      "name": "Photon-counting CT",
+      "family": "CT",
+      "final_assembly": [
+        "waukesha"
+      ],
+      "final_assembly_prov": "est",
+      "subassembly": [
+        "stockholm_sensor"
+      ],
+      "price_usd": [
+        2500000,
+        3500000
+      ],
+      "price_prov": "est",
+      "note": "510(k) cleared Mar 2026; CE mark expected H2 2026; volume mainly 2027 (S)",
+      "installs_next_90d": 6,
+      "backlog_units": 40,
+      "installs_prov": "synth",
+      "inputs": [
+        "deep_silicon",
+        "tungsten",
+        "gpu",
+        "memory"
+      ]
+    },
+    {
+      "id": "pet_bgo",
+      "name": "Digital PET/CT (BGO)",
+      "family": "MI",
+      "final_assembly": [
+        "waukesha"
+      ],
+      "fa_note": "moved from Israel to Waukesha in 2025 (S)",
+      "price_usd": [
+        2000000,
+        3500000
+      ],
+      "price_prov": "est",
+      "installs_next_90d": 18,
+      "installs_prov": "synth",
+      "inputs": [
+        "bgo",
+        "sipm",
+        "tungsten",
+        "memory",
+        "gpu"
+      ]
+    },
+    {
+      "id": "spect_czt",
+      "name": "CZT SPECT/CT",
+      "family": "MI",
+      "final_assembly": [
+        "haifa"
+      ],
+      "subassembly": [
+        "yavne_czt"
+      ],
+      "price_usd": [
+        800000,
+        1500000
+      ],
+      "price_prov": "est",
+      "installs_next_90d": 14,
+      "installs_prov": "synth",
+      "inputs": [
+        "czt_tellurium",
+        "tungsten",
+        "memory"
+      ]
+    },
+    {
+      "id": "us_womens",
+      "name": "Women's health ultrasound",
+      "family": "US",
+      "final_assembly": [
+        "zipf",
+        "seongnam"
+      ],
+      "subassembly": [
+        "state_college"
+      ],
+      "price_usd": [
+        20000,
+        250000
+      ],
+      "price_prov": "est",
+      "ship_mode": "air / LCL (est.)",
+      "installs_next_90d": 2100,
+      "installs_prov": "synth",
+      "inputs": [
+        "pzt",
+        "memory",
+        "fpga",
+        "display"
+      ]
+    },
+    {
+      "id": "xr_mammo",
+      "name": "Mammography and digital X-ray",
+      "family": "XR",
+      "final_assembly": [
+        "buc",
+        "beijing"
+      ],
+      "final_assembly_prov": "S (mammography/Buc); est (X-ray/Beijing)",
+      "price_usd": [
+        100000,
+        600000
+      ],
+      "price_prov": "est",
+      "installs_next_90d": 380,
+      "installs_prov": "synth",
+      "inputs": [
+        "indium_detector",
+        "molybdenum",
+        "tungsten",
+        "lithium_battery",
+        "memory"
+      ]
+    }
+  ],
+  "sites": [
+    {
+      "id": "waukesha",
+      "name": "Waukesha, WI",
+      "type": "plant",
+      "lat": 43.01,
+      "lon": -88.23,
+      "role": "MR, CT, PET/CT final assembly; global imaging hub",
+      "prov": "S/est"
+    },
+    {
+      "id": "west_milwaukee",
+      "name": "West Milwaukee, WI",
+      "type": "subassembly",
+      "lat": 43.01,
+      "lon": -87.97,
+      "role": "X-ray/CT tubes, CT detectors",
+      "prov": "S"
+    },
+    {
+      "id": "florence",
+      "name": "Florence, SC",
+      "type": "subassembly",
+      "lat": 34.2,
+      "lon": -79.76,
+      "role": "Superconducting MR magnets; helium liquefaction plant",
+      "prov": "S"
+    },
+    {
+      "id": "aurora",
+      "name": "Aurora, OH",
+      "type": "subassembly",
+      "lat": 41.32,
+      "lon": -81.35,
+      "role": "MR coils",
+      "prov": "S"
+    },
+    {
+      "id": "ohio_anode",
+      "name": "Ohio (anode plant)",
+      "type": "subassembly",
+      "lat": 40.0,
+      "lon": -82.9,
+      "role": "Tube anodes (tungsten–rhenium)",
+      "prov": "S (state); location est"
+    },
+    {
+      "id": "tianjin",
+      "name": "Tianjin, China",
+      "type": "plant",
+      "lat": 39.08,
+      "lon": 117.2,
+      "role": "MR magnets and systems; Eastern Hemisphere MR HQ",
+      "prov": "S"
+    },
+    {
+      "id": "beijing",
+      "name": "Beijing (Yizhuang), China",
+      "type": "plant",
+      "lat": 39.79,
+      "lon": 116.5,
+      "role": "CT systems & detectors (>60% exported; lights-out detector line Apr 2026); X-ray",
+      "prov": "S"
+    },
+    {
+      "id": "hino",
+      "name": "Hino, Japan",
+      "type": "subassembly",
+      "lat": 35.67,
+      "lon": 139.4,
+      "role": "CT detectors",
+      "prov": "S"
+    },
+    {
+      "id": "buc",
+      "name": "Buc, France",
+      "type": "plant",
+      "lat": 48.77,
+      "lon": 2.12,
+      "role": "Mammography; CT",
+      "prov": "S"
+    },
+    {
+      "id": "bengaluru",
+      "name": "Bengaluru, India",
+      "type": "plant",
+      "lat": 12.97,
+      "lon": 77.59,
+      "role": "Value CT under PLI; ultrasound",
+      "prov": "S"
+    },
+    {
+      "id": "haifa",
+      "name": "Haifa / Tirat Carmel, Israel",
+      "type": "plant",
+      "lat": 32.77,
+      "lon": 34.97,
+      "role": "CZT SPECT/CT",
+      "prov": "S",
+      "src": "https://www.accessdata.fda.gov/cdrh_docs/pdf24/K241665.pdf"
+    },
+    {
+      "id": "yavne_czt",
+      "name": "Yavne, Israel",
+      "type": "subassembly",
+      "lat": 31.88,
+      "lon": 34.74,
+      "role": "CZT detector modules",
+      "prov": "S"
+    },
+    {
+      "id": "zipf",
+      "name": "Zipf, Austria",
+      "type": "plant",
+      "lat": 48.03,
+      "lon": 13.6,
+      "role": "Women's health ultrasound global production",
+      "prov": "S"
+    },
+    {
+      "id": "seongnam",
+      "name": "Seongnam, Korea",
+      "type": "plant",
+      "lat": 37.42,
+      "lon": 127.13,
+      "role": "Ultrasound (~20k units/yr site-wide)",
+      "prov": "S"
+    },
+    {
+      "id": "horten",
+      "name": "Horten, Norway",
+      "type": "plant",
+      "lat": 59.42,
+      "lon": 10.48,
+      "role": "Cardiac and handheld ultrasound",
+      "prov": "S"
+    },
+    {
+      "id": "state_college",
+      "name": "State College, PA",
+      "type": "subassembly",
+      "lat": 40.79,
+      "lon": -77.86,
+      "role": "Ultrasound probes",
+      "prov": "S"
+    },
+    {
+      "id": "stockholm_sensor",
+      "name": "Stockholm",
+      "type": "subassembly",
+      "lat": 59.33,
+      "lon": 18.07,
+      "role": "Silicon photon-counting sensors",
+      "prov": "S (origin); current fab unverified"
+    },
+    {
+      "id": "sin_parts",
+      "name": "Singapore parts hub (DHL)",
+      "type": "dc",
+      "lat": 1.33,
+      "lon": 103.89,
+      "role": "Global service parts routing",
+      "prov": "S (import records)"
+    },
+    {
+      "id": "p_chs",
+      "name": "Charleston",
+      "type": "port",
+      "lat": 32.78,
+      "lon": -79.93,
+      "portwatch": "Charleston",
+      "prov": "est"
+    },
+    {
+      "id": "p_lalb",
+      "name": "Los Angeles / Long Beach",
+      "type": "port",
+      "lat": 33.74,
+      "lon": -118.26,
+      "portwatch": "Los Angeles-Long Beach",
+      "prov": "S"
+    },
+    {
+      "id": "p_nynj",
+      "name": "New York / New Jersey",
+      "type": "port",
+      "lat": 40.67,
+      "lon": -74.04,
+      "portwatch": "New York-New Jersey",
+      "prov": "S"
+    },
+    {
+      "id": "p_tianjin",
+      "name": "Tianjin Xingang",
+      "type": "port",
+      "lat": 38.98,
+      "lon": 117.78,
+      "portwatch": "Tianjin",
+      "prov": "est"
+    },
+    {
+      "id": "p_shanghai",
+      "name": "Shanghai",
+      "type": "port",
+      "lat": 31.35,
+      "lon": 121.6,
+      "portwatch": "Shanghai",
+      "prov": "est"
+    },
+    {
+      "id": "p_busan",
+      "name": "Busan",
+      "type": "port",
+      "lat": 35.1,
+      "lon": 129.04,
+      "portwatch": "Busan",
+      "prov": "est"
+    },
+    {
+      "id": "p_rtm",
+      "name": "Rotterdam",
+      "type": "port",
+      "lat": 51.95,
+      "lon": 4.14,
+      "portwatch": "Rotterdam",
+      "prov": "est"
+    },
+    {
+      "id": "p_lehavre",
+      "name": "Le Havre",
+      "type": "port",
+      "lat": 49.48,
+      "lon": 0.11,
+      "portwatch": "Le Havre",
+      "prov": "est"
+    },
+    {
+      "id": "p_haifa",
+      "name": "Haifa",
+      "type": "port",
+      "lat": 32.82,
+      "lon": 35.0,
+      "portwatch": "Haifa",
+      "prov": "est"
+    },
+    {
+      "id": "p_jebelali",
+      "name": "Jebel Ali",
+      "type": "port",
+      "lat": 25.01,
+      "lon": 55.06,
+      "portwatch": "Jebel Ali",
+      "prov": "est"
+    },
+    {
+      "id": "p_sin",
+      "name": "Singapore",
+      "type": "port",
+      "lat": 1.26,
+      "lon": 103.84,
+      "portwatch": "Singapore",
+      "prov": "S"
+    },
+    {
+      "id": "a_ord",
+      "name": "Chicago O'Hare",
+      "type": "airport",
+      "lat": 41.98,
+      "lon": -87.9,
+      "prov": "est"
+    },
+    {
+      "id": "a_vie",
+      "name": "Vienna",
+      "type": "airport",
+      "lat": 48.11,
+      "lon": 16.57,
+      "prov": "est"
+    },
+    {
+      "id": "a_icn",
+      "name": "Incheon",
+      "type": "airport",
+      "lat": 37.46,
+      "lon": 126.44,
+      "prov": "est"
+    },
+    {
+      "id": "a_cdg",
+      "name": "Paris CDG",
+      "type": "airport",
+      "lat": 49.01,
+      "lon": 2.55,
+      "prov": "est"
+    },
+    {
+      "id": "c_us_ne",
+      "name": "US Northeast health systems",
+      "type": "demand",
+      "lat": 42.3,
+      "lon": -71.1,
+      "prov": "synth"
+    },
+    {
+      "id": "c_us_se",
+      "name": "US Southeast health systems",
+      "type": "demand",
+      "lat": 33.75,
+      "lon": -84.39,
+      "prov": "synth"
+    },
+    {
+      "id": "c_uk",
+      "name": "UK NHS trusts",
+      "type": "demand",
+      "lat": 53.8,
+      "lon": -1.55,
+      "prov": "synth"
+    },
+    {
+      "id": "c_de",
+      "name": "DACH university hospitals",
+      "type": "demand",
+      "lat": 48.14,
+      "lon": 11.58,
+      "prov": "synth"
+    },
+    {
+      "id": "c_gcc",
+      "name": "GCC tertiary hospitals",
+      "type": "demand",
+      "lat": 24.71,
+      "lon": 46.68,
+      "prov": "synth"
+    },
+    {
+      "id": "c_in",
+      "name": "India private hospital groups",
+      "type": "demand",
+      "lat": 19.07,
+      "lon": 72.88,
+      "prov": "synth"
+    },
+    {
+      "id": "c_jp",
+      "name": "Japan hospitals",
+      "type": "demand",
+      "lat": 34.69,
+      "lon": 135.5,
+      "prov": "synth"
+    },
+    {
+      "id": "c_au",
+      "name": "ANZ imaging networks",
+      "type": "demand",
+      "lat": -33.87,
+      "lon": 151.2,
+      "prov": "synth"
+    },
+    {
+      "id": "c_br",
+      "name": "Brazil imaging networks",
+      "type": "demand",
+      "lat": -23.55,
+      "lon": -46.63,
+      "prov": "synth"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "helium",
+      "name": "Liquid helium",
+      "used_in": [
+        "mr_conv"
+      ],
+      "origin": [
+        {
+          "place": "Ras Laffan, Qatar",
+          "lat": 25.9,
+          "lon": 51.53,
+          "share": "~1/3 world (S)"
+        },
+        {
+          "place": "US (LaBarge WY / Kansas)",
+          "lat": 42.3,
+          "lon": -110.2,
+          "share": "~40% world (S)"
+        },
+        {
+          "place": "Amur, Russia",
+          "lat": 51.9,
+          "lon": 128.0,
+          "share": "export-authorised since 14 Apr 2026 (S)"
+        },
+        {
+          "place": "Arzew, Algeria",
+          "lat": 35.85,
+          "lon": -0.32,
+          "share": "secondary"
+        }
+      ],
+      "industry_suppliers": [
+        "ExxonMobil",
+        "Air Liquide",
+        "Linde",
+        "Air Products",
+        "Messer",
+        "Airgas"
+      ],
+      "controls": "China helium export ban 10 Jul 2026 (S); Russia authorisation (S)",
+      "tts_days": 41,
+      "ttr_days": 120,
+      "cover_prov": "synth",
+      "live": {
+        "gdelt": "helium shortage OR \"Ras Laffan\" OR \"helium supply\"",
+        "portwatch_chokepoint": "Strait of Hormuz",
+        "fred": "PCU325120325120"
+      }
+    },
+    {
+      "id": "nbti",
+      "name": "NbTi superconducting wire",
+      "used_in": [
+        "mr_conv",
+        "mr_sealed"
+      ],
+      "origin": [
+        {
+          "place": "Araxá, Brazil (niobium, CBMM)",
+          "lat": -19.6,
+          "lon": -46.94
+        },
+        {
+          "place": "Hanau, Germany (Bruker EST)",
+          "lat": 50.13,
+          "lon": 8.92
+        },
+        {
+          "place": "Pori, Finland (Luvata)",
+          "lat": 61.48,
+          "lon": 21.8
+        },
+        {
+          "place": "Japan (JASTEC / Furukawa)",
+          "lat": 34.7,
+          "lon": 135.2
+        }
+      ],
+      "industry_suppliers": [
+        "Bruker EST",
+        "Luvata",
+        "JASTEC",
+        "Furukawa Electric",
+        "Western Superconducting"
+      ],
+      "tts_days": 150,
+      "ttr_days": 60,
+      "cover_prov": "synth",
+      "live": {
+        "gdelt": "niobium OR \"superconducting wire\""
+      },
+      "oem_link": "unverified"
+    },
+    {
+      "id": "copper",
+      "name": "Copper (gradient coils, windings, HV generators)",
+      "used_in": [
+        "mr_conv",
+        "mr_sealed",
+        "ct_main"
+      ],
+      "origin": [
+        {
+          "place": "Antofagasta, Chile",
+          "lat": -23.65,
+          "lon": -70.4
+        },
+        {
+          "place": "Peru",
+          "lat": -12.05,
+          "lon": -77.04
+        }
+      ],
+      "controls": "US Section 232: 50% semi-finished (2025); derivatives 25–50% from 6 Apr 2026 (S)",
+      "tts_days": 90,
+      "ttr_days": 30,
+      "cover_prov": "synth",
+      "live": {
+        "yahoo": "HG=F",
+        "fred": "PCOPPUSDM",
+        "federal_register": "copper section 232"
+      }
+    },
+    {
+      "id": "cryocooler",
+      "name": "Cryocooler cold heads",
+      "used_in": [
+        "mr_conv",
+        "mr_sealed"
+      ],
+      "origin": [
+        {
+          "place": "Japan",
+          "lat": 34.7,
+          "lon": 135.5
+        }
+      ],
+      "industry_suppliers": [
+        "Sumitomo (SHI) Cryogenics"
+      ],
+      "tts_days": 120,
+      "ttr_days": 90,
+      "cover_prov": "synth",
+      "oem_link": "est"
+    },
+    {
+      "id": "tungsten",
+      "name": "Tungsten (tube anodes/targets, collimators)",
+      "used_in": [
+        "ct_main",
+        "ct_pcct",
+        "pet_bgo",
+        "spect_czt",
+        "xr_mammo"
+      ],
+      "origin": [
+        {
+          "place": "Ganzhou, Jiangxi, China",
+          "lat": 25.85,
+          "lon": 114.93,
+          "share": "~80% world (est)"
+        },
+        {
+          "place": "Sangdong, Korea (Almonty)",
+          "lat": 37.15,
+          "lon": 128.8,
+          "share": "Phase 1 Mar 2026 (S)"
+        }
+      ],
+      "controls": "China export control Feb 2025; 15 licensed exporters 2026–27 (S)",
+      "tts_days": 75,
+      "ttr_days": 150,
+      "cover_prov": "synth",
+      "live": {
+        "gdelt": "tungsten export OR \"tungsten price\"",
+        "federal_register": "tungsten"
+      }
+    },
+    {
+      "id": "gadolinium",
+      "name": "Gadolinium (GOS scintillator)",
+      "used_in": [
+        "ct_main"
+      ],
+      "origin": [
+        {
+          "place": "Baotou, China",
+          "lat": 40.65,
+          "lon": 109.84
+        }
+      ],
+      "industry_suppliers": [
+        "Proterial",
+        "Toshiba Materials"
+      ],
+      "controls": "China licensing since Apr 2025 (S); Oct 2025 expansion suspended to ~10 Nov 2026 (S)",
+      "tts_days": 60,
+      "ttr_days": 45,
+      "cover_prov": "synth",
+      "live": {
+        "gdelt": "\"rare earth\" export controls",
+        "yahoo": "MP"
+      },
+      "oem_link": "unverified"
+    },
+    {
+      "id": "bgo",
+      "name": "BGO crystals (bismuth germanate)",
+      "used_in": [
+        "pet_bgo"
+      ],
+      "origin": [
+        {
+          "place": "Shanghai (SICCAS)",
+          "lat": 31.23,
+          "lon": 121.47
+        }
+      ],
+      "industry_suppliers": [
+        "SICCAS",
+        "EBO",
+        "Epic Crystal"
+      ],
+      "controls": "Bismuth under China export control Feb 2025 (S); germanium ban to US suspended to Nov 2026 (S)",
+      "tts_days": 70,
+      "ttr_days": 180,
+      "cover_prov": "synth",
+      "live": {
+        "gdelt": "bismuth OR germanium export"
+      },
+      "oem_link": "unverified"
+    },
+    {
+      "id": "czt_tellurium",
+      "name": "CZT detectors (tellurium)",
+      "used_in": [
+        "spect_czt"
+      ],
+      "origin": [
+        {
+          "place": "Yavne, Israel (in-house)",
+          "lat": 31.88,
+          "lon": 34.74
+        }
+      ],
+      "controls": "Tellurium under China export control (S); Israel conflict exposure (S)",
+      "tts_days": 45,
+      "ttr_days": 120,
+      "cover_prov": "synth",
+      "live": {
+        "gdelt": "Haifa missile OR \"northern Israel\" strike"
+      }
+    },
+    {
+      "id": "deep_silicon",
+      "name": "Silicon photon-counting sensors",
+      "used_in": [
+        "ct_pcct"
+      ],
+      "origin": [
+        {
+          "place": "Stockholm, Sweden",
+          "lat": 59.33,
+          "lon": 18.07
+        }
+      ],
+      "tts_days": 40,
+      "ttr_days": 200,
+      "cover_prov": "synth",
+      "note": "single-source by design; ramp risk"
+    },
+    {
+      "id": "sipm",
+      "name": "SiPM photodetectors",
+      "used_in": [
+        "pet_bgo"
+      ],
+      "industry_suppliers": [
+        "onsemi",
+        "Hamamatsu",
+        "Broadcom"
+      ],
+      "origin": [
+        {
+          "place": "Hamamatsu, Japan",
+          "lat": 34.71,
+          "lon": 137.73
+        }
+      ],
+      "tts_days": 90,
+      "ttr_days": 120,
+      "cover_prov": "synth",
+      "oem_link": "est"
+    },
+    {
+      "id": "photodiode",
+      "name": "CT photodiodes / DAS ASICs",
+      "used_in": [
+        "ct_main"
+      ],
+      "origin": [
+        {
+          "place": "Asia (est)",
+          "lat": 24.8,
+          "lon": 120.97
+        }
+      ],
+      "tts_days": 80,
+      "ttr_days": 150,
+      "cover_prov": "synth"
+    },
+    {
+      "id": "slipring",
+      "name": "Slip rings & gantry bearings",
+      "used_in": [
+        "ct_main"
+      ],
+      "industry_suppliers": [
+        "Schleifring",
+        "Moog"
+      ],
+      "origin": [
+        {
+          "place": "Fürstenfeldbruck, Germany",
+          "lat": 48.18,
+          "lon": 11.25
+        }
+      ],
+      "tts_days": 100,
+      "ttr_days": 90,
+      "cover_prov": "synth",
+      "oem_link": "est"
+    },
+    {
+      "id": "memory",
+      "name": "DRAM / NAND",
+      "used_in": [
+        "mr_conv",
+        "mr_sealed",
+        "ct_main",
+        "ct_pcct",
+        "pet_bgo",
+        "spect_czt",
+        "us_womens",
+        "xr_mammo"
+      ],
+      "origin": [
+        {
+          "place": "Icheon, Korea (SK hynix)",
+          "lat": 37.27,
+          "lon": 127.44
+        },
+        {
+          "place": "Pyeongtaek, Korea (Samsung)",
+          "lat": 36.99,
+          "lon": 127.11
+        },
+        {
+          "place": "Boise / Taiwan (Micron)",
+          "lat": 24.8,
+          "lon": 120.97
+        }
+      ],
+      "controls": "AI-driven allocation; lead times 12–18+ months; memory named as a leading OEM cost driver in 2026 (S)",
+      "tts_days": 95,
+      "ttr_days": 180,
+      "cover_prov": "synth",
+      "live": {
+        "yahoo": "MU",
+        "gdelt": "DRAM shortage OR \"memory chip\" price",
+        "fred": "PCU33443344"
+      }
+    },
+    {
+      "id": "fpga",
+      "name": "FPGAs / logic",
+      "used_in": [
+        "mr_conv",
+        "mr_sealed",
+        "ct_main",
+        "us_womens"
+      ],
+      "industry_suppliers": [
+        "AMD (Xilinx)",
+        "Intel (Altera)"
+      ],
+      "origin": [
+        {
+          "place": "Hsinchu, Taiwan (foundry)",
+          "lat": 24.8,
+          "lon": 120.97
+        }
+      ],
+      "tts_days": 120,
+      "ttr_days": 200,
+      "cover_prov": "synth",
+      "live": {
+        "yahoo": "SOXX",
+        "gdelt": "Taiwan Strait blockade OR drills"
+      }
+    },
+    {
+      "id": "gpu",
+      "name": "GPUs (recon / AI)",
+      "used_in": [
+        "mr_conv",
+        "ct_main",
+        "ct_pcct",
+        "pet_bgo"
+      ],
+      "industry_suppliers": [
+        "NVIDIA"
+      ],
+      "origin": [
+        {
+          "place": "Hsinchu, Taiwan (foundry)",
+          "lat": 24.8,
+          "lon": 120.97
+        }
+      ],
+      "tts_days": 60,
+      "ttr_days": 120,
+      "cover_prov": "synth",
+      "oem_link": "S (photon-counting CT)"
+    },
+    {
+      "id": "pzt",
+      "name": "Piezo ceramics / single crystal",
+      "used_in": [
+        "us_womens"
+      ],
+      "industry_suppliers": [
+        "CTS / TRS",
+        "Morgan Advanced Materials",
+        "Fuji Ceramics"
+      ],
+      "origin": [
+        {
+          "place": "US / UK / Japan",
+          "lat": 40.79,
+          "lon": -77.86
+        }
+      ],
+      "tts_days": 120,
+      "ttr_days": 40,
+      "cover_prov": "synth",
+      "oem_link": "unverified"
+    },
+    {
+      "id": "display",
+      "name": "Displays",
+      "used_in": [
+        "us_womens"
+      ],
+      "origin": [
+        {
+          "place": "Korea / China",
+          "lat": 37.5,
+          "lon": 127.0
+        }
+      ],
+      "tts_days": 60,
+      "ttr_days": 30,
+      "cover_prov": "synth"
+    },
+    {
+      "id": "indium_detector",
+      "name": "CsI/a-Si flat-panel detectors (indium)",
+      "used_in": [
+        "xr_mammo"
+      ],
+      "controls": "Indium under China export control (S)",
+      "origin": [
+        {
+          "place": "in-house (site unverified)",
+          "lat": 48.77,
+          "lon": 2.12
+        }
+      ],
+      "tts_days": 70,
+      "ttr_days": 120,
+      "cover_prov": "synth"
+    },
+    {
+      "id": "molybdenum",
+      "name": "Molybdenum / rhodium mammo targets",
+      "used_in": [
+        "xr_mammo"
+      ],
+      "controls": "Molybdenum under China export control (S)",
+      "origin": [
+        {
+          "place": "China / Chile",
+          "lat": 34.3,
+          "lon": 108.9
+        }
+      ],
+      "tts_days": 90,
+      "ttr_days": 90,
+      "cover_prov": "synth"
+    },
+    {
+      "id": "lithium_battery",
+      "name": "Li-ion packs (mobile X-ray)",
+      "used_in": [
+        "xr_mammo"
+      ],
+      "origin": [
+        {
+          "place": "China / Korea",
+          "lat": 30.6,
+          "lon": 114.3
+        }
+      ],
+      "tts_days": 60,
+      "ttr_days": 60,
+      "cover_prov": "synth"
+    }
+  ],
+  "lanes": [
+    {
+      "id": "L01",
+      "from": "florence",
+      "to": "waukesha",
+      "mode": "road",
+      "products": [
+        "mr_conv",
+        "mr_sealed"
+      ],
+      "via": []
+    },
+    {
+      "id": "L02",
+      "from": "waukesha",
+      "to": "c_us_ne",
+      "mode": "road",
+      "products": [
+        "mr_conv",
+        "ct_main",
+        "pet_bgo"
+      ],
+      "via": []
+    },
+    {
+      "id": "L03",
+      "from": "waukesha",
+      "to": "c_us_se",
+      "mode": "road",
+      "products": [
+        "mr_conv",
+        "ct_main",
+        "pet_bgo"
+      ],
+      "via": []
+    },
+    {
+      "id": "L04",
+      "from": "waukesha",
+      "to": "c_uk",
+      "mode": "sea",
+      "products": [
+        "mr_conv",
+        "pet_bgo"
+      ],
+      "via": [
+        "p_chs",
+        "p_rtm"
+      ]
+    },
+    {
+      "id": "L05",
+      "from": "waukesha",
+      "to": "c_gcc",
+      "mode": "sea",
+      "products": [
+        "mr_conv"
+      ],
+      "via": [
+        "p_chs",
+        "Suez Canal",
+        "Bab el-Mandeb Strait"
+      ],
+      "alt": "Cape of Good Hope + Salalah/Duqm"
+    },
+    {
+      "id": "L06",
+      "from": "waukesha",
+      "to": "c_br",
+      "mode": "sea",
+      "products": [
+        "mr_conv"
+      ],
+      "via": [
+        "p_chs"
+      ]
+    },
+    {
+      "id": "L07",
+      "from": "tianjin",
+      "to": "c_jp",
+      "mode": "sea",
+      "products": [
+        "mr_conv"
+      ],
+      "via": [
+        "p_tianjin"
+      ]
+    },
+    {
+      "id": "L08",
+      "from": "tianjin",
+      "to": "c_in",
+      "mode": "sea",
+      "products": [
+        "mr_conv"
+      ],
+      "via": [
+        "p_tianjin",
+        "Malacca Strait"
+      ]
+    },
+    {
+      "id": "L09",
+      "from": "beijing",
+      "to": "waukesha",
+      "mode": "sea",
+      "products": [
+        "ct_main"
+      ],
+      "via": [
+        "p_tianjin",
+        "p_lalb"
+      ],
+      "note": "detector modules; Section 301 exposure"
+    },
+    {
+      "id": "L10",
+      "from": "beijing",
+      "to": "c_de",
+      "mode": "sea",
+      "products": [
+        "ct_main",
+        "xr_mammo"
+      ],
+      "via": [
+        "p_tianjin",
+        "Malacca Strait",
+        "Bab el-Mandeb Strait",
+        "Suez Canal",
+        "p_rtm"
+      ],
+      "alt": "Cape of Good Hope (+10–14 d)"
+    },
+    {
+      "id": "L11",
+      "from": "beijing",
+      "to": "c_gcc",
+      "mode": "sea",
+      "products": [
+        "ct_main"
+      ],
+      "via": [
+        "p_tianjin",
+        "Malacca Strait",
+        "Strait of Hormuz",
+        "p_jebelali"
+      ]
+    },
+    {
+      "id": "L12",
+      "from": "beijing",
+      "to": "c_au",
+      "mode": "sea",
+      "products": [
+        "ct_main"
+      ],
+      "via": [
+        "p_tianjin"
+      ]
+    },
+    {
+      "id": "L13",
+      "from": "bengaluru",
+      "to": "c_in",
+      "mode": "road",
+      "products": [
+        "ct_main"
+      ],
+      "via": []
+    },
+    {
+      "id": "L14",
+      "from": "buc",
+      "to": "c_uk",
+      "mode": "road",
+      "products": [
+        "ct_main",
+        "xr_mammo"
+      ],
+      "via": [
+        "Dover Strait"
+      ]
+    },
+    {
+      "id": "L15",
+      "from": "buc",
+      "to": "c_us_ne",
+      "mode": "sea",
+      "products": [
+        "xr_mammo"
+      ],
+      "via": [
+        "p_lehavre",
+        "p_nynj"
+      ]
+    },
+    {
+      "id": "L16",
+      "from": "haifa",
+      "to": "c_de",
+      "mode": "sea",
+      "products": [
+        "spect_czt"
+      ],
+      "via": [
+        "p_haifa",
+        "Gibraltar Strait"
+      ]
+    },
+    {
+      "id": "L17",
+      "from": "haifa",
+      "to": "c_us_ne",
+      "mode": "air",
+      "products": [
+        "spect_czt"
+      ],
+      "via": []
+    },
+    {
+      "id": "L18",
+      "from": "zipf",
+      "to": "c_us_ne",
+      "mode": "air",
+      "products": [
+        "us_womens"
+      ],
+      "via": [
+        "a_vie"
+      ]
+    },
+    {
+      "id": "L19",
+      "from": "zipf",
+      "to": "c_in",
+      "mode": "air",
+      "products": [
+        "us_womens"
+      ],
+      "via": [
+        "a_vie"
+      ]
+    },
+    {
+      "id": "L20",
+      "from": "seongnam",
+      "to": "c_au",
+      "mode": "air",
+      "products": [
+        "us_womens"
+      ],
+      "via": [
+        "a_icn"
+      ]
+    },
+    {
+      "id": "L21",
+      "from": "west_milwaukee",
+      "to": "sin_parts",
+      "mode": "air",
+      "products": [
+        "ct_main"
+      ],
+      "via": [
+        "a_ord"
+      ],
+      "note": "service tubes"
+    },
+    {
+      "id": "L22",
+      "from": "waukesha",
+      "to": "c_jp",
+      "mode": "sea",
+      "products": [
+        "pet_bgo"
+      ],
+      "via": [
+        "p_lalb"
+      ]
+    }
+  ],
+  "chokepoints_portwatch": [
+    "Strait of Hormuz",
+    "Bab el-Mandeb Strait",
+    "Suez Canal",
+    "Panama Canal",
+    "Malacca Strait",
+    "Cape of Good Hope",
+    "Gibraltar Strait",
+    "Dover Strait",
+    "Taiwan Strait",
+    "Korea Strait"
+  ],
+  "regulatory_watch": {
+    "federal_register_terms": [
+      "section 232 medical",
+      "section 301",
+      "tungsten",
+      "copper section 232",
+      "semiconductor section 232",
+      "rare earth"
+    ],
+    "openfda": {
+      "510k": "applicant:\"${OEM_FDA_APPLICANT}\"",
+      "recall": "recalling_firm:\"${OEM_FDA_APPLICANT}\"",
+      "shortage": "device/shortage"
+    }
+  },
+  "cyber_watch": {
+    "ransomware_sectors": [
+      "Manufacturing",
+      "Healthcare",
+      "Transportation/Logistics"
+    ],
+    "peer_names": [
+      "Stryker",
+      "Boston Scientific",
+      "Siemens Healthineers",
+      "Philips",
+      "Canon Medical"
+    ]
+  }
+}
