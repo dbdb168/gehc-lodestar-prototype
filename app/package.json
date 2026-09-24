@@ -219,7 +219,7 @@
     "docs:dates": "node scripts/generate-docs-page-dates.mjs",
     "docs:dates:check": "node scripts/generate-docs-page-dates.mjs --check",
     "freeze:github-stars": "node scripts/freeze-github-stars.mjs",
-    "build:lodestar": "npm run security:vite-env-secrets -- --strict-local && cross-env-shell VITE_VARIANT=commodity VITE_DISABLE_PAYWALL=true VITE_DISABLE_ANALYTICS=true \"tsc && vite build\""
+    "build:lodestar": "npm run security:vite-env-secrets -- --strict-local && cross-env-shell VITE_VARIANT=commodity VITE_LODESTAR=true VITE_DISABLE_PAYWALL=true VITE_DISABLE_ANALYTICS=true \"tsc && vite build\""
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",

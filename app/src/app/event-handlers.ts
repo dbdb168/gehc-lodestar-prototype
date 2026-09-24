@@ -908,6 +908,8 @@ export class EventHandlerManager implements AppModule {
   }
 
   private setupMissionPresets(): void {
+    // Lodestar: one fixed panel set. No workspace picker, no onboarding prompt.
+    if (import.meta.env.VITE_LODESTAR === 'true') return;
     this.renderMissionPresetControl();
 
     const shouldPrompt =

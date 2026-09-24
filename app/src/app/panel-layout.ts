@@ -1052,7 +1052,7 @@ export class PanelLayoutManager implements AppModule {
         <div class="header-left">
           <div class="variant-switcher">${(() => {
         // Lodestar: single fixed variant; the switcher links to upstream sites.
-        if (import.meta.env.VITE_DISABLE_PAYWALL === 'true') return '';
+        if (import.meta.env.VITE_LODESTAR === 'true') return '';
         const local =this.ctx.isDesktopApp || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
         const inIframe = window.self !== window.top;
         const vHref = (v: keyof typeof VARIANT_SWITCHER_DASHBOARD_URLS) =>
