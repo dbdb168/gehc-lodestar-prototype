@@ -23,5 +23,5 @@ Feeds live / failing: _ (none wired yet)
 
 ## Changes to supplied content
 - `prototype/data.js`: role titles replaced with functions (rule 2): "Procurement", "Supplier quality + Cyber security". One confidence note on the sealed-magnet decision card reworded to "Medium: depends on how fast sealed-magnet output can ramp".
-- `docs/RESEARCH_NOTES.md`: "Ga/Ge" spelled out as "gallium/germanium" (tripped `lint:names`).
+- `docs/RESEARCH_NOTES.md`: chemical symbols for gallium and germanium spelled out (tripped `lint:names`).
 - `lint:names` matches whole words, so short banned terms don't match inside ordinary words.
