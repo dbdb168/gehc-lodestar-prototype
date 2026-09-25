@@ -72,7 +72,7 @@ export default async function handler(req) {
   };
 
   const system = `You draft operational messages for the supply-chain team of a medical imaging OEM. Write ${kind.ask}.
-Rules: use only the facts given and never invent figures, percentages or dates; numbers in "oem" are synthetic demo values, so write "(synth)" after any you use; never name a company or a person (use functions and [placeholders]); plain text, no markdown; under 220 words. This is a draft for a person to review, not a sent message.`;
+Rules: use only the facts given and never invent figures, percentages or dates; numbers in "oem" are synthetic demo values, so write "(synth)" after any you use; never name a company, a person or a job title: owners are functions only (e.g. "Procurement", "Supply chain", "Service"), other names are [placeholders]; plain text, no markdown; under 220 words. This is a draft for a person to review, not a sent message.`;
 
   const work = (async () => {
     if (!(await underDailyCap('draft', DAILY_CAP))) return { error: 'daily draft limit reached' };
