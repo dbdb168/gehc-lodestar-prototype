@@ -40,10 +40,16 @@ export async function chat(model, messages, { schema, schemaName = 'result', max
     err.status = r.status === 402 ? 402 : 502;
     throw err;
   }
-  const text = body.choices?.[0]?.message?.content;
+  const choice = body.choices?.[0];
+  const text = choice?.message?.content;
   let content = text;
   if (schema) {
-    try { content = typeof text === 'string' ? JSON.parse(text) : text; } catch { throw new Error('model returned invalid JSON'); }
+    content = parseJsonLoose(text);
+    if (content === undefined) {
+      throw new Error(choice?.finish_reason === 'length'
+        ? 'model output was cut off (token limit)'
+        : 'model returned invalid JSON');
+    }
   }
   return {
     content,
@@ -51,6 +57,21 @@ export async function chat(model, messages, { schema, schemaName = 'result', max
     usage: body.usage ? { prompt: body.usage.prompt_tokens, completion: body.usage.completion_tokens, total: body.usage.total_tokens } : null,
     cost: typeof body.usage?.cost === 'number' ? body.usage.cost : null,
   };
+}
+
+/** JSON from a model reply: plain, fenced in ```json, or with text around the object. */
+function parseJsonLoose(text) {
+  if (text && typeof text === 'object') return text;
+  if (typeof text !== 'string') return undefined;
+  const tryParse = (t) => { try { return JSON.parse(t); } catch { return undefined; } };
+  const direct = tryParse(text.trim());
+  if (direct !== undefined) return direct;
+  const unfenced = text.replace(/^\s*```(?:json)?\s*/i, '').replace(/\s*```\s*$/, '');
+  const fenced = tryParse(unfenced);
+  if (fenced !== undefined) return fenced;
+  const a = text.indexOf('{');
+  const b = text.lastIndexOf('}');
+  return a >= 0 && b > a ? tryParse(text.slice(a, b + 1)) : undefined;
 }
 
 /** Stream a JSON body so slow models don't hit the edge first-byte limit. */

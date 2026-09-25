@@ -72,13 +72,13 @@ export default async function handler(req) {
   };
 
   const system = `You draft operational messages for the supply-chain team of a medical imaging OEM. Write ${kind.ask}.
-Rules: use only the facts given; numbers in "oem" are synthetic demo values, so write "(synth)" after any you use; never name a company or a person (use functions and [placeholders]); plain text, no markdown; under 220 words. This is a draft for a person to review, not a sent message.`;
+Rules: use only the facts given and never invent figures, percentages or dates; numbers in "oem" are synthetic demo values, so write "(synth)" after any you use; never name a company or a person (use functions and [placeholders]); plain text, no markdown; under 220 words. This is a draft for a person to review, not a sent message.`;
 
   const work = (async () => {
     if (!(await underDailyCap('draft', DAILY_CAP))) return { error: 'daily draft limit reached' };
     const model = process.env.LLM_MODEL_FAST || 'deepseek/deepseek-v4-flash';
     const r = await chat(model, [{ role: 'system', content: system }, { role: 'user', content: JSON.stringify(item) }], {
-      schema: SCHEMA, schemaName: 'draft', maxTokens: 900, temperature: 0.3,
+      schema: SCHEMA, schemaName: 'draft', maxTokens: 2500, temperature: 0.3,
     });
     const draft = scrubDeep({ title: clip(r.content?.title, 140) || kind.label, to: kind.to, body: clip(r.content?.body, 3000) });
     return { draft, kind: kind.label, model: r.model, usage: r.usage, cost: r.cost, sent: false };
