@@ -53,12 +53,12 @@ export async function startLodestar(ctx: AppContext): Promise<void> {
     ctx.map?.setLodestarOverlay(buildOverlay(state, (hs) => {
       state.selectedId = hs.id;
       render();
-      openDrawer(ix, hs);
+      openDrawer(ix, hs, state.result);
     }));
     const p = panel();
     if (p && state.result) {
       p.setFocusHandler(focus);
-      p.setDrawerHandler((hs) => openDrawer(ix, hs));
+      p.setDrawerHandler((hs) => openDrawer(ix, hs, state.result));
       p.update(state.result, state.filter, state.selectedId);
     }
     (ctx.panels['lodestar-brief'] as LodestarBriefPanel | undefined)?.update(ix, state.result, state.filter);
