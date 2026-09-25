@@ -867,7 +867,7 @@ const COMMODITY_MAP_LAYERS: MapLayers = {
   minerals: true,
   fires: true,
   // Data source layers
-  ucdpEvents: true,
+  ucdpEvents: false, // on once UCDP_ACCESS_TOKEN is set
   displacement: false,
   climate: false,         // Climate events disrupt supply chains
   // Tech layers (disabled)
@@ -888,7 +888,7 @@ const COMMODITY_MAP_LAYERS: MapLayers = {
   happiness: false,
   speciesRecovery: false,
   renewableInstallations: false,
-  tradeRoutes: true,
+  tradeRoutes: false, // OEM lanes carry the route story
   iranAttacks: false,
   ciiChoropleth: true,
   resilienceScore: false,

@@ -24,7 +24,7 @@ Feeds live (25 Sep, checked in Chromium against production): all 8 exposure-engi
 
 ## Open issues
 - **OpenRouter credit.** The key's credit limit blocks Compare (Opus) and will soon block briefs and drafts (about $0.005–0.01 per brief). Raise the key's limit on openrouter.ai.
-- **UCDP** needs a free `UCDP_ACCESS_TOKEN` (request at ucdp.uu.se); then add it to the repo secrets and re-enable the `ucdp-events` panel in `app/src/config/panels.ts`.
+- **UCDP** needs a free `UCDP_ACCESS_TOKEN`: email the API maintainer (see https://ucdp.uu.se/apidocs/, 3–5 working days), add it as the GitHub Actions secret `UCDP_ACCESS_TOKEN` (the workflow already passes it), then re-enable the `ucdp-events` panel and `ucdpEvents` layer in `app/src/config/panels.ts`.
 - **Brand names beyond `BANNED_TERMS`.** The name scrub and `lint:names` only know the terms in `BANNED_TERMS`. Product brand names that aren't listed can still arrive in live news headlines. Add the product brand names to `BANNED_TERMS` (Vercel env and the lint environment).
 - **Live AIS:** upstream's AIS relay can't run on Vercel, so `AISSTREAM_API_KEY` is unused (optional per the brief). The chokepoint panels say so.
 - **Upstream static fetches remain:** country-boundary overrides from maps.worldmonitor.app and the widget relay at proxy.worldmonitor.app. Several background calls return 503 (x-feed, telegram-feed, gpsjam, outages, climate): no panel shows them.

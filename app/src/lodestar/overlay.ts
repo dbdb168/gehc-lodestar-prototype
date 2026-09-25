@@ -44,18 +44,22 @@ export function buildOverlay(state: OverlayState, onSelect: (h: Hotspot) => void
   const siteScore = (s: Site) => hotspotById.get(`site:${s.id}`)?.score ?? 0;
   const visibleHotspots = (result?.hotspots ?? []).filter((h) => filter === 'ALL' || h.families.includes(filter as never));
 
+  // Heat: only items worth diving into (score >= 35), tight radius, weight
+  // above the threshold, so calm baselines (country risk on every site) don't
+  // merge into regional fog at world zoom.
+  const HOT = 35;
   if (state.showHeat && visibleHotspots.length) {
-    const heatData = visibleHotspots.filter((h) => h.score > 0);
-    layers.push(new HeatmapLayer<Hotspot>({
+    const heatData = visibleHotspots.filter((h) => h.score >= HOT);
+    if (heatData.length) layers.push(new HeatmapLayer<Hotspot>({
       id: 'lodestar-heat',
       data: heatData,
       getPosition: (h) => [h.lon, h.lat],
-      getWeight: (h) => h.score * (1 + Math.log10(1 + h.products.length)),
-      radiusPixels: 60,
-      intensity: 1.2,
-      threshold: 0.04,
+      getWeight: (h) => h.score - HOT + 5,
+      radiusPixels: 38,
+      intensity: 1.6,
+      threshold: 0.08,
       colorRange: [
-        [255, 255, 178], [254, 217, 118], [254, 178, 76], [253, 141, 60], [240, 59, 32], [189, 0, 38],
+        [254, 217, 118, 90], [254, 178, 76, 140], [253, 141, 60, 180], [240, 59, 32, 210], [220, 30, 40, 230], [189, 0, 38, 240],
       ],
       aggregation: 'SUM',
       pickable: false,
@@ -72,8 +76,8 @@ export function buildOverlay(state: OverlayState, onSelect: (h: Hotspot) => void
       id: 'lodestar-lanes-sea',
       data: seaLanes,
       getPath: (l) => laneWaypoints(ix, l).map((w) => [w.lon, w.lat] as [number, number]),
-      getColor: (l) => (laneScore(l) >= 35 ? scoreColor(laneScore(l), 210) : [140, 180, 220, 150]),
-      getWidth: (l) => (laneScore(l) >= 35 ? 3 : 1.5),
+      getColor: (l) => (laneScore(l) >= 35 ? scoreColor(laneScore(l), 220) : [140, 180, 220, 70]),
+      getWidth: (l) => (laneScore(l) >= 35 ? 2.5 : 1),
       widthUnits: 'pixels',
       jointRounded: true,
       capRounded: true,
@@ -84,9 +88,9 @@ export function buildOverlay(state: OverlayState, onSelect: (h: Hotspot) => void
       data: otherLanes,
       getSourcePosition: (l) => { const s = ix.siteById.get(l.from)!; return [s.lon, s.lat]; },
       getTargetPosition: (l) => { const s = ix.siteById.get(l.to)!; return [s.lon, s.lat]; },
-      getSourceColor: (l) => (l.mode === 'air' ? [190, 150, 230, 170] : [200, 200, 210, 140]),
-      getTargetColor: (l) => (l.mode === 'air' ? [190, 150, 230, 170] : [200, 200, 210, 140]),
-      getWidth: 1.5,
+      getSourceColor: (l) => (l.mode === 'air' ? [190, 150, 230, 80] : [200, 200, 210, 60]),
+      getTargetColor: (l) => (l.mode === 'air' ? [190, 150, 230, 80] : [200, 200, 210, 60]),
+      getWidth: 1,
       getHeight: (l) => (l.mode === 'air' ? 0.4 : 0.05),
       pickable: true,
     }));
@@ -138,7 +142,7 @@ export function buildOverlay(state: OverlayState, onSelect: (h: Hotspot) => void
     }));
     layers.push(new TextLayer<Site>({
       id: 'lodestar-plant-labels',
-      data: plants.filter((s) => s.type === 'plant'),
+      data: plants.filter((s) => s.type === 'plant' && siteScore(s) >= HOT),
       getPosition: (s) => [s.lon, s.lat],
       getText: (s) => s.name.split(',')[0]!,
       getSize: 11,
@@ -154,7 +158,7 @@ export function buildOverlay(state: OverlayState, onSelect: (h: Hotspot) => void
   }
 
   // Hotspot markers: the entries worth diving into, clickable.
-  const markers = visibleHotspots.filter((h) => h.score >= 35);
+  const markers = visibleHotspots.filter((h) => h.score >= HOT);
   if (markers.length) {
     layers.push(new ScatterplotLayer<Hotspot>({
       id: 'lodestar-hotspots',
@@ -169,6 +173,22 @@ export function buildOverlay(state: OverlayState, onSelect: (h: Hotspot) => void
       lineWidthUnits: 'pixels',
       pickable: true,
       updateTriggers: { getLineColor: state.selectedId, getLineWidth: state.selectedId },
+    }));
+    // Score on the marker for the top items, so the map reads as a ranked list.
+    layers.push(new TextLayer<Hotspot>({
+      id: 'lodestar-hotspot-scores',
+      data: markers.slice().sort((a, b) => b.score - a.score).slice(0, 8),
+      getPosition: (h) => [h.lon, h.lat],
+      getText: (h) => String(h.score),
+      getSize: 11,
+      getColor: [255, 255, 255, 255],
+      fontWeight: 700,
+      outlineWidth: 3,
+      outlineColor: [10, 12, 16, 255],
+      fontSettings: { sdf: true },
+      getAlignmentBaseline: 'center',
+      getTextAnchor: 'middle',
+      pickable: false,
     }));
   }
 

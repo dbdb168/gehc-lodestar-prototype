@@ -56,5 +56,7 @@ jobs:
           UPSTASH_REDIS_REST_TOKEN: ${{ secrets.UPSTASH_REDIS_REST_TOKEN }}
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
           NASA_FIRMS_API_KEY: ${{ secrets.NASA_FIRMS_API_KEY || secrets.NASA_FIRMS_KEY }}
+          # Optional: armed-conflict events. Without it the UCDP seeder logs 401 and skips.
+          UCDP_ACCESS_TOKEN: ${{ secrets.UCDP_ACCESS_TOKEN }}
           GROUP: ${{ github.event_name == 'workflow_dispatch' && inputs.group || (github.event.schedule == '47 */6 * * *' && 'slow' || (github.event.schedule == '11 4 * * *' && 'daily' || 'fast')) }}
         run: bash scripts/run-seeders.sh "$GROUP"
