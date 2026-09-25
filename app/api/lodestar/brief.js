@@ -13,7 +13,7 @@ import { getCorsHeaders, isDisallowedOrigin } from '../_cors.js';
 import { jsonResponse } from '../_json-response.js';
 import { validateApiKey } from '../_api-key.js';
 import { readJsonFromUpstash, setCachedData } from '../_upstash-json.js';
-import { chat, underDailyCap, streamJson } from './_openrouter.js';
+import { chatWithFallback, underDailyCap, streamJson } from './_openrouter.js';
 import { scrubDeep, scrubReady } from './_scrub.js';
 
 export const config = { runtime: 'edge' };
@@ -132,12 +132,13 @@ async function sha(text) {
 }
 
 async function callModel(model, userContent) {
-  const r = await chat(model, [{ role: 'system', content: SYSTEM }, { role: 'user', content: userContent }], {
-    schema: SCHEMA, schemaName: 'command_brief', maxTokens: 2500,
+  // No fallback for the Compare model: a comparison must be the model it names.
+  const fallback = model === process.env.LLM_MODEL_COMPARE ? null : (process.env.LLM_MODEL_FAST || 'deepseek/deepseek-v4-flash');
+  const r = await chatWithFallback(model, fallback, [{ role: 'system', content: SYSTEM }, { role: 'user', content: userContent }], {
+    schema: SCHEMA, schemaName: 'command_brief', maxTokens: 4000,
+    validate: (b) => !!(b?.headline && b?.brief),
   });
-  const brief = r.content;
-  if (!brief?.headline || !brief?.brief) throw new Error('model returned an incomplete brief');
-  return { brief: scrubDeep(tidy(brief)), model: r.model, usage: r.usage, cost: r.cost };
+  return { brief: scrubDeep(tidy(r.content)), model: r.model, usage: r.usage, cost: r.cost, ...(r.fallbackFrom ? { fallbackFrom: r.fallbackFrom } : {}) };
 }
 
 async function briefFor(model, items, filter, date, regenerate) {

@@ -11,7 +11,7 @@ import { getCorsHeaders, isDisallowedOrigin } from '../_cors.js';
 import { jsonResponse } from '../_json-response.js';
 import { validateApiKey } from '../_api-key.js';
 import { readJsonFromUpstash, setCachedData } from '../_upstash-json.js';
-import { chat, underDailyCap, streamJson } from './_openrouter.js';
+import { chatWithFallback, underDailyCap, streamJson } from './_openrouter.js';
 import { scrubDeep, scrubReady } from './_scrub.js';
 
 export const config = { runtime: 'edge' };
@@ -135,11 +135,12 @@ export default async function handler(req) {
       if (hit?.read) return { ...hit, cached: true };
     } catch { /* cache miss */ }
     if (!(await underDailyCap('read', DAILY_CAP))) return { error: 'daily read limit reached' };
-    const r = await chat(model, [{ role: 'system', content: SYSTEM }, { role: 'user', content: userContent }], {
-      schema: SCHEMA, schemaName: 'hotspot_read', maxTokens: 3000, temperature: 0.2,
+    const fallback = process.env.LLM_MODEL_FAST || 'deepseek/deepseek-v4-flash';
+    const r = await chatWithFallback(model, fallback, [{ role: 'system', content: SYSTEM }, { role: 'user', content: userContent }], {
+      schema: SCHEMA, schemaName: 'hotspot_read', maxTokens: 4000, temperature: 0.2,
+      validate: (c) => !!(c?.headline && c?.lede),
     });
-    if (!r.content?.headline) throw new Error('model returned an incomplete read');
-    const out = { read: scrubDeep(tidy(r.content)), model: r.model, usage: r.usage, cost: r.cost, generatedAt: new Date().toISOString() };
+    const out = { read: scrubDeep(tidy(r.content)), model: r.model, usage: r.usage, cost: r.cost, generatedAt: new Date().toISOString(), ...(r.fallbackFrom ? { fallbackFrom: r.fallbackFrom } : {}) };
     await setCachedData(cacheKey, out, CACHE_TTL_S).catch(() => {});
     return { ...out, cached: false };
   })().catch((e) => ({ error: e.message || 'read failed' }));

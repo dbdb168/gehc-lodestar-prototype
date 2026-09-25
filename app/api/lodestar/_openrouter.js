@@ -30,6 +30,9 @@ export async function chat(model, messages, { schema, schemaName = 'result', max
       ...(schema ? { response_format: { type: 'json_schema', json_schema: { name: schemaName, strict: true, schema } } } : {}),
       temperature,
       max_tokens: maxTokens,
+      // Reasoning models (GLM-5.x) can spend the whole budget thinking and
+      // return nothing; low effort keeps the budget for the answer.
+      reasoning: { effort: 'low' },
       usage: { include: true },
     }),
     signal: AbortSignal.timeout(timeoutMs),
@@ -69,9 +72,32 @@ function parseJsonLoose(text) {
   const unfenced = text.replace(/^\s*```(?:json)?\s*/i, '').replace(/\s*```\s*$/, '');
   const fenced = tryParse(unfenced);
   if (fenced !== undefined) return fenced;
-  const a = text.indexOf('{');
+  // Wrapped in prose, or a stray extra brace ("{\n{ ... }"): try each opening
+  // brace (first few) up to the last closing one.
   const b = text.lastIndexOf('}');
-  return a >= 0 && b > a ? tryParse(text.slice(a, b + 1)) : undefined;
+  for (let a = text.indexOf('{'), n = 0; a >= 0 && a < b && n < 4; a = text.indexOf('{', a + 1), n++) {
+    const v = tryParse(text.slice(a, b + 1));
+    if (v !== undefined) return v;
+  }
+  return undefined;
+}
+
+/**
+ * chat() with one retry on a fallback model when the primary is cut off,
+ * returns unusable JSON or fails upstream (not on 402/429: those are account
+ * limits). The result's `model` says which model actually answered.
+ */
+export async function chatWithFallback(model, fallbackModel, messages, opts = {}) {
+  try {
+    const r = await chat(model, messages, opts);
+    if (opts.validate && !opts.validate(r.content)) throw new Error('model returned an incomplete result');
+    return r;
+  } catch (err) {
+    if (!fallbackModel || fallbackModel === model || err.status === 402 || err.status === 429) throw err;
+    const r = await chat(fallbackModel, messages, opts);
+    if (opts.validate && !opts.validate(r.content)) throw new Error(`model returned an incomplete result (after ${err.message})`);
+    return { ...r, fallbackFrom: model, fallbackReason: err.message };
+  }
 }
 
 /** Stream a JSON body so slow models don't hit the edge first-byte limit. */
