@@ -5,7 +5,7 @@
 //
 // Written only from the live evidence passed in. Options are recommendations for
 // a person to decide on; the first is the recommended one. Same guards as the
-// brief route (origin, session, size caps, daily cap, 30-min cache); LLM_MODEL_FAST.
+// brief route (origin, session, size caps, daily cap, 30-min cache); LLM_MODEL_BRIEF.
 
 import { getCorsHeaders, isDisallowedOrigin } from '../_cors.js';
 import { jsonResponse } from '../_json-response.js';
@@ -49,14 +49,26 @@ const SCHEMA = {
   },
 };
 
-const SYSTEM = `You write the evidence read for one supply-chain hotspot of a medical imaging OEM, for its supply-chain leadership.
+const SYSTEM = `You write the evidence read for one supply-chain hotspot of a medical imaging OEM, for its supply-chain leadership. Write like a sharp briefing editor, not a report generator.
+Budgets (hard): headline under 50 characters, a question or a short claim; lede one sentence, under 30 words, the "so what"; story three short sentences, under 70 words, context only; option action under 45 characters; every other option field under 12 words.
+Style example (tone and length only; do not reuse its facts):
+  headline: "Rare-earth truce: decided today?"
+  lede: "The April licensing still bites. The wider controls are suspended, and the suspension is on the table today."
+  option: action "Hold, and pre-authorise a buy"; detail "Don't over-buy on today's headlines. Pre-approve a 90-day buy that triggers if the suspension lapses."; cost "None until triggered"; protects "Time to survive 60 → 150 days if triggered (synth)".
 Rules:
-- Use only the facts in the evidence. Never invent figures, percentages, dates or events. Numbers in "oem" are synthetic demo values: write "(synth)" after any you use.
+- Use only the facts in the evidence. Never invent figures, percentages, dates or events. Numbers in "oem" are synthetic demo values: write "(synth)" after any you use, and don't recite them in the lede.
 - Medtech operations language (S&OP, time to survive / time to recover, 510(k) change control, site readiness). Plain text, no markdown.
 - Never name a company, a person or a job title; owners are functions.
 - Options are recommendations for people to decide on. Recommended first. Prefer proportionate moves (hold, pre-authorise, trigger-based buys) over over-reaction to headlines. If the evidence is weak or calm, return watch-only: empty options and decide_by "".`;
 
 const clip = (s, n) => String(s ?? '').slice(0, n);
+/** Shorten at a word boundary with an ellipsis, never mid-word. */
+const fit = (s, n) => {
+  const t = String(s ?? '').trim();
+  if (t.length <= n) return t;
+  const cut = t.slice(0, n - 1);
+  return `${cut.slice(0, Math.max(cut.lastIndexOf(' '), n * 0.6)).replace(/[\s,;:.–-]+$/, '')}…`;
+};
 const strip = (s) => String(s ?? '').replace(/\*\*|__|`|^#+\s*/gm, '').trim();
 
 function sanitize(it) {
@@ -83,17 +95,17 @@ async function sha(text) {
 
 function tidy(r) {
   return {
-    headline: clip(strip(r.headline), 90),
-    lede: clip(strip(r.lede), 400),
-    story: clip(strip(r.story), 900),
-    category: clip(strip(r.category), 40),
+    headline: fit(strip(r.headline), 80),
+    lede: fit(strip(r.lede), 260),
+    story: fit(strip(r.story), 600),
+    category: fit(strip(r.category), 40),
     decide_by: /^\d{4}-\d{2}-\d{2}$/.test(r.decide_by ?? '') ? r.decide_by : '',
-    decide_why: clip(strip(r.decide_why), 240),
+    decide_why: fit(strip(r.decide_why), 200),
     options: (Array.isArray(r.options) ? r.options : []).slice(0, 3).map((o) => ({
-      action: clip(strip(o.action), 80), detail: clip(strip(o.detail), 400), cost: clip(strip(o.cost), 80),
-      protects: clip(strip(o.protects), 100), regulatory_time: clip(strip(o.regulatory_time), 80),
+      action: fit(strip(o.action), 70), detail: fit(strip(o.detail), 320), cost: fit(strip(o.cost), 90),
+      protects: fit(strip(o.protects), 110), regulatory_time: fit(strip(o.regulatory_time), 90),
       confidence: ['High', 'Medium', 'Low'].includes(o.confidence) ? o.confidence : 'Medium',
-      owner_function: clip(strip(o.owner_function), 40),
+      owner_function: fit(strip(o.owner_function), 40),
     })),
   };
 }
@@ -114,9 +126,10 @@ export default async function handler(req) {
   const date = /^\d{4}-\d{2}-\d{2}$/.test(body?.date ?? '') ? body.date : new Date().toISOString().slice(0, 10);
 
   const work = (async () => {
-    const model = process.env.LLM_MODEL_FAST || 'deepseek/deepseek-v4-flash';
+    // The read is the drawer's editorial centrepiece: brief-quality model, cached.
+    const model = process.env.LLM_MODEL_READ || process.env.LLM_MODEL_BRIEF || 'z-ai/glm-5.3';
     const userContent = JSON.stringify({ date, item });
-    const cacheKey = `lodestar:read:v1:${await sha(`${model}|${userContent}`)}`;
+    const cacheKey = `lodestar:read:v2:${await sha(`${model}|${userContent}`)}`;
     try {
       const hit = await readJsonFromUpstash(cacheKey, 2000);
       if (hit?.read) return { ...hit, cached: true };
