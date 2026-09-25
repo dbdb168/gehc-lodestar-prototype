@@ -29,6 +29,7 @@ export class LodestarHotspotsPanel extends Panel {
   private filter: FamilyFilter = 'ALL';
   private expanded: string | null = null;
   private onFocus: ((h: Hotspot) => void) | null = null;
+  private onDrawer: ((h: Hotspot) => void) | null = null;
 
   constructor() {
     super({
@@ -42,6 +43,10 @@ export class LodestarHotspotsPanel extends Panel {
 
   setFocusHandler(fn: (h: Hotspot) => void): void {
     this.onFocus = fn;
+  }
+
+  setDrawerHandler(fn: (h: Hotspot) => void): void {
+    this.onDrawer = fn;
   }
 
   update(result: ExposureResult, filter: FamilyFilter, selectedId: string | null): void {
@@ -107,6 +112,7 @@ export class LodestarHotspotsPanel extends Panel {
           `${e.source}${e.at ? ` · ${e.at}` : ''} · +${e.points} · `,
           h('span', { className: `lodestar-prov prov-${e.prov}` }, PROV_LABEL[e.prov])),
       ))),
+      h('button', { type: 'button', className: 'lodestar-btn ghost lodestar-open-drawer', onClick: () => this.onDrawer?.(x) }, 'Open evidence drawer: cascade, options, drafts'),
     );
   }
 }

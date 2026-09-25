@@ -9,6 +9,8 @@ import { computeExposure, type ExposureResult, type Hotspot } from './exposure';
 import { buildOverlay, type OverlayState } from './overlay';
 import type { LodestarHotspotsPanel } from './HotspotsPanel';
 import type { LodestarBriefPanel } from './BriefPanel';
+import type { LodestarProductsPanel, LodestarInputClockPanel, LodestarRegWatchPanel } from './BoardPanels';
+import { openDrawer } from './drawer';
 import './lodestar.css';
 
 const REFRESH_MS = 5 * 60 * 1000;
@@ -51,15 +53,26 @@ export async function startLodestar(ctx: AppContext): Promise<void> {
     ctx.map?.setLodestarOverlay(buildOverlay(state, (hs) => {
       state.selectedId = hs.id;
       render();
-      const p = panel();
-      p?.getElement?.().scrollIntoView?.({ behavior: 'smooth', block: 'nearest' });
+      openDrawer(ix, hs);
     }));
     const p = panel();
     if (p && state.result) {
       p.setFocusHandler(focus);
+      p.setDrawerHandler((hs) => openDrawer(ix, hs));
       p.update(state.result, state.filter, state.selectedId);
     }
     (ctx.panels['lodestar-brief'] as LodestarBriefPanel | undefined)?.update(ix, state.result, state.filter);
+    if (state.result) {
+      const board = ctx.panels['lodestar-products'] as LodestarProductsPanel | undefined;
+      board?.setPickHandler((family, driver) => {
+        state.filter = family; writeFilter(family);
+        if (driver) { state.selectedId = driver.id; ctx.map?.setCenter(driver.lat, driver.lon, 4); }
+        render();
+      });
+      board?.update(ix, state.result, state.filter);
+      (ctx.panels['lodestar-inputs'] as LodestarInputClockPanel | undefined)?.update(ix, state.result, state.filter);
+      (ctx.panels['lodestar-regwatch'] as LodestarRegWatchPanel | undefined)?.update(ix, state.result);
+    }
     for (const fn of listeners) fn({ filter: state.filter, result: state.result, ix });
     syncFilterButtons();
   };
@@ -106,6 +119,8 @@ export async function startLodestar(ctx: AppContext): Promise<void> {
   setInterval(() => { if (!document.hidden) void refresh(); }, REFRESH_MS);
   // The hotspots panel is lazily created; hand it the current result when it appears.
   const waitForPanel = setInterval(() => {
-    if (panel() && ctx.panels['lodestar-brief'] && state.result) { render(); clearInterval(waitForPanel); }
+    const ids = ['lodestar-hotspots', 'lodestar-brief', 'lodestar-products', 'lodestar-inputs', 'lodestar-regwatch'];
+    if (state.result && ids.every((id) => ctx.panels[id])) { render(); clearInterval(waitForPanel); }
+    else if (state.result) render();
   }, 1000);
 }

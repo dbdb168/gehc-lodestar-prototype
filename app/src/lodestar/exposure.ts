@@ -59,6 +59,8 @@ export interface ExposureResult {
   /** Lane id -> max chokepoint score along it. */
   laneScores: Map<string, number>;
   feeds: FeedStatus[];
+  /** Raw regulatory/news signals, for the regulatory & trade watch panel. */
+  signals: Signals | null;
 }
 
 // ---------- live feeds ----------
@@ -74,8 +76,8 @@ interface HistoryPoint { date: string; total: number }
 interface Quake { id: string; place: string; magnitude: number; location: { latitude: number; longitude: number }; occurredAt: number; sourceUrl?: string }
 interface NaturalEvent { id: string; title: string; category: string; categoryTitle?: string; lat: number; lon: number; date: number; sourceUrl?: string; sourceName?: string; closed?: boolean; windKt?: number }
 interface Advisory { title: string; link: string; pubDate: string; source: string; level: string; country: string }
-interface FrItem { title: string; url: string; date: string; type: string; agencies: string[] }
-interface Signals {
+export interface FrItem { title: string; url: string; date: string; type: string; agencies: string[] }
+export interface Signals {
   federalRegister: Array<{ term: string; inputs: string[]; items: FrItem[]; error?: boolean }>;
   fda: { configured: boolean; recalls: Array<{ product: string; reason: string; status?: string; initiated?: string; url?: string }>; clearances: Array<{ device: string; kNumber?: string; date?: string; url?: string }> };
   newsPulse: { inputs: Record<string, { query: string; z: number | null; recentAvg: number | null; baselineAvg: number | null; articles: Array<{ title: string; url: string; domain?: string; seendate?: string }> }>; fetchedAt: number } | null;
@@ -479,5 +481,5 @@ export async function computeExposure(ix: Indexed): Promise<ExposureResult> {
   });
 
   hotspots.sort((a, b) => b.score - a.score);
-  return { computedAt: now, hotspots, products, laneScores, feeds };
+  return { computedAt: now, hotspots, products, laneScores, feeds, signals };
 }

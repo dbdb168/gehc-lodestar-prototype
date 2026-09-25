@@ -56,3 +56,46 @@
 .lodestar-opt-meta { display: block; color: var(--text-dim); font-size: 10px; }
 .lodestar-watch ul { margin: 2px 0 0; padding-left: 16px; color: var(--text-secondary, var(--text-dim)); }
 .lodestar-ai-note { color: var(--text-dim); font-size: 10px; font-style: italic; border-top: 1px solid var(--border-subtle, var(--border)); padding-top: 6px; }
+
+/* Board, clock, reg watch */
+.lodestar-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.lodestar-table th { text-align: left; color: var(--text-dim); font-weight: 500; font-size: 10px; text-transform: uppercase; letter-spacing: .05em; padding: 4px 6px; border-bottom: 1px solid var(--border); }
+.lodestar-table td { padding: 7px 6px; border-bottom: 1px solid var(--border-subtle, var(--border)); vertical-align: top; color: var(--text); }
+.lodestar-row { cursor: pointer; }
+.lodestar-row:hover td { background: var(--surface-hover); }
+.lodestar-spark { width: 60px; height: 18px; display: block; }
+.lodestar-score.sm { min-width: 24px; height: 16px; font-size: 10px; }
+.lodestar-clock { display: flex; flex-direction: column; gap: 10px; font-size: 12px; }
+.lodestar-clock-legend { color: var(--text-dim); font-size: 10px; display: flex; gap: 10px; align-items: center; }
+.lodestar-clock-legend .k::before { content: ''; display: inline-block; width: 12px; height: 6px; margin-right: 4px; vertical-align: middle; }
+.lodestar-clock-legend .tts::before { background: var(--text-dim); }
+.lodestar-clock-legend .ttr::before { background: #ff5a3c; }
+.lodestar-clock-row { display: flex; flex-direction: column; gap: 3px; }
+.lodestar-clock-name { display: flex; justify-content: space-between; color: var(--text); }
+.lodestar-bar { position: relative; height: 8px; background: var(--border-subtle, var(--border)); border-radius: 1px; }
+.lodestar-bar i { position: absolute; inset: 0 auto 0 0; border-radius: 1px; }
+.lodestar-bar b { position: absolute; right: 0; top: -2px; font-size: 9px; font-weight: 400; color: var(--text-dim); transform: translateY(-100%); }
+.lodestar-bar.tts i { background: var(--text-dim); }
+.lodestar-bar.ttr i { background: #b9a07a; }
+.lodestar-clock-row.exposed .lodestar-bar.ttr i { background: #ff5a3c; }
+.lodestar-bar.ttr.ok i { background: #50be9f; }
+.lodestar-regwatch section + section { margin-top: 10px; }
+.lodestar-regwatch h4, .lodestar-drawer h4 { margin: 0 0 6px; font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--text-dim); font-weight: 500; }
+.lodestar-regwatch .lodestar-evidence { margin-left: 0; }
+.lodestar-open-drawer { margin: 0 0 10px 44px; }
+
+/* Evidence drawer */
+.lodestar-drawer-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 10000; display: flex; justify-content: flex-end; }
+.lodestar-drawer { width: min(560px, 100vw); height: 100%; overflow-y: auto; background: var(--bg); color: var(--text); border-left: 1px solid var(--border); padding: 18px 20px 28px; display: flex; flex-direction: column; gap: 16px; font-size: 12px; box-shadow: -12px 0 40px rgba(0,0,0,.35); }
+.lodestar-drawer-head { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: start; }
+.lodestar-drawer-title { font-size: 16px; font-weight: 600; color: var(--text); }
+.lodestar-x { background: none; border: 0; color: var(--text-dim); font-size: 22px; line-height: 1; cursor: pointer; }
+.lodestar-drawer .lodestar-evidence { margin-left: 0; }
+.lodestar-cascade { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0; }
+.lodestar-cascade li { display: grid; grid-template-columns: 110px 1fr; gap: 8px; padding: 6px 0 6px 12px; border-left: 2px solid var(--border); position: relative; }
+.lodestar-cascade li:last-child { border-left-color: #ff5a3c; font-weight: 600; }
+.lodestar-drafts { display: flex; gap: 8px; flex-wrap: wrap; }
+.lodestar-draft-modal { border: 1px solid var(--border); border-radius: 4px; padding: 12px; display: flex; flex-direction: column; gap: 8px; background: var(--surface, var(--bg)); }
+.lodestar-modal-kicker { color: var(--accent); font-size: 10px; text-transform: uppercase; letter-spacing: .06em; }
+.lodestar-draft-body { white-space: pre-wrap; font-family: inherit; font-size: 12px; line-height: 1.55; margin: 0; color: var(--text); }
+.lodestar-prov.prov-live { border-color: #50be9f; color: #50be9f; }

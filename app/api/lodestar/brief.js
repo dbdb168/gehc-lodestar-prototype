@@ -12,7 +12,8 @@
 import { getCorsHeaders, isDisallowedOrigin } from '../_cors.js';
 import { jsonResponse } from '../_json-response.js';
 import { validateApiKey } from '../_api-key.js';
-import { readJsonFromUpstash, setCachedData, redisPipeline } from '../_upstash-json.js';
+import { readJsonFromUpstash, setCachedData } from '../_upstash-json.js';
+import { chat, underDailyCap, streamJson } from './_openrouter.js';
 import { scrubDeep, scrubReady } from './_scrub.js';
 
 export const config = { runtime: 'edge' };
@@ -130,49 +131,13 @@ async function sha(text) {
   return [...new Uint8Array(buf)].slice(0, 12).map((b) => b.toString(16).padStart(2, '0')).join('');
 }
 
-async function underDailyCap() {
-  const key = `lodestar:brief:calls:${new Date().toISOString().slice(0, 10)}`;
-  try {
-    const res = await redisPipeline([['INCR', key], ['EXPIRE', key, 90000]]);
-    const n = Number(res?.[0]?.result ?? res?.[0]);
-    return !Number.isFinite(n) || n <= DAILY_CAP;
-  } catch {
-    return true; // Redis down: the per-payload cache still limits repeat calls
-  }
-}
-
 async function callModel(model, userContent) {
-  const key = process.env.OPENROUTER_API_KEY;
-  if (!key) throw new Error('OPENROUTER_API_KEY not set');
-  const r = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${key}`,
-      'Content-Type': 'application/json',
-      'X-Title': 'Lodestar',
-    },
-    body: JSON.stringify({
-      model,
-      messages: [{ role: 'system', content: SYSTEM }, { role: 'user', content: userContent }],
-      response_format: { type: 'json_schema', json_schema: { name: 'command_brief', strict: true, schema: SCHEMA } },
-      temperature: 0.2,
-      max_tokens: 2500,
-      usage: { include: true },
-    }),
-    signal: AbortSignal.timeout(55_000),
+  const r = await chat(model, [{ role: 'system', content: SYSTEM }, { role: 'user', content: userContent }], {
+    schema: SCHEMA, schemaName: 'command_brief', maxTokens: 2500,
   });
-  const body = await r.json().catch(() => null);
-  if (!r.ok || !body) throw new Error(`OpenRouter HTTP ${r.status}${body?.error?.message ? `: ${body.error.message}` : ''}`);
-  const text = body.choices?.[0]?.message?.content;
-  let brief;
-  try { brief = typeof text === 'string' ? JSON.parse(text) : text; } catch { throw new Error('model returned invalid JSON'); }
+  const brief = r.content;
   if (!brief?.headline || !brief?.brief) throw new Error('model returned an incomplete brief');
-  return {
-    brief: scrubDeep(tidy(brief)),
-    model: body.model || model,
-    usage: body.usage ? { prompt: body.usage.prompt_tokens, completion: body.usage.completion_tokens, total: body.usage.total_tokens } : null,
-    cost: typeof body.usage?.cost === 'number' ? body.usage.cost : null,
-  };
+  return { brief: scrubDeep(tidy(brief)), model: r.model, usage: r.usage, cost: r.cost };
 }
 
 async function briefFor(model, items, filter, date, regenerate) {
@@ -184,7 +149,7 @@ async function briefFor(model, items, filter, date, regenerate) {
       if (hit?.brief) return { ...hit, cached: true };
     } catch { /* cache miss */ }
   }
-  if (!(await underDailyCap())) throw Object.assign(new Error('daily brief limit reached'), { status: 429 });
+  if (!(await underDailyCap('brief', DAILY_CAP))) throw Object.assign(new Error('daily brief limit reached'), { status: 429 });
   const out = { ...(await callModel(model, userContent)), generatedAt: new Date().toISOString() };
   await setCachedData(cacheKey, out, CACHE_TTL_S).catch(() => {});
   return { ...out, cached: false };
@@ -216,19 +181,5 @@ export default async function handler(req) {
       : Promise.resolve(null),
   ]).then(([main, compare]) => ({ ...main, compare }), (e) => ({ error: e.message || 'brief failed', status: e.status || 502 }));
 
-  // Edge functions must start responding within ~25 s; a reasoning model can
-  // take longer. Send headers now and the JSON when it's ready (errors go in
-  // the body as { error }).
-  const enc = new TextEncoder();
-  const stream = new ReadableStream({
-    async start(controller) {
-      controller.enqueue(enc.encode(' '));
-      controller.enqueue(enc.encode(JSON.stringify(await work)));
-      controller.close();
-    },
-  });
-  return new Response(stream, {
-    status: 200,
-    headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', ...cors },
-  });
+  return streamJson(work, cors);
 }

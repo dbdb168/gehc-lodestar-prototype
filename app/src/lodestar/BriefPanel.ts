@@ -7,6 +7,7 @@ import { Panel } from '@/components/Panel';
 import { h } from '@/utils/dom-utils';
 import type { ExposureResult, Hotspot } from './exposure';
 import type { FamilyFilter, Indexed } from './network';
+import { setBriefDecisions } from './store';
 
 interface Option { action: string; cost: string; protects: string; regulatory_time: string; confidence: string }
 interface Decision { title: string; why: string; owner_function: string; decide_by: string; evidence_ids: string[]; options: Option[] }
@@ -102,6 +103,7 @@ export class LodestarBriefPanel extends Panel {
       });
       this.response = await r.json() as BriefResponse;
       if (!r.ok && !this.response.error) this.response.error = `HTTP ${r.status}`;
+      setBriefDecisions(this.response.brief?.decisions ?? []);
     } catch (err) {
       this.response = { error: err instanceof Error ? err.message : String(err) };
     }

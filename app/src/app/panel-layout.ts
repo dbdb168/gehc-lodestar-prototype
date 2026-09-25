@@ -2873,6 +2873,9 @@ export class PanelLayoutManager implements AppModule {
     });
     this.lazyDefaultPanel('lodestar-brief', () => import('@/lodestar/BriefPanel'), 'LodestarBriefPanel');
     this.lazyDefaultPanel('lodestar-hotspots', () => import('@/lodestar/HotspotsPanel'), 'LodestarHotspotsPanel');
+    this.lazyDefaultPanel('lodestar-products', () => import('@/lodestar/BoardPanels'), 'LodestarProductsPanel');
+    this.lazyDefaultPanel('lodestar-inputs', () => import('@/lodestar/BoardPanels'), 'LodestarInputClockPanel');
+    this.lazyDefaultPanel('lodestar-regwatch', () => import('@/lodestar/BoardPanels'), 'LodestarRegWatchPanel');
     this.lazyImportedPanel('disaster-correlation', () => import('@/components/DisasterCorrelationPanel'), 'DisasterCorrelationPanel', (DisasterCorrelationPanel) => {
       const p = new DisasterCorrelationPanel();
       p.setMapNavigateHandler((lat, lon) => { this.ctx.map?.setCenter(lat, lon, 5); });
