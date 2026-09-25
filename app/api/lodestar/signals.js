@@ -1,7 +1,7 @@
 // Lodestar: regulatory and news signals for the exposure engine.
 //
 //   GET /api/lodestar/signals
-//   → { federalRegister: [...], fda: {...}, newsPulse: {...}, fetchedAt }
+//   → { federalRegister: [...], fda: {...}, newsPulse: {...}, telegram: {...}, fetchedAt }
 //
 // - Federal Register (no key): documents from the last 14 days matching the
 //   network's regulatory-watch terms and each input's term.
@@ -129,7 +129,11 @@ async function build(origin) {
   // Seeder-owned key: read raw (no preview prefix).
   try { newsPulse = await readJsonFromUpstash('lodestar:news-pulse:v1', 3000, true); } catch { newsPulse = null; }
   if (!newsPulse) errors.push('GDELT news pulse: not seeded yet');
-  return scrubDeep({ federalRegister: federal, fda, newsPulse, errors, fetchedAt: new Date().toISOString() });
+  // Telegram watch (scripts/seed-lodestar-telegram.mjs): unverified posts, display only.
+  let telegram = null;
+  try { telegram = await readJsonFromUpstash('lodestar:telegram:v1', 3000, true); } catch { telegram = null; }
+  if (!telegram) errors.push('Telegram watch: not seeded yet');
+  return scrubDeep({ federalRegister: federal, fda, newsPulse, telegram, errors, fetchedAt: new Date().toISOString() });
 }
 
 export default async function handler(req) {

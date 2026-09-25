@@ -1,0 +1,15 @@
+{
+  "note": "Public Telegram channels read through their public web preview (t.me/s/<handle>); no account or API key. Chosen from upstream's curated list plus checks on 25 Sep 2026: English, posted in the last week. State-propaganda and partisan channels left out. Posts are unverified and labelled so; they never feed exposure scores.",
+  "channels": [
+    { "handle": "cnalatest", "label": "CNA", "kind": "news", "focus": "Singapore / Malacca, Asia" },
+    { "handle": "bloomberg", "label": "Bloomberg", "kind": "news", "focus": "markets, trade" },
+    { "handle": "france24_en", "label": "France 24", "kind": "news", "focus": "global" },
+    { "handle": "MiddleEastEye_TG", "label": "Middle East Eye", "kind": "news", "focus": "Gulf, Red Sea" },
+    { "handle": "wamnews_en", "label": "WAM (UAE state news agency)", "kind": "government", "focus": "Gulf, Hormuz" },
+    { "handle": "LiveUAMap", "label": "LiveUAMap", "kind": "osint", "focus": "conflict incidents" },
+    { "handle": "OSINTdefender", "label": "OSINTdefender", "kind": "osint", "focus": "breaking conflict" },
+    { "handle": "warfareanalysis", "label": "Warfare Analysis", "kind": "osint", "focus": "military, maritime" },
+    { "handle": "rnintel", "label": "RN Intel", "kind": "osint", "focus": "breaking" },
+    { "handle": "thehackernews", "label": "The Hacker News", "kind": "news", "focus": "cyber, supply-chain attacks" }
+  ]
+}

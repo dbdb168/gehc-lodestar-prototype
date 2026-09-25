@@ -27,6 +27,7 @@ GitHub Actions instead (`.github/workflows/seed.yml` → `scripts/run-seeders.sh
 | Sanctions pressure | `sanctions:pressure:v1` | `seed-sanctions-pressure.mjs` (OFAC SDN + consolidated, Canada SEMA; heavy) | – |
 | News panels (incl. world, Middle East, Asia-Pacific) | – | none (RSS fetched live at the edge) | – |
 | Exposure engine: GDELT news pulse per input | `lodestar:news-pulse:v1` | `seed-lodestar-news-pulse.mjs` (GDELT DOC API, 6 s spacing, backs off on 429; best-effort: a failure warns and keeps the previous pulse) | – |
+| Telegram watch (unverified, display only) | `lodestar:telegram:v1` | `seed-lodestar-telegram.mjs` (public t.me/s previews of the channels in `app/scripts/data/lodestar-telegram-channels.json`; keeps posts from 72h that mention a chokepoint, input, export control or shipping; best-effort, fast group) | – |
 | Exposure engine: Federal Register, openFDA | `lodestar:signals:v2` (30-min cache) | none: live in `api/lodestar/signals.js` (applicant server-side only; text scrubbed of `BANNED_TERMS`) | `OEM_FDA_APPLICANT`, `BANNED_TERMS` (Vercel) |
 | Trade routes, waterways, ports, sanctions layers | – | none (static) | – |
 

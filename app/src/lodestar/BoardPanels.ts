@@ -170,3 +170,48 @@ export class LodestarRegWatchPanel extends Panel {
     this.setContentNodes(h('div', { className: 'lodestar-regwatch' }, ...sections));
   }
 }
+
+// ---------- Telegram watch ----------
+
+const ago = (iso: string) => {
+  const m = Math.max(0, Math.round((Date.now() - Date.parse(iso)) / 60_000));
+  return m < 60 ? `${m}m ago` : m < 48 * 60 ? `${Math.round(m / 60)}h ago` : `${Math.round(m / 1440)}d ago`;
+};
+const KIND_LABEL: Record<string, string> = { news: 'news outlet', government: 'government', osint: 'OSINT aggregator' };
+
+export class LodestarTelegramPanel extends Panel {
+  constructor() {
+    super({
+      id: 'lodestar-telegram',
+      title: 'Telegram watch',
+      infoTooltip: 'Posts from the last 72 hours on a short list of public Telegram channels that mention a chokepoint, a critical input, export controls or shipping. Unverified: shown for early warning only and never used in exposure scores. Read every 2 hours from Telegram\'s public channel previews.',
+    });
+    this.showLoading('Loading Telegram watch…');
+  }
+
+  update(ix: Indexed, result: ExposureResult, filter: FamilyFilter): void {
+    const tg = result.signals?.telegram;
+    if (!tg) {
+      this.setContentNodes(h('p', { className: 'lodestar-quiet' }, result.signals ? 'Telegram watch not seeded yet.' : 'Telegram watch unavailable.'));
+      return;
+    }
+    const inFamily = (inputId: string) => filter === 'ALL'
+      || (ix.inputById.get(inputId)?.used_in ?? []).some((p) => ix.productById.get(p)?.family === filter);
+    const posts = tg.posts.filter((p) => {
+      const inputs = p.tags.filter((t) => t.input);
+      return inputs.length === 0 || p.tags.some((t) => !t.input) || inputs.some((t) => inFamily(t.input!));
+    });
+    const okChannels = tg.channels.filter((c) => c.ok).length;
+    this.setContentNodes(h('div', { className: 'lodestar-telegram' },
+      h('p', { className: 'lodestar-tg-note' },
+        h('span', { className: 'lodestar-prov prov-unverified' }, 'unverified'),
+        ` ${posts.length} relevant of ${tg.scanned} posts from ${okChannels}/${tg.channels.length} channels · read ${ago(new Date(tg.fetchedAt).toISOString())}`),
+      posts.length
+        ? h('ul', { className: 'lodestar-evidence' }, ...posts.map((p) => h('li', null,
+          h('span', { className: 'lodestar-ev-kind' }, `${p.label} · ${KIND_LABEL[p.kind] ?? p.kind} · ${ago(p.at)}`),
+          h('span', { className: 'lodestar-ev-text' }, extLink(p.url, p.text.length > 280 ? `${p.text.slice(0, 277)}…` : p.text)),
+          h('span', { className: 'lodestar-tg-tags' }, ...p.tags.map((t) => h('span', { className: 'lodestar-tg-tag' }, t.label))))))
+        : h('p', { className: 'lodestar-quiet' }, 'Nothing on the network\'s chokepoints, inputs or trade in the last 72 hours.'),
+    ));
+  }
+}

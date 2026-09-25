@@ -9,7 +9,7 @@ import { computeExposure, exportSnapshot, type ExposureResult, type Hotspot } fr
 import { buildOverlay, type OverlayState } from './overlay';
 import type { LodestarHotspotsPanel } from './HotspotsPanel';
 import type { LodestarBriefPanel } from './BriefPanel';
-import type { LodestarProductsPanel, LodestarInputClockPanel, LodestarRegWatchPanel } from './BoardPanels';
+import type { LodestarProductsPanel, LodestarInputClockPanel, LodestarRegWatchPanel, LodestarTelegramPanel } from './BoardPanels';
 import { openDrawer } from './drawer';
 import './lodestar.css';
 
@@ -72,6 +72,7 @@ export async function startLodestar(ctx: AppContext): Promise<void> {
       board?.update(ix, state.result, state.filter);
       (ctx.panels['lodestar-inputs'] as LodestarInputClockPanel | undefined)?.update(ix, state.result, state.filter);
       (ctx.panels['lodestar-regwatch'] as LodestarRegWatchPanel | undefined)?.update(ix, state.result);
+      (ctx.panels['lodestar-telegram'] as LodestarTelegramPanel | undefined)?.update(ix, state.result, state.filter);
     }
     for (const fn of listeners) fn({ filter: state.filter, result: state.result, ix });
     syncFilterButtons();
@@ -129,7 +130,7 @@ export async function startLodestar(ctx: AppContext): Promise<void> {
   setInterval(() => { if (!document.hidden) void refresh(); }, REFRESH_MS);
   // The hotspots panel is lazily created; hand it the current result when it appears.
   const waitForPanel = setInterval(() => {
-    const ids = ['lodestar-hotspots', 'lodestar-brief', 'lodestar-products', 'lodestar-inputs', 'lodestar-regwatch'];
+    const ids = ['lodestar-hotspots', 'lodestar-brief', 'lodestar-products', 'lodestar-inputs', 'lodestar-regwatch', 'lodestar-telegram'];
     if (state.result && ids.every((id) => ctx.panels[id])) { render(); clearInterval(waitForPanel); }
     else if (state.result) render();
   }, 1000);

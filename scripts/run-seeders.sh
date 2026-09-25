@@ -51,7 +51,7 @@ export RELAY_URL=direct
 # Order matters: earthquakes before correlation; portwatch before transit
 # summaries; portwatch and baselines before chokepoint flows; the GDELT bulk
 # materializer right before unrest (it needs a snapshot under 3h old).
-fast=(seed-commodity-quotes seed-earthquakes seed-security-advisories seed-cyber-threats seed-correlation)
+fast=(seed-commodity-quotes seed-earthquakes seed-security-advisories seed-cyber-threats seed-correlation seed-lodestar-telegram)
 slow=(seed-supply-chain-trade seed-hormuz seed-natural-events seed-fire-detections seed-portwatch seed-lodestar-transit-summaries seed-chokepoint-baselines seed-chokepoint-flows seed-gdelt-bulk-materializer seed-unrest-events seed-ucdp-events seed-displacement-summary seed-lodestar-news-pulse)
 daily=(seed-sanctions-pressure)
 
@@ -65,7 +65,7 @@ esac
 
 # Best-effort feeds: a failure is reported as a warning, not a red run.
 # GDELT's DOC API rate-limits shared CI runner IPs; the last pulse is kept.
-best_effort=" seed-lodestar-news-pulse "
+best_effort=" seed-lodestar-news-pulse seed-lodestar-telegram "
 
 failed=()
 for s in "${list[@]}"; do

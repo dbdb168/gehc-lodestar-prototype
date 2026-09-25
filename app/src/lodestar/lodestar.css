@@ -99,3 +99,10 @@
 .lodestar-modal-kicker { color: var(--accent); font-size: 10px; text-transform: uppercase; letter-spacing: .06em; }
 .lodestar-draft-body { white-space: pre-wrap; font-family: inherit; font-size: 12px; line-height: 1.55; margin: 0; color: var(--text); }
 .lodestar-prov.prov-live { border-color: #50be9f; color: #50be9f; }
+
+/* Telegram watch */
+.lodestar-tg-note { font-size: 11px; opacity: 0.8; margin: 0 0 8px; }
+.lodestar-prov.prov-unverified { border-color: #c98a2b; color: #e0a54a; }
+.lodestar-tg-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 3px; }
+.lodestar-tg-tag { font-size: 10px; padding: 1px 6px; border-radius: 8px; background: rgba(140, 180, 220, 0.15); color: var(--text-dim, #9ab); }
+.lodestar-telegram .lodestar-ev-text { white-space: pre-line; }

@@ -82,7 +82,19 @@ export interface Signals {
   federalRegister: Array<{ term: string; inputs: string[]; items: FrItem[]; error?: boolean }>;
   fda: { configured: boolean; recalls: Array<{ product: string; reason: string; status?: string; initiated?: string; url?: string }>; clearances: Array<{ device: string; kNumber?: string; date?: string; url?: string }> };
   newsPulse: { inputs: Record<string, { query: string; z: number | null; recentAvg: number | null; baselineAvg: number | null; articles: Array<{ title: string; url: string; domain?: string; seendate?: string }> }>; fetchedAt: number } | null;
+  telegram: TelegramWatch | null;
   errors: string[];
+}
+export interface TelegramPost {
+  id: string; channel: string; label: string; kind: 'news' | 'government' | 'osint';
+  at: string; url: string; text: string;
+  tags: Array<{ id: string; label: string; kind: string; input?: string }>;
+}
+export interface TelegramWatch {
+  posts: TelegramPost[];
+  channels: Array<{ handle: string; label: string; kind: string; ok: boolean; relevant?: number }>;
+  scanned: number;
+  fetchedAt: number;
 }
 interface Quote { symbol: string; price: number; change: number }
 

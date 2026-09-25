@@ -816,6 +816,7 @@ const COMMODITY_PANELS: Record<string, PanelConfig> = {
   'lodestar-products': { name: 'Product exposure board', enabled: true, priority: 1 },
   'lodestar-inputs': { name: 'Input clock', enabled: true, priority: 1 },
   'lodestar-regwatch': { name: 'Regulatory & trade watch', enabled: true, priority: 1 },
+  'lodestar-telegram': { name: 'Telegram watch', enabled: true, priority: 1 },
   'chokepoint-strip': { name: 'Chokepoint Status', enabled: true, priority: 1 },
   'supply-chain': { name: 'Supply Chain & Logistics', enabled: true, priority: 1 },
   'hormuz-tracker': { name: 'Strait of Hormuz Tracker', enabled: true, priority: 1 },
