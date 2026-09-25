@@ -3,6 +3,7 @@
 
 import { Panel } from '@/components/Panel';
 import { h } from '@/utils/dom-utils';
+import { extLink } from './links';
 import { groupRecalls, type ExposureResult, type Hotspot } from './exposure';
 import type { FamilyFilter, Indexed } from './network';
 import { scoreColor } from './overlay';
@@ -146,7 +147,7 @@ export class LodestarRegWatchPanel extends Panel {
     const sections: HTMLElement[] = [];
     sections.push(h('section', null, h('h4', null, 'Federal Register, last 14 days ', live()),
       fr.length ? h('ul', { className: 'lodestar-evidence' }, ...fr.flatMap((g) => g.items.map((it) => h('li', null,
-        h('span', { className: 'lodestar-ev-text' }, h('a', { href: it.url, target: '_blank', rel: 'noopener' }, it.title)),
+        h('span', { className: 'lodestar-ev-text' }, extLink(it.url, it.title)),
         h('span', { className: 'lodestar-ev-meta' }, `${it.type} · ${it.date} · watch term "${g.term}"${it.agencies[0] ? ` · ${it.agencies[0]}` : ''}`)))))
         : h('p', { className: 'lodestar-quiet' }, s ? 'Nothing new on the watch terms in the last 14 days.' : 'Federal Register feed unavailable.')));
     if (s?.fda?.configured) {
@@ -154,11 +155,11 @@ export class LodestarRegWatchPanel extends Panel {
         (s.fda.recalls.length || s.fda.clearances.length) ? h('ul', { className: 'lodestar-evidence' },
           ...groupRecalls(s.fda.recalls).map((r) => h('li', null,
             h('span', { className: 'lodestar-ev-kind' }, `Recall · ${r.status ?? ''}${r.count > 1 ? ` · ${r.count} product entries` : ''}`),
-            h('span', { className: 'lodestar-ev-text' }, r.url ? h('a', { href: r.url, target: '_blank', rel: 'noopener' }, r.product) : r.product),
+            h('span', { className: 'lodestar-ev-text' }, extLink(r.url, r.product)),
             h('span', { className: 'lodestar-ev-meta' }, `${r.initiated ?? ''}${r.reason ? ` · root cause: ${r.reason}` : ''}`))),
           ...s.fda.clearances.map((c) => h('li', null,
             h('span', { className: 'lodestar-ev-kind' }, `510(k) ${c.kNumber ?? ''}`),
-            h('span', { className: 'lodestar-ev-text' }, c.url ? h('a', { href: c.url, target: '_blank', rel: 'noopener' }, c.device) : c.device),
+            h('span', { className: 'lodestar-ev-text' }, extLink(c.url, c.device)),
             h('span', { className: 'lodestar-ev-meta' }, c.date ?? ''))))
           : h('p', { className: 'lodestar-quiet' }, 'No recalls or 510(k) decisions in the window.')));
     }

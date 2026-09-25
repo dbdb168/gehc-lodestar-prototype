@@ -3,6 +3,7 @@
 
 import { Panel } from '@/components/Panel';
 import { h } from '@/utils/dom-utils';
+import { extLink } from './links';
 import type { ExposureResult, Hotspot, Evidence } from './exposure';
 import type { FamilyFilter } from './network';
 import { scoreColor } from './overlay';
@@ -107,7 +108,7 @@ export class LodestarHotspotsPanel extends Panel {
       h('ul', { className: 'lodestar-evidence' }, ...top.map((e) => h('li', null,
         h('span', { className: 'lodestar-ev-kind' }, SIGNAL_LABEL[e.signal]),
         h('span', { className: 'lodestar-ev-text' },
-          e.url ? h('a', { href: e.url, target: '_blank', rel: 'noopener' }, e.text) : e.text),
+          extLink(e.url, e.text)),
         h('span', { className: 'lodestar-ev-meta' },
           `${e.source}${e.at ? ` · ${e.at}` : ''} · +${e.points} · `,
           h('span', { className: `lodestar-prov prov-${e.prov}` }, PROV_LABEL[e.prov])),

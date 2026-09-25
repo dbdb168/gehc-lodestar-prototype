@@ -4,6 +4,7 @@
 // supplier RFQ. Drafts need a person's approval and are never sent.
 
 import { h } from '@/utils/dom-utils';
+import { extLink } from './links';
 import type { Hotspot } from './exposure';
 import type { Indexed } from './network';
 import { decisionsFor } from './store';
@@ -75,7 +76,7 @@ export function openDrawer(ix: Indexed, x: Hotspot): void {
       ),
       h('section', null, h('h4', null, 'Live evidence'),
         h('ul', { className: 'lodestar-evidence' }, ...top.map((e) => h('li', null,
-          h('span', { className: 'lodestar-ev-text' }, e.url ? h('a', { href: e.url, target: '_blank', rel: 'noopener' }, e.text) : e.text),
+          h('span', { className: 'lodestar-ev-text' }, extLink(e.url, e.text)),
           h('span', { className: 'lodestar-ev-meta' }, `${e.source}${e.at ? ` · ${e.at}` : ''} · +${e.points} · `,
             h('span', { className: `lodestar-prov prov-${e.prov}` }, e.prov === 'live' ? 'live' : e.prov === 'S' ? 'sourced' : e.prov)))))),
       h('section', null, h('h4', null, 'How it reaches the OEM'),
