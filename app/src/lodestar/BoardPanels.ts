@@ -3,7 +3,7 @@
 
 import { Panel } from '@/components/Panel';
 import { h } from '@/utils/dom-utils';
-import type { ExposureResult, Hotspot } from './exposure';
+import { groupRecalls, type ExposureResult, type Hotspot } from './exposure';
 import type { FamilyFilter, Indexed } from './network';
 import { scoreColor } from './overlay';
 
@@ -134,7 +134,7 @@ export class LodestarRegWatchPanel extends Panel {
     super({
       id: 'lodestar-regwatch',
       title: 'Regulatory & trade watch',
-      infoTooltip: 'Federal Register documents from the last 14 days on the network\'s watch terms, FDA device recalls and 510(k) decisions for the OEM (last 120 days), and export controls on critical inputs from public reporting.',
+      infoTooltip: 'Federal Register documents from the last 14 days on the network\'s watch terms, FDA device recalls and 510(k) decisions for the OEM (last 120 days, shown by generic FDA device class), and export controls on critical inputs from public reporting.',
     });
     this.showLoading('Loading Federal Register and openFDA…');
   }
@@ -152,10 +152,10 @@ export class LodestarRegWatchPanel extends Panel {
     if (s?.fda?.configured) {
       sections.push(h('section', null, h('h4', null, 'FDA device regulatory, last 120 days ', live()),
         (s.fda.recalls.length || s.fda.clearances.length) ? h('ul', { className: 'lodestar-evidence' },
-          ...s.fda.recalls.map((r) => h('li', null,
-            h('span', { className: 'lodestar-ev-kind' }, `Recall · ${r.status ?? ''}`),
+          ...groupRecalls(s.fda.recalls).map((r) => h('li', null,
+            h('span', { className: 'lodestar-ev-kind' }, `Recall · ${r.status ?? ''}${r.count > 1 ? ` · ${r.count} product entries` : ''}`),
             h('span', { className: 'lodestar-ev-text' }, r.url ? h('a', { href: r.url, target: '_blank', rel: 'noopener' }, r.product) : r.product),
-            h('span', { className: 'lodestar-ev-meta' }, `${r.initiated ?? ''}${r.reason ? ` · ${r.reason}` : ''}`))),
+            h('span', { className: 'lodestar-ev-meta' }, `${r.initiated ?? ''}${r.reason ? ` · root cause: ${r.reason}` : ''}`))),
           ...s.fda.clearances.map((c) => h('li', null,
             h('span', { className: 'lodestar-ev-kind' }, `510(k) ${c.kNumber ?? ''}`),
             h('span', { className: 'lodestar-ev-text' }, c.url ? h('a', { href: c.url, target: '_blank', rel: 'noopener' }, c.device) : c.device),

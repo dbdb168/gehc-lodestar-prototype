@@ -19,7 +19,8 @@ const MINUTE = 60_000;
 const REFRESH_MS = 5 * MINUTE;
 const FRESH_MS = 15 * MINUTE;
 // Historical display only; this does not extend the producer's freshness budget.
-const MAX_AGE_MS = 60 * MINUTE;
+// Lodestar seeds correlation every 2h from CI (upstream: every 5 min).
+const MAX_AGE_MS = (import.meta.env.VITE_LODESTAR === 'true' ? 180 : 60) * MINUTE;
 // Client clocks can lag the producer; reject only implausibly future-dated data.
 const CLOCK_SKEW_MS = 10 * MINUTE;
 

@@ -37,7 +37,7 @@ export class SanctionsPressurePanel extends Panel {
         ${this.renderSummaryCard(t('components.sanctionsPressure.summary.new'), data.newEntryCount, data.newEntryCount > 0 ? 'highlight' : '')}
         ${this.renderSummaryCard(
           t('components.sanctionsPressure.summary.sema'),
-          data.semaError ? `${data.semaCount} · ${data.semaError}` : data.semaCount,
+          data.semaError ? 'feed unavailable' : data.semaCount,
           data.semaError ? 'highlight' : '',
         )}
         ${this.renderSummaryCard(t('components.sanctionsPressure.summary.vessels'), data.vesselCount)}

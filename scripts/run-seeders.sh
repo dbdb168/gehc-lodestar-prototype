@@ -63,6 +63,10 @@ case "$group" in
   *) echo "usage: $0 fast|slow|daily|all" >&2; exit 2 ;;
 esac
 
+# Best-effort feeds: a failure is reported as a warning, not a red run.
+# GDELT's DOC API rate-limits shared CI runner IPs; the last pulse is kept.
+best_effort=" seed-lodestar-news-pulse "
+
 failed=()
 for s in "${list[@]}"; do
   start=$(date +%s)
@@ -71,7 +75,10 @@ for s in "${list[@]}"; do
   code=$?
   echo "::endgroup::"
   echo "$s: exit $code in $(( $(date +%s) - start ))s"
-  [ "$code" -ne 0 ] && failed+=("$s")
+  if [ "$code" -ne 0 ]; then
+    if [[ "$best_effort" == *" $s "* ]]; then echo "::warning::$s failed (best-effort; previous data kept)"
+    else failed+=("$s"); fi
+  fi
 done
 
 if [ "${#failed[@]}" -gt 0 ]; then

@@ -827,9 +827,9 @@ const COMMODITY_PANELS: Record<string, PanelConfig> = {
   'commodity-regulation': { name: 'Regulation & Trade News', enabled: true, priority: 2 },
   // Geopolitical signals (keyless sources; see docs/SEEDERS.md).
   cii: { name: 'Country Instability', enabled: true, priority: 1 },
-  'gdelt-intel': { name: 'Live Intelligence (GDELT)', enabled: true, priority: 1 },
+  'gdelt-intel': { name: 'Live Intelligence (GDELT)', enabled: false, priority: 1 }, // off by default: keyword-matched items are often off-topic
   'sanctions-pressure': { name: 'Sanctions Pressure', enabled: true, priority: 2 },
-  'ucdp-events': { name: 'Armed Conflict Events (UCDP)', enabled: true, priority: 2 },
+  'ucdp-events': { name: 'Armed Conflict Events (UCDP)', enabled: false, priority: 2 }, // off until a UCDP_ACCESS_TOKEN is set (API answers 401)
   politics: { name: 'World News', enabled: true, priority: 2 },
   middleeast: { name: 'Middle East', enabled: true, priority: 2 },
   asia: { name: 'Asia-Pacific', enabled: true, priority: 2 },
@@ -1479,7 +1479,9 @@ export const LAYER_TO_SOURCE: Partial<Record<keyof MapLayers, DataSourceId[]>> =
   ucdpEvents: ['ucdp_events'],
   displacement: ['unhcr'],
   climate: ['climate'],
-  sanctions: ['sanctions_pressure'],
+  // Lodestar shows the sanctions panel with the choropleth layer off; don't let
+  // the layer toggle mark the panel's source "Disabled".
+  ...(import.meta.env.VITE_LODESTAR === 'true' ? {} : { sanctions: ['sanctions_pressure'] as DataSourceId[] }),
   radiationWatch: ['radiation'],
 };
 

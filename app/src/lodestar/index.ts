@@ -5,7 +5,7 @@
 import type { AppContext } from '@/app/app-context';
 import { h } from '@/utils/dom-utils';
 import { loadNetwork, indexNetwork, type FamilyFilter, type Indexed, FAMILIES, FAMILY_LABELS } from './network';
-import { computeExposure, type ExposureResult, type Hotspot } from './exposure';
+import { computeExposure, exportSnapshot, type ExposureResult, type Hotspot } from './exposure';
 import { buildOverlay, type OverlayState } from './overlay';
 import type { LodestarHotspotsPanel } from './HotspotsPanel';
 import type { LodestarBriefPanel } from './BriefPanel';
@@ -111,6 +111,16 @@ export async function startLodestar(ctx: AppContext): Promise<void> {
     }
     mountFilter();
     render();
+  };
+
+  // Operator helper: run lodestarExportSnapshot() in the console of a browser
+  // with live data to download a fresh public/snapshot/last-good.json
+  // (docs/runbooks/refresh-snapshot.md). Public feed data only.
+  (window as unknown as { lodestarExportSnapshot: () => void }).lodestarExportSnapshot = () => {
+    const blob = new Blob([JSON.stringify(exportSnapshot())], { type: 'application/json' });
+    const a = h('a', { href: URL.createObjectURL(blob), download: 'last-good.json' }) as HTMLAnchorElement;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 5000);
   };
 
   mountFilter();

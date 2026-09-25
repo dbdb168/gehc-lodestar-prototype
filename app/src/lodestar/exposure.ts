@@ -6,8 +6,9 @@
 // time-to-recover gap penalty (TTS/TTR are synthetic, and labelled so).
 //
 // Every external number here comes from a live feed with its source, date and
-// link. When a feed fails, its signals are simply absent and the failure is
-// reported in `feeds`, never replaced with a made-up value.
+// link. When a feed fails, its last good real payload is used with its real
+// timestamp (see "last-good fallback"), or its signals are absent; the failure
+// is reported in `feeds`, never replaced with a made-up value.
 
 import { fetchCachedRiskScores } from '@/services/cached-risk-scores';
 import {
@@ -281,14 +282,59 @@ function combine(evidence: Evidence[]): number {
 
 // ---------- engine ----------
 
+type Recall = Signals['fda']['recalls'][number];
+/** One row per recall event: openFDA lists each affected product separately. */
+export function groupRecalls(recalls: Recall[]): Array<Recall & { count: number }> {
+  const out = new Map<string, Recall & { count: number }>();
+  for (const r of recalls) {
+    const k = `${r.product}|${r.initiated}|${r.status}|${r.reason}`;
+    const g = out.get(k);
+    if (g) g.count += 1; else out.set(k, { ...r, count: 1 });
+  }
+  return [...out.values()];
+}
+
+// ---------- last-good fallback ----------
+//
+// Tier 1: live. Tier 2: this browser's last good payload per feed. Tier 3: the
+// deployed snapshot (public/snapshot/last-good.json), exported from a browser
+// that had live data. Tiers 2 and 3 are real data shown with their real, older
+// timestamp and labelled as such; nothing is ever invented.
+
+const LAST_GOOD_PREFIX = 'lodestar-last-good:';
+interface SavedFeed { at: string; value?: unknown; map?: Array<[unknown, unknown]> }
+interface Snapshot { exportedAt: string; feeds: Record<string, SavedFeed> }
+
+let snapshotPromise: Promise<Snapshot | null> | null = null;
+function deployedSnapshot(): Promise<Snapshot | null> {
+  snapshotPromise ??= getJson<Snapshot>('/snapshot/last-good.json')
+    .then((s) => (s?.feeds ? s : null))
+    .catch(() => null);
+  return snapshotPromise;
+}
+
+const restore = <T>(saved: SavedFeed): T => (saved.map ? new Map(saved.map) : saved.value) as T;
+const utc = (iso: string) => `${iso.slice(0, 16).replace('T', ' ')} UTC`;
+
+/** Every feed's last good payload in this browser, in the snapshot file format. */
+export function exportSnapshot(): Snapshot {
+  const feeds: Record<string, SavedFeed> = {};
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (!k?.startsWith(LAST_GOOD_PREFIX)) continue;
+    try { feeds[k.slice(LAST_GOOD_PREFIX.length)] = JSON.parse(localStorage.getItem(k) ?? 'null'); } catch { /* skip */ }
+  }
+  return { exportedAt: new Date().toISOString(), feeds };
+}
+
+// ---------- engine ----------
+
 export async function computeExposure(ix: Indexed): Promise<ExposureResult> {
   const feeds: FeedStatus[] = [];
   const now = new Date().toISOString();
-  // Each feed's last good payload is kept per browser, so a feed that dies
-  // mid-demo falls back to real data with its real (older) timestamp, and the
-  // panel says so. Map values are stored as entry arrays.
+  // Map values are stored as entry arrays.
   const track = async <T>(name: string, fn: () => Promise<T>, fallback: T): Promise<T> => {
-    const storeKey = `lodestar-last-good:${name}`;
+    const storeKey = `${LAST_GOOD_PREFIX}${name}`;
     try {
       const v = await fn();
       feeds.push({ name, ok: true, at: now });
@@ -300,12 +346,17 @@ export async function computeExposure(ix: Indexed): Promise<ExposureResult> {
     } catch (err) {
       const detail = err instanceof Error ? err.message : String(err);
       try {
-        const saved = JSON.parse(localStorage.getItem(storeKey) ?? 'null');
+        const saved = JSON.parse(localStorage.getItem(storeKey) ?? 'null') as SavedFeed | null;
         if (saved?.at) {
-          feeds.push({ name, ok: false, at: saved.at, detail: `${detail}; showing last good data from ${saved.at.slice(0, 16).replace('T', ' ')} UTC`, stale: true });
-          return (saved.map ? new Map(saved.map) : saved.value) as T;
+          feeds.push({ name, ok: false, at: saved.at, detail: `${detail}; showing this browser's last good data from ${utc(saved.at)}`, stale: true });
+          return restore<T>(saved);
         }
       } catch { /* no usable last-good copy */ }
+      const snap = (await deployedSnapshot())?.feeds[name];
+      if (snap?.at) {
+        feeds.push({ name, ok: false, at: snap.at, detail: `${detail}; showing the deployed snapshot from ${utc(snap.at)}`, stale: true });
+        return restore<T>(snap);
+      }
       feeds.push({ name, ok: false, at: now, detail });
       return fallback;
     }
@@ -327,7 +378,11 @@ export async function computeExposure(ix: Indexed): Promise<ExposureResult> {
     track('Chokepoint status (NGA)', () => getJson<{ chokepoints: ChokepointStatus[] }>('/api/supply-chain/v1/get-chokepoint-status').then((d) => d.chokepoints ?? []), [] as ChokepointStatus[]),
     track('Earthquakes (USGS)', () => getJson<{ earthquakes: Quake[] }>('/api/seismology/v1/list-earthquakes').then((d) => d.earthquakes ?? []), [] as Quake[]),
     track('Natural events (EONET/GDACS/NHC)', () => getJson<{ events: NaturalEvent[] }>('/api/natural/v1/list-natural-events').then((d) => d.events ?? []), [] as NaturalEvent[]),
-    track('Travel advisories', () => getJson<{ advisories: Advisory[]; byCountry: Record<string, string> }>('/api/intelligence/v1/list-security-advisories'), { advisories: [] as Advisory[], byCountry: {} as Record<string, string> }),
+    // Only levels that score are kept (smaller last-good copies; nothing else is read).
+    track('Travel advisories', () => getJson<{ advisories: Advisory[]; byCountry: Record<string, string> }>('/api/intelligence/v1/list-security-advisories').then((d) => {
+      const byCountry = Object.fromEntries(Object.entries(d.byCountry ?? {}).filter(([, level]) => ADVISORY_POINTS[level]));
+      return { byCountry, advisories: (d.advisories ?? []).filter((a) => byCountry[a.country]) };
+    }), { advisories: [] as Advisory[], byCountry: {} as Record<string, string> }),
     track('Country instability (CII)', async () => {
       const r = await fetchCachedRiskScores();
       if (!r) throw new Error('no scores');
@@ -337,16 +392,14 @@ export async function computeExposure(ix: Indexed): Promise<ExposureResult> {
     track('Commodity quotes (Yahoo)', () => getJson<{ quotes: Quote[] }>('/api/market/v1/list-commodity-quotes').then((d) => d.quotes ?? []), [] as Quote[]),
   ]);
 
-  const histories = new Map<string, HistoryPoint[]>();
-  await track('Chokepoint transits (IMF PortWatch)', async () => {
+  const histories = await track('Chokepoint transits (IMF PortWatch)', async () => {
     const results = await Promise.all([...historyIds].map(async (id) => {
       const d = await getJson<{ history?: HistoryPoint[] }>(`/api/supply-chain/v1/get-chokepoint-history?chokepointId=${encodeURIComponent(id)}`);
       return [id, d.history ?? []] as const;
     }));
-    let any = false;
-    for (const [id, h] of results) { histories.set(id, h); if (h.length) any = true; }
-    if (!any) throw new Error('no history');
-  }, undefined);
+    if (!results.some(([, h]) => h.length)) throw new Error('no history');
+    return new Map<string, HistoryPoint[]>(results);
+  }, new Map<string, HistoryPoint[]>());
 
   const hotspots: Hotspot[] = [];
   const familiesOf = (productIds: Iterable<string>): Family[] =>
@@ -441,9 +494,9 @@ export async function computeExposure(ix: Indexed): Promise<ExposureResult> {
   }
   if (signals?.fda?.configured) {
     const ev: Evidence[] = [
-      ...signals.fda.recalls.slice(0, 5).map((r) => ({
+      ...groupRecalls(signals.fda.recalls).slice(0, 5).map((r) => ({
         signal: 'device-regulatory' as const,
-        text: `FDA recall (${r.status ?? 'status n/a'}): ${r.product}${r.reason ? ` — ${r.reason}` : ''}`,
+        text: `FDA recall (${r.status ?? 'status n/a'}): ${r.product}${r.count > 1 ? ` (${r.count} product entries)` : ''}${r.reason ? ` — root cause: ${r.reason}` : ''}`,
         source: 'openFDA device recalls', url: r.url, at: r.initiated, points: 25, prov: 'live' as const,
       })),
     ];

@@ -25,13 +25,32 @@ const NETWORK_PATHS = [resolve(here, '../../data/network.json'), resolve(here, '
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-async function gdelt(params) {
+// GDELT rejects OR'd terms unless the whole group is parenthesised.
+const gdeltQuery = (q) => (/\sOR\s/.test(q) && !/^\(.*\)$/.test(q.trim()) ? `(${q.trim()})` : q.trim());
+
+async function gdeltOnce(params) {
   const url = `${GDELT}?${new URLSearchParams({ ...params, format: 'json' })}`;
   const r = await fetch(url, { headers: { 'User-Agent': 'lodestar-seeder/1.0' }, signal: AbortSignal.timeout(20_000) });
-  if (!r.ok) throw new Error(`GDELT HTTP ${r.status}`);
+  if (!r.ok) throw Object.assign(new Error(`GDELT HTTP ${r.status}`), { retry: r.status === 429 || r.status >= 500 });
   const text = await r.text();
   if (!text.trim().startsWith('{')) throw new Error(`GDELT non-JSON: ${text.slice(0, 80)}`);
   return JSON.parse(text);
+}
+
+// Shared CI runner IPs hit GDELT's per-IP limit often: back off and retry
+// rate limits and network failures; query errors fail at once.
+async function gdelt(params) {
+  let wait = 10_000;
+  for (let attempt = 1; ; attempt++) {
+    try {
+      return await gdeltOnce(params);
+    } catch (err) {
+      const retryable = err.retry || err.name === 'TimeoutError' || /fetch failed/.test(err.message);
+      if (!retryable || attempt >= 4) throw err;
+      await sleep(wait);
+      wait *= 2;
+    }
+  }
 }
 
 function pulse(timeline) {
@@ -52,8 +71,8 @@ async function build() {
   const inputs = {};
   let ok = 0;
   for (const input of net.inputs) {
-    const query = input.live?.gdelt;
-    if (!query) continue;
+    if (!input.live?.gdelt) continue;
+    const query = gdeltQuery(input.live.gdelt);
     try {
       const timeline = await gdelt({ query, mode: 'timelinevol', timespan: '30d' });
       await sleep(SPACING_MS);
@@ -88,8 +107,10 @@ if (isMain) {
     schemaVersion: 1,
     maxStaleMin: 720,
   }).catch((err) => {
+    // Best-effort feed: GDELT being unreachable from CI must not fail the whole
+    // seeder group. The previous pulse (if any) stays, with its own fetchedAt.
     const cause = err.cause ? ` (cause: ${err.cause.message || err.cause.code || err.cause})` : '';
-    console.error('FATAL:', (err.message || err) + cause);
-    process.exit(1);
+    console.warn('WARNING: news pulse not refreshed:', (err.message || err) + cause);
+    process.exit(0);
   });
 }

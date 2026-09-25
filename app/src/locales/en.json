@@ -1060,7 +1060,7 @@
       "noChokepoints": "Chokepoint data loading...",
       "noShipping": "Shipping rate data not available",
       "noMinerals": "Mineral data loading...",
-      "upstreamUnavailable": "Supply chain data temporarily unavailable — showing cached data",
+      "upstreamUnavailable": "Partial coverage: live AIS vessel counts are not connected here. Transits are IMF PortWatch daily data; warnings are NGA.",
       "spikeAlert": "Spike detected — rate significantly above 52-week average (weekly)",
       "warnings": "warning(s)",
       "aisDisruptions": "AIS disruption(s)",

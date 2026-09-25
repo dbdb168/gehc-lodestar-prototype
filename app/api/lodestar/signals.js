@@ -19,7 +19,7 @@ import { scrubDeep, scrubReady } from './_scrub.js';
 
 export const config = { runtime: 'edge' };
 
-const CACHE_KEY = 'lodestar:signals:v2';
+const CACHE_KEY = 'lodestar:signals:v3';
 const CACHE_TTL_S = 1800;
 const DAY = 86_400_000;
 let memo = null;
@@ -69,6 +69,9 @@ async function federalRegister(term) {
     }));
 }
 
+const genericDevice = (name, code) =>
+  String(name || (code ? `FDA product code ${code}` : 'Device')).slice(0, 120);
+
 async function openFda() {
   // OEM_FDA_APPLICANT may list several registered names separated by '|'.
   const names = String(process.env.OEM_FDA_APPLICANT || '').split('|').map((n) => n.trim()).filter(Boolean);
@@ -86,16 +89,19 @@ async function openFda() {
     configured: true,
     recallsError: recalls.error && !notFound(recalls) ? recalls.error : undefined,
     clearancesError: k510.error && !notFound(k510) ? k510.error : undefined,
+    // Generic FDA classification names only. The firm's own free text
+    // (product_description, reason_for_recall, 510(k) device_name) carries
+    // product brand names, which must never render (CLAUDE.md rule 1).
     recalls: (recalls.results ?? []).map((r) => ({
-      product: String(r.product_description ?? '').slice(0, 200),
-      reason: String(r.reason_for_recall ?? '').slice(0, 240),
+      product: genericDevice(r.openfda?.device_name, r.product_code),
+      reason: String(r.root_cause_description ?? '').slice(0, 120),
       status: r.recall_status,
       initiated: r.event_date_initiated,
       productCode: r.product_code,
       url: r.res_event_number ? `https://www.accessdata.fda.gov/scripts/cdrh/cfdocs/cfRES/res.cfm?id=${encodeURIComponent(r.cfres_id ?? '')}` : undefined,
     })),
     clearances: (k510.results ?? []).map((r) => ({
-      device: String(r.device_name ?? '').slice(0, 200),
+      device: genericDevice(r.openfda?.device_name, r.product_code),
       kNumber: r.k_number,
       decision: r.decision_description,
       date: r.decision_date,
