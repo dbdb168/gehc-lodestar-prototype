@@ -830,7 +830,7 @@ const COMMODITY_PANELS: Record<string, PanelConfig> = {
   cii: { name: 'Country Instability', enabled: true, priority: 1 },
   'gdelt-intel': { name: 'Live Intelligence (GDELT)', enabled: false, priority: 1 }, // off by default: keyword-matched items are often off-topic
   'sanctions-pressure': { name: 'Sanctions Pressure', enabled: true, priority: 2 },
-  'ucdp-events': { name: 'Armed Conflict Events (UCDP)', enabled: false, priority: 2 }, // off until a UCDP_ACCESS_TOKEN is set (API answers 401)
+  'ucdp-events': { name: 'Armed Conflict Events (UCDP)', enabled: true, priority: 2 },
   politics: { name: 'World News', enabled: true, priority: 2 },
   middleeast: { name: 'Middle East', enabled: true, priority: 2 },
   asia: { name: 'Asia-Pacific', enabled: true, priority: 2 },
@@ -868,7 +868,7 @@ const COMMODITY_MAP_LAYERS: MapLayers = {
   minerals: true,
   fires: true,
   // Data source layers
-  ucdpEvents: false, // on once UCDP_ACCESS_TOKEN is set
+  ucdpEvents: true,
   displacement: false,
   climate: false,         // Climate events disrupt supply chains
   // Tech layers (disabled)
