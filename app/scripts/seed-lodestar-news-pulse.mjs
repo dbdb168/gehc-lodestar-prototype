@@ -106,6 +106,8 @@ if (isMain) {
     declareRecords: (d) => d?.covered ?? 0,
     schemaVersion: 1,
     maxStaleMin: 720,
+    // 9 inputs x 2 GDELT calls, 6 s apart, plus 429 back-off: well past the 4-min default.
+    fetchPhaseTimeoutMs: 12 * 60_000,
   }).catch((err) => {
     // Best-effort feed: GDELT being unreachable from CI must not fail the whole
     // seeder group. The previous pulse (if any) stays, with its own fetchedAt.
