@@ -35,6 +35,12 @@ function readFilter(): FamilyFilter {
 }
 function writeFilter(v: FamilyFilter): void {
   try { localStorage.setItem(FILTER_KEY, v); } catch { /* per-viewer convenience only */ }
+  // Keep the URL in step, so a copied link opens on the same filter.
+  try {
+    const url = new URL(location.href);
+    url.searchParams.set('product', v);
+    history.replaceState(history.state, '', url.toString());
+  } catch { /* history unavailable */ }
 }
 
 export async function startLodestar(ctx: AppContext): Promise<void> {

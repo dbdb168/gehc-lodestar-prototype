@@ -84,7 +84,7 @@ function clock(tts: number, ttr: number): HTMLElement {
     h('div', { className: 'ld-clock-row' }, h('span', null, 'Time to survive'), h('div', { className: 'ld-bar tts' }, h('i', { style: `width:${w(tts)}` })), h('b', null, `${tts} d`)),
     h('div', { className: 'ld-clock-row' }, h('span', null, 'Time to recover'), h('div', { className: `ld-bar ttr${gap <= 0 ? ' ok' : ''}` }, h('i', { style: `width:${w(ttr)}` })), h('b', null, `${ttr} d`)),
     gap <= 0
-      ? h('p', { className: 'ld-verdict' }, h('b', { className: 'ok' }, 'Covered.'), ` Stock outlasts recovery here by ${-gap} days.`)
+      ? h('p', { className: 'ld-verdict' }, h('b', { className: 'ok' }, 'Covered.'), gap === 0 ? ' Stock lasts exactly as long as recovery takes, with no margin.' : ` Stock outlasts recovery here by ${-gap} days.`)
       : h('p', { className: 'ld-verdict' }, h('b', { className: 'gap' }, `Exposed by ${gap} days.`), ' Recovery outruns stock on hand, so this needs action rather than monitoring.'),
   );
 }
@@ -140,7 +140,7 @@ function whyFlagged(x: Hotspot, input: Input | undefined): HTMLElement {
   return h('section', { className: 'ld-sec' },
     h('div', { className: 'ld-h4' }, 'Why this was flagged ', h('em', null, counts)),
     h('p', { className: 'ld-why' }, 'Flagged because ', h('b', null, `${ev.length} signal${ev.length === 1 ? '' : 's'}`),
-      ` point here, and they reach ${x.families.join(' and ') || 'the portfolio'}${gap ? ' where recovery time exceeds stock on hand' : ''}.`),
+      ` point${ev.length === 1 ? 's' : ''} here, and ${ev.length === 1 ? 'it reaches' : 'they reach'} ${x.families.join(' and ') || 'the portfolio'}${gap ? ' where recovery time exceeds stock on hand' : ''}.`),
     ...rows.map((e) => {
       const [k, label] = evidenceKind(e);
       return h('div', { className: 'ld-ev' },

@@ -9,7 +9,7 @@ import type { FamilyFilter, Indexed } from './network';
 import { scoreColor } from './overlay';
 
 const rgb = (s: number) => { const [r, g, b] = scoreColor(s); return `rgb(${r},${g},${b})`; };
-const money = (usd: number) => (usd >= 1e9 ? `$${(usd / 1e9).toFixed(1)}B` : usd >= 1e6 ? `$${Math.round(usd / 1e6)}M` : `$${Math.round(usd / 1e3)}K`);
+const money = (usd: number) => (usd >= 1e9 ? `$${(usd / 1e9).toFixed(1)}B` : usd >= 1e6 ? `$${Math.round(usd / 1e6)}M` : usd > 0 ? `$${Math.round(usd / 1e3)}K` : '$0');
 const synth = () => h('span', { className: 'lodestar-prov prov-synth', title: 'Synthetic demo value, not company data' }, 'synth');
 const live = () => h('span', { className: 'lodestar-prov prov-live', title: 'From live public feeds' }, 'live');
 // The provenance of what drives a score: its strongest evidence item.
@@ -131,7 +131,7 @@ export class LodestarInputClockPanel extends Panel {
             h('span', { className: 'lodestar-score sm', style: `background:${rgb(score)}` }, String(score))),
           h('div', { className: 'lodestar-bar tts' }, h('i', { style: `width:${w(i.tts_days!)}` }), h('b', null, `${i.tts_days} d`)),
           h('div', { className: `lodestar-bar ttr${gap <= 0 ? ' ok' : ''}` }, h('i', { style: `width:${w(i.ttr_days!)}` }), h('b', null, `${i.ttr_days} d`)),
-          h('div', { className: 'lodestar-hotspot-sub' }, gap > 0 ? `${exposed ? 'Exposed' : 'Gap'}: recovery outruns cover by ${gap} days` : `Covered by ${-gap} days`),
+          h('div', { className: 'lodestar-hotspot-sub' }, gap > 0 ? `${exposed ? 'Exposed' : 'Gap'}: recovery outruns cover by ${gap} days` : (gap === 0 ? 'Covered, with no margin' : `Covered by ${-gap} days`)),
         );
       }),
     ));

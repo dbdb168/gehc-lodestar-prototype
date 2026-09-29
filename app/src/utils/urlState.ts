@@ -230,6 +230,13 @@ export function buildMapUrl(
     params.set('chokepoint', state.chokepoint);
   }
 
+  // Lodestar: keep the product filter (?product=MR) through map-state rewrites,
+  // so demo links and copied URLs open on the same product line.
+  if (import.meta.env.VITE_LODESTAR === 'true' && typeof window !== 'undefined') {
+    const product = new URLSearchParams(window.location.search).get('product');
+    if (product) params.set('product', product);
+  }
+
   url.search = params.toString();
   return url.toString();
 }
