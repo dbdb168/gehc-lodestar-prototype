@@ -77,6 +77,7 @@ Sources are listed in `docs/DEMO_SCRIPT.md`.
 - **`prototype/data.js`:** the static prototype's wording is left as supplied.
 - **GDELT news pulse is still empty.** On 29 Sep GDELT's DOC API refused every query: 503 from this sandbox, and 429s and dropped connections from GitHub's runners.
   - The seeder now fails fast, and the feed line says "GDELT news pulse: unavailable".
+  - First CI run with the fix (29 Sep 18:55 UTC) finished in 349 s and published a partial pulse: helium answered (z 0.47, no spike); six inputs failed on GDELT 429s and dropped connections; two were skipped at the time budget. The feed line now reports the inputs that missed the refresh.
   - A durable fix is to derive the pulse from GDELT's bulk files. The upstream materializer already downloads them from CI without trouble, but a spike needs a 4-week baseline, which would have to build up in Redis over time.
 
 ## Changes to supplied content
