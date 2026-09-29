@@ -123,7 +123,8 @@ export class ChokepointStripPanel extends Panel {
       0,
     );
     const footer: SafeHtml = unsafeRawHtml(attributionFooterHtml({
-      sourceType: 'ais',
+      // Lodestar has no AIS relay: the numbers are derived from PortWatch and NGA.
+      sourceType: import.meta.env.VITE_LODESTAR === 'true' ? 'derived' : 'ais',
       method: t('components.chokepointStrip.attribution.method'),
       sampleSize: nAis || undefined,
       sampleLabel: t('components.chokepointStrip.attribution.sampleLabel'),

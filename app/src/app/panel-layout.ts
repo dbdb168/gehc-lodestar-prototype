@@ -1157,13 +1157,13 @@ export class PanelLayoutManager implements AppModule {
       <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
       <nav class="mobile-menu" id="mobileMenu" aria-label="Menu">
         <div class="mobile-menu-header">
-          <span class="mobile-menu-title">WORLD MONITOR</span>
+          <span class="mobile-menu-title">${import.meta.env.VITE_LODESTAR === 'true' ? 'LODESTAR' : 'WORLD MONITOR'}</span>
           <button class="mobile-menu-close" id="mobileMenuClose" aria-label="Close menu">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </div>
         <div class="mobile-menu-divider"></div>
-        <div class="mobile-menu-account" aria-label="Account">
+        ${/* Lodestar: no sign-in and one fixed variant, so skip the account row and the upstream variant list. */ import.meta.env.VITE_LODESTAR === 'true' ? '' : `<div class="mobile-menu-account" aria-label="Account">
           <span class="mobile-menu-account-icon" aria-hidden="true">◯</span>
           <div id="mobileAuthWidgetMount"></div>
           <button class="mobile-auth-fallback" id="mobileAuthFallback" type="button">Sign In</button>
@@ -1186,7 +1186,7 @@ export class PanelLayoutManager implements AppModule {
           </button>`
         ).join('');
       })()}
-        <div class="mobile-menu-divider"></div>
+        <div class="mobile-menu-divider"></div>`}
         <button class="mobile-menu-item" id="mobileMenuRegion">
           <span class="mobile-menu-item-icon">🌐</span>
           <span class="mobile-menu-item-label">${t('components.deckgl.views.global')}</span>
@@ -1287,7 +1287,7 @@ export class PanelLayoutManager implements AppModule {
           <img src="/lodestar-icon.svg" alt="" width="28" height="28" loading="lazy" decoding="async" class="site-footer-icon" />
           <div class="site-footer-brand-text">
             <span class="site-footer-name">LODESTAR</span>
-            <span class="site-footer-sub">Demo. OEM figures are synthetic and labelled; external feeds are live.</span>
+            <span class="site-footer-sub">Demo. OEM figures are synthetic, estimated or sourced, and tagged; external feeds are public, time-stamped and refreshed every 2–6 hours.</span>
           </div>
         </div>
         <nav aria-label="Lodestar references">

@@ -1,9 +1,9 @@
 {
   "shell": {
     "documentTitle": "Lodestar · Supply-chain command centre",
-    "metaDescription": "Real-time global intelligence platform. Featured in WIRED. Used by 2M+ people across 190 countries. Conflicts, markets, military, OSINT in one view.",
+    "metaDescription": "Supply-chain command centre for a medical imaging OEM. Demo: OEM figures are synthetic, estimated or sourced, and tagged; external feeds are public, time-stamped and refreshed every 2–6 hours.",
     "offlineTitle": "You're Offline",
-    "offlineMessage": "Lodestar requires an internet connection for real-time intelligence data.",
+    "offlineMessage": "Lodestar requires an internet connection for the latest intelligence data.",
     "offlineRetry": "Retry"
   },
   "widgets": {
@@ -622,7 +622,7 @@
         "minimal": "Minimal layers (conflicts + hotspots)"
       },
       "layer": {
-        "ais": "Toggle AIS vessel tracking",
+        "ais": "Toggle ship traffic layer (no AIS relay connected here)",
         "flights": "Toggle military flights",
         "conflicts": "Toggle conflict zones",
         "hotspots": "Toggle intel hotspots",
@@ -1088,7 +1088,7 @@
       "productionCaption": "Country shares of actual production. The map deposits layer shows where resources sit; this table shows who mines or refines them.",
       "productionProLocked": "Upgrade to PRO for mine and refinery country shares with concentration (HHI) by stage.",
       "risk": "Risk",
-      "infoTooltip": "<strong>Supply Chain Monitor</strong> Global logistics and resource tracking:<ul><li><strong>Chokepoints</strong>: Maritime transit status, disruption scores, and vessel counts</li><li><strong>Shipping</strong>: Baltic Dry Index and freight rate trends</li><li><strong>Minerals</strong>: Critical mineral concentration risk (HHI) and top producers</li></ul>Click a chokepoint card to expand transit history chart."
+      "infoTooltip": "<strong>Supply Chain Monitor</strong> Global logistics and resource tracking:<ul><li><strong>Chokepoints</strong>: Status and disruption scores, with IMF PortWatch daily transit counts (these lag a few days; no live AIS here) and NGA navigational warnings</li><li><strong>Shipping</strong>: Baltic Dry Index and freight rate trends</li><li><strong>Minerals</strong>: Critical mineral concentration risk (HHI) and top producers</li></ul>Click a chokepoint card to expand transit history chart."
     },
     "tradePolicy": {
       "overview": "Overview",
@@ -1512,11 +1512,11 @@
           "militaryBases": "US/NATO, China, Russia military installations (150+)",
           "militaryNuclear": "Power plants, enrichment, weapons facilities",
           "militaryIrradiators": "Industrial gamma irradiator facilities",
-          "militaryActivity": "Live military aircraft and vessel tracking",
+          "militaryActivity": "Military aircraft and naval vessel positions; not available in this deployment",
           "infraCablesFull": "Major undersea fiber optic cables (20 backbone routes)",
           "infraPipelinesFull": "Oil/gas pipelines (Nord Stream, TAPI, etc.)",
           "infraDatacentersFull": "AI compute clusters >=10,000 GPUs only",
-          "transportShipping": "Live vessel tracking via AIS (ship positions)",
+          "transportShipping": "Ship positions from an AIS relay; no AIS relay is connected in this deployment",
           "transportDelays": "Airport delays, ground stops, and NOTAM closures",
           "naturalEventsFull": "Earthquakes (USGS) + storms, fires, volcanoes, floods (NASA EONET)",
           "firesFull": "Active wildfires and fire perimeters (NASA FIRMS)",
@@ -2486,7 +2486,7 @@
       "proLocked": "Upgrade to PRO for commodity vulnerability scoring"
     },
     "hormuzTracker": {
-      "infoTooltip": "<strong>Hormuz Trade Tracker</strong> Live AIS vessel tracking through the Strait of Hormuz, the world's most critical oil chokepoint. Monitors tanker counts, disruption events, and weekly flow changes. Approximately 20% of global oil supply transits here daily.",
+      "infoTooltip": "<strong>Hormuz Trade Tracker</strong> A daily scrape of the WTO DataLab Strait of Hormuz Trade Tracker (AXSMarine data): 30-day series for crude oil, LNG and fertilizer outbound and agriculture inbound shipments. The status badge is read from the tracker's latest summary text. There is no live AIS vessel tracking here.",
       "title": "Hormuz Trade Tracker",
       "noData": "No data",
       "notAvailable": "N/A",
@@ -2803,7 +2803,7 @@
     },
     "chokepointStrip": {
       "title": "Chokepoint Status",
-      "infoTooltip": "Live status for the seven global oil & gas shipping chokepoints. Flow estimates calibrated from Portwatch DWT + AIS observations. See /docs/methodology/chokepoints for methodology.",
+      "infoTooltip": "Status for the seven global oil & gas shipping chokepoints. It draws on NGA navigational warnings and IMF PortWatch daily transit data, which lags a few days. Flow estimates scale EIA baseline volumes by PortWatch tanker transits. There is no live AIS vessel tracking here.",
       "unknown": "unknown",
       "shortName": {
         "hormuzStrait": "Hormuz",
@@ -2823,7 +2823,7 @@
         "noData": "No chokepoint data yet"
       },
       "attribution": {
-        "method": "Portwatch DWT + AIS calibration",
+        "method": "IMF PortWatch daily transits (no live AIS here)",
         "sampleLabel": "AIS disruption signals",
         "creditName": "EIA World Oil Transit Chokepoints"
       }

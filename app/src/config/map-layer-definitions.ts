@@ -377,7 +377,8 @@ const VARIANT_LAYER_ORDER: Record<MapVariant, Array<keyof MapLayers>> = {
   commodity: [
     'miningSites', 'processingPlants', 'commodityPorts', 'commodityHubs',
     'minerals', 'pipelines', 'waterways', 'tradeRoutes',
-    'ais', 'economic', 'fires', 'climate',
+    // Lodestar: no AIS relay is connected, so the ship-traffic layer would be empty.
+    ...(import.meta.env.VITE_LODESTAR === 'true' ? [] : ['ais' as const]), 'economic', 'fires', 'climate',
     'resilienceScore', 'natural', 'weather', 'canadaRoads', 'outages', 'sanctions', 'dayNight', 'canadaAlerts',
     // Lodestar: geopolitical layers for the supply-chain command centre.
     'conflicts', 'hotspots', 'cyberThreats', 'protests', 'ucdpEvents', 'ciiChoropleth',
