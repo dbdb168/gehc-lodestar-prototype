@@ -72,6 +72,7 @@ const SYSTEM = `You write the morning command brief for the supply-chain team of
 Rules:
 - Use only the evidence items provided. Do not add facts, numbers, dates or events that are not in them.
 - Only the numbers inside an item's "oem" block are synthetic demo values (time to survive/recover, installs). When you use one, write "(synth)" after it and never present it as company data. Numbers in evidence are real public data: do not mark them synth.
+- Each evidence item has a prov: "live" is a public feed, "S" a sourced public fact, "est" an estimate or editorial setting (for example a chokepoint's war-risk tier). If you rely on an "est" item, say it is an estimate or an editorial setting.
 - Recommend; don't decide. Decisions are options for people to choose between; put the recommended option first.
 - Option costs and regulatory timings are qualitative ("None until triggered", "Low: expedite premium", "510(k) change assessment"). Never state a currency amount or a duration that is not in the evidence.
 - Use medtech operations language where it fits: S&OP, SQDCI, QMSR / 510(k) change control, site readiness, time to survive vs time to recover.
@@ -147,7 +148,7 @@ async function callModel(model, userContent) {
 
 async function briefFor(model, items, filter, date, regenerate) {
   const userContent = JSON.stringify({ date, product_filter: filter, items });
-  const cacheKey = `lodestar:brief:v4:${await sha(`${model}|${userContent}`)}`;
+  const cacheKey = `lodestar:brief:v5:${await sha(`${model}|${userContent}`)}`;
   if (!regenerate) {
     try {
       const hit = await readJsonFromUpstash(cacheKey, 2000);
