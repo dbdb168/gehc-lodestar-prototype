@@ -13,6 +13,7 @@ import { validateApiKey } from '../_api-key.js';
 import { readJsonFromUpstash, setCachedData } from '../_upstash-json.js';
 import { chatWithFallback, underDailyCap, streamJson } from './_openrouter.js';
 import { scrubDeep, scrubReady } from './_scrub.js';
+import { unsupportedMoneyToText } from './_claims.js';
 
 export const config = { runtime: 'edge' };
 
@@ -26,9 +27,9 @@ const OPTION = {
   properties: {
     action: { type: 'string', description: 'Imperative, under 50 characters, e.g. "Hold, and pre-authorise a buy".' },
     detail: { type: 'string', description: 'One or two sentences: what exactly to do and when it triggers.' },
-    cost: { type: 'string', description: 'Rough, qualitative unless the evidence gives a number, e.g. "None until triggered", "Low: expedite premium".' },
-    protects: { type: 'string', description: 'What it protects, e.g. "Time to survive 41 → 120 days if triggered (synth)".' },
-    regulatory_time: { type: 'string', description: 'Regulatory impact, e.g. "None", "510(k) change assessment, weeks".' },
+    cost: { type: 'string', description: 'Qualitative, e.g. "None until triggered", "Low: expedite premium". No currency amounts unless in the evidence.' },
+    protects: { type: 'string', description: 'What it protects, e.g. "Near-term installs", "Extends cover if triggered". Synthetic numbers only from oem, marked (synth).' },
+    regulatory_time: { type: 'string', description: 'Qualitative regulatory impact, e.g. "None", "Letter to file", "510(k) change assessment". No durations unless in the evidence.' },
     confidence: { type: 'string', enum: ['High', 'Medium', 'Low'] },
     owner_function: { type: 'string', description: 'A function, never a person or job title: Procurement, S&OP council, Install PMO, Quality/RA, Logistics, Trade compliance, Commercial, Service.' },
   },
@@ -51,12 +52,13 @@ const SCHEMA = {
 
 const SYSTEM = `You write the evidence read for one supply-chain hotspot of a medical imaging OEM, for its supply-chain leadership. Write like a sharp briefing editor, not a report generator.
 Budgets (hard): headline under 50 characters, a question or a short claim; lede one sentence, under 30 words, the "so what"; story three short sentences, under 70 words, context only; option action under 45 characters; every other option field under 12 words.
-Style example (tone and length only; do not reuse its facts):
-  headline: "Rare-earth truce: decided today?"
-  lede: "The April licensing still bites. The wider controls are suspended, and the suspension is on the table today."
-  option: action "Hold, and pre-authorise a buy"; detail "Don't over-buy on today's headlines. Pre-approve a 90-day buy that triggers if the suspension lapses."; cost "None until triggered"; protects "Time to survive 60 → 150 days if triggered (synth)".
+Style example (tone and length only; it describes no real event, so never reuse its content):
+  headline: "Input supply: act now or watch?"
+  lede: "The signal is real but early; cover holds for now, and the decision is whether to pre-commit."
+  option: action "Hold, and pre-authorise a buy"; detail "Don't over-buy on one day's signal. Pre-approve a buy that triggers if the signal persists."; cost "None until triggered"; protects "Extends cover if triggered".
 Rules:
-- Use only the facts in the evidence. Never invent figures, percentages, dates or events. Numbers in "oem" are synthetic demo values: write "(synth)" after any you use, and don't recite them in the lede.
+- Use only the facts in the evidence. Never invent figures, percentages, dates, events or effect sizes. Evidence marked prov "S" is sourced public fact; "est" is an estimate or editorial setting (say so if you rely on it). Numbers in "oem" are synthetic demo values: write "(synth)" after any you use, and don't recite them in the lede. "oem.applies_to" lists the only products the input's cover applies to.
+- Option cost and regulatory fields are qualitative ("None until triggered", "Low: expedite premium", "510(k) change assessment"): no currency amounts or durations unless they are in the evidence.
 - Medtech operations language (S&OP, time to survive / time to recover, 510(k) change control, site readiness). Plain text, no markdown.
 - Never name a company, a person or a job title; owners are functions.
 - Options are recommendations for people to decide on. Recommended first. Prefer proportionate moves (hold, pre-authorise, trigger-based buys) over over-reaction to headlines. If the evidence is weak or calm, return watch-only: empty options and decide_by "".`;
@@ -78,9 +80,9 @@ function sanitize(it) {
     products: Array.isArray(it.products) ? it.products.slice(0, 8).map((p) => clip(p, 60)) : [],
     oem: it.oem && typeof it.oem === 'object' ? {
       input: clip(it.oem.input, 80) || undefined,
+      applies_to: Array.isArray(it.oem.applies_to) ? it.oem.applies_to.slice(0, 8).map((p) => clip(p, 60)) : undefined,
       tts_days: Number(it.oem.tts_days) || undefined, ttr_days: Number(it.oem.ttr_days) || undefined,
       installs_next_90d: Number(it.oem.installs_next_90d) || undefined,
-      controls: clip(it.oem.controls, 240) || undefined,
     } : undefined,
     evidence: Array.isArray(it.evidence) ? it.evidence.slice(0, 8).map((e) => ({
       text: clip(e.text, 300), source: clip(e.source, 80), at: clip(e.at, 20), prov: clip(e.prov, 8),
@@ -93,7 +95,7 @@ async function sha(text) {
   return [...new Uint8Array(buf)].slice(0, 12).map((b) => b.toString(16).padStart(2, '0')).join('');
 }
 
-function tidy(r) {
+function tidy(r, source = '') {
   return {
     headline: fit(strip(r.headline), 80),
     lede: fit(strip(r.lede), 260),
@@ -102,7 +104,7 @@ function tidy(r) {
     decide_by: /^\d{4}-\d{2}-\d{2}$/.test(r.decide_by ?? '') ? r.decide_by : '',
     decide_why: fit(strip(r.decide_why), 200),
     options: (Array.isArray(r.options) ? r.options : []).slice(0, 3).map((o) => ({
-      action: fit(strip(o.action), 70), detail: fit(strip(o.detail), 320), cost: fit(strip(o.cost), 90),
+      action: fit(strip(o.action), 70), detail: fit(strip(o.detail), 320), cost: unsupportedMoneyToText(fit(strip(o.cost), 90), source),
       protects: fit(strip(o.protects), 110), regulatory_time: fit(strip(o.regulatory_time), 90),
       confidence: ['High', 'Medium', 'Low'].includes(o.confidence) ? o.confidence : 'Medium',
       owner_function: fit(strip(o.owner_function), 40),
@@ -129,7 +131,7 @@ export default async function handler(req) {
     // The read is the drawer's editorial centrepiece: brief-quality model, cached.
     const model = process.env.LLM_MODEL_READ || process.env.LLM_MODEL_BRIEF || 'z-ai/glm-5.3';
     const userContent = JSON.stringify({ date, item });
-    const cacheKey = `lodestar:read:v2:${await sha(`${model}|${userContent}`)}`;
+    const cacheKey = `lodestar:read:v3:${await sha(`${model}|${userContent}`)}`;
     try {
       const hit = await readJsonFromUpstash(cacheKey, 2000);
       if (hit?.read) return { ...hit, cached: true };
@@ -140,7 +142,7 @@ export default async function handler(req) {
       schema: SCHEMA, schemaName: 'hotspot_read', maxTokens: 4000, temperature: 0.2,
       validate: (c) => !!(c?.headline && c?.lede),
     });
-    const out = { read: scrubDeep(tidy(r.content)), model: r.model, usage: r.usage, cost: r.cost, generatedAt: new Date().toISOString(), ...(r.fallbackFrom ? { fallbackFrom: r.fallbackFrom } : {}) };
+    const out = { read: scrubDeep(tidy(r.content, userContent)), model: r.model, usage: r.usage, cost: r.cost, generatedAt: new Date().toISOString(), ...(r.fallbackFrom ? { fallbackFrom: r.fallbackFrom } : {}) };
     await setCachedData(cacheKey, out, CACHE_TTL_S).catch(() => {});
     return { ...out, cached: false };
   })().catch((e) => ({ error: e.message || 'read failed' }));

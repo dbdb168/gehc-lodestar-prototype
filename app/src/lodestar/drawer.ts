@@ -7,7 +7,7 @@
 
 import { h } from '@/utils/dom-utils';
 import { extLink } from './links';
-import type { Evidence, ExposureResult, Hotspot } from './exposure';
+import { contributions, type Evidence, type ExposureResult, type Hotspot } from './exposure';
 import { type Indexed, type Input, chokepointByPortwatchName } from './network';
 import { decisionsFor } from './store';
 
@@ -51,10 +51,10 @@ function inputFor(ix: Indexed, x: Hotspot): Input | undefined {
 }
 
 interface Exposure { installs90: number; midPrice: number }
-function exposureOf(ix: Indexed, x: Hotspot): Exposure {
+function exposureOf(ix: Indexed, productIds: string[]): Exposure {
   let installs90 = 0;
   let value = 0;
-  for (const pid of x.products) {
+  for (const pid of productIds) {
     const p = ix.productById.get(pid);
     if (!p) continue;
     const n = p.installs_next_90d ?? 0;
@@ -102,8 +102,8 @@ function whatIf(ex: Exposure, tts: number, ttr: number): HTMLElement {
     const c = calc(i);
     out.replaceChildren(
       h('div', null, h('b', null, money(c.usd)), h('span', null, 'revenue at risk (synth)'), delta(c.usd, base.usd, money)),
-      h('div', null, h('b', null, String(c.installs)), h('span', null, 'installs at risk (synth)'), delta(c.installs, base.installs, String)),
-      h('div', null, h('b', null, `${c.short} d`), h('span', null, 'days without supply'), delta(c.short, base.short, (n) => `${n} d`)),
+      h('div', null, h('b', null, String(c.installs)), h('span', null, 'installs short (synth)'), delta(c.installs, base.installs, String)),
+      h('div', null, h('b', null, `${c.short} d`), h('span', null, 'days without supply (synth)'), delta(c.short, base.short, (n) => `${n} d`)),
     );
     steps.querySelectorAll('span').forEach((s) => s.classList.toggle('on', Number((s as HTMLElement).dataset.i) === i));
   };
@@ -112,14 +112,14 @@ function whatIf(ex: Exposure, tts: number, ttr: number): HTMLElement {
   return h('div', { className: 'ld-scen' },
     h('div', { className: 'ld-h4', style: 'margin-top:18px' }, 'What if ', h('em', null, 'the disruption lasts…')),
     slider, steps, out,
-    h('p', { className: 'ld-note' }, `Days without supply = min(disruption, ${ttr} d to recover) − ${tts} d of stock. Installs at risk = ${ex.installs90} installs due in 90 days × days without supply ÷ 90. Cover and installs are synthetic; list price is an estimate.`));
+    h('p', { className: 'ld-note' }, `Days without supply = min(disruption, ${ttr} d to recover) − ${tts} d of stock, never below 0. Installs short = ${ex.installs90} installs due in 90 days × days without supply ÷ 90, at most all ${ex.installs90}. Cover and installs are synthetic; list price is an estimate. (The board's "installs at risk" is a different, exposure-weighted measure.)`));
 }
 
 // ---------- sections ----------
 
 function evidenceKind(e: Evidence): ['source' | 'reference' | 'internal', string] {
   if (e.prov === 'live') return ['source', 'Source'];
-  if (e.prov === 'synth') return ['internal', 'Internal'];
+  if (e.prov === 'synth') return ['internal', 'Synthetic'];
   return ['reference', 'Reference'];
 }
 
@@ -132,9 +132,10 @@ function whyFlagged(x: Hotspot, input: Input | undefined): HTMLElement {
   }] : [];
   const rows = [...ev, ...internal];
   const max = Math.max(1, ...ev.map((e) => e.points));
+  const contrib = contributions(ev);
   const n = { source: 0, reference: 0, internal: 0 };
   for (const e of rows) n[evidenceKind(e)[0]]++;
-  const counts = [n.source && `${n.source} live`, n.reference && `${n.reference} reference`, n.internal && `${n.internal} internal`].filter(Boolean).join(' · ');
+  const counts = [n.source && `${n.source} live`, n.reference && `${n.reference} reference`, n.internal && `${n.internal} synthetic`].filter(Boolean).join(' · ');
   const gap = !!(input?.tts_days && input.ttr_days && input.ttr_days > input.tts_days);
   return h('section', { className: 'ld-sec' },
     h('div', { className: 'ld-h4' }, 'Why this was flagged ', h('em', null, counts)),
@@ -147,18 +148,25 @@ function whyFlagged(x: Hotspot, input: Input | undefined): HTMLElement {
         h('div', null,
           h('div', { className: 'ld-et' }, extLink(e.url, e.text)),
           h('div', { className: 'ld-em' }, h('span', null, `${e.source}${e.at ? ` · ${e.at}` : ''}`),
-            e.points ? h('span', { className: 'ld-str', title: `Adds ${e.points} to the score` }, h('i', { style: `width:${Math.round((e.points / max) * 100)}%` })) : null)));
+            e.points ? h('span', { className: 'ld-str', title: `Signal strength ${e.points}; adds ${contrib.get(e) ?? 0} to the score (strongest in full, others at 25%)` }, h('i', { style: `width:${Math.round((e.points / max) * 100)}%` })) : null,
+            e.stale ? h('span', null, 'last good copy (feed down)') : null)));
     }));
 }
 
-function cascade(ix: Indexed, x: Hotspot, input: Input | undefined, ex: Exposure): HTMLElement {
+function cascade(ix: Indexed, x: Hotspot, input: Input | undefined, coverProducts: string[], ex: Exposure): HTMLElement {
   const top = x.evidence.slice().sort((a, b) => b.points - a.points)[0];
   const products = x.products.map((p) => ix.productById.get(p)).filter((p) => !!p);
+  const coverNames = coverProducts.map((p) => ix.productById.get(p)?.name).filter(Boolean);
   const plants = [...new Set(products.flatMap((p) => [...(p.subassembly ?? []), ...(p.final_assembly ?? [])]))]
     .map((s) => ix.siteById.get(s)?.name.split(',')[0]).filter((s): s is string => !!s);
   const steps: Array<[string, string]> = [[SIGNAL_LABEL[top?.signal ?? 'news'], top?.text ?? x.subtitle]];
-  if (input) steps.push([input.name, `${input.origin.map((o) => o.place).slice(0, 2).join(' · ')}${input.controls ? ` · ${input.controls.split(';')[0]}` : ''}`]);
-  if (plants.length) steps.push(['Where it is used', plants.slice(0, 4).join(' · ')]);
+  if (x.kind === 'chokepoint') {
+    const cpId = x.id.slice(3);
+    const lanes = ix.net.lanes.filter((l) => l.via.some((v) => chokepointByPortwatchName(v)?.id === cpId));
+    steps.push(['OEM lanes through it', `${lanes.length} lane(s): ${lanes.map((l) => `${ix.siteById.get(l.from)?.name.split(',')[0]} → ${ix.siteById.get(l.to)?.name.split(',')[0]}`).slice(0, 3).join(' · ')}`]);
+  }
+  if (input) steps.push([input.name, `${input.origin.map((o) => o.place).slice(0, 2).join(' · ')}${input.controls ? ` · ${input.controls.split(';')[0]}` : ''}${x.kind === 'chokepoint' && coverNames.length ? ` · used in ${coverNames.join(', ')}` : ''}`]);
+  if (plants.length) steps.push(['Plants making these products', plants.slice(0, 4).join(' · ')]);
   steps.push(['Products', products.map((p) => p.name).join(' · ') || '—']);
   steps.push(['Output', `${ex.installs90} installs due in 90 days (synth); exposure scales with how long it lasts`]);
   return h('section', { className: 'ld-sec' },
@@ -198,12 +206,20 @@ function optionsView(opts: ReadOption[], decideBy: string, decideWhy: string, so
     h('p', { className: 'ld-note' }, source));
 }
 
-function readItem(ix: Indexed, x: Hotspot, input: Input | undefined, ex: Exposure) {
+function readItem(ix: Indexed, x: Hotspot, input: Input | undefined, coverProducts: string[], ex: Exposure) {
+  const evidence = x.evidence.slice().sort((a, b) => b.points - a.points).slice(0, 8).map((e) => ({ text: e.text, source: e.source, at: e.at, prov: e.prov }));
+  // Export controls are sourced public facts, not synthetic OEM data: they go in as evidence.
+  if (input?.controls && !x.evidence.some((e) => e.signal === 'export-control')) {
+    evidence.push({ text: `Export controls on ${input.name}: ${input.controls}`, source: 'Public reporting (OEM network research)', at: undefined, prov: 'S' });
+  }
   return {
     id: x.id, title: x.title, subtitle: x.subtitle, kind: x.kind, score: x.score,
     products: x.products.map((p) => ix.productById.get(p)?.name ?? p),
-    oem: { input: input?.name, tts_days: input?.tts_days, ttr_days: input?.ttr_days, installs_next_90d: ex.installs90 || undefined, controls: input?.controls },
-    evidence: x.evidence.slice().sort((a, b) => b.points - a.points).slice(0, 8).map((e) => ({ text: e.text, source: e.source, at: e.at, prov: e.prov })),
+    oem: {
+      input: input?.name, applies_to: coverProducts.map((p) => ix.productById.get(p)?.name ?? p),
+      tts_days: input?.tts_days, ttr_days: input?.ttr_days, installs_next_90d: ex.installs90 || undefined,
+    },
+    evidence,
   };
 }
 
@@ -224,12 +240,17 @@ function fetchRead(item: ReturnType<typeof readItem>): Promise<ReadResponse> {
 
 export function openDrawer(ix: Indexed, x: Hotspot, result: ExposureResult | null = null): void {
   close();
-  const input = inputFor(ix, x);
-  const ex = exposureOf(ix, x);
+  // For a chokepoint, the hooked input's cover (e.g. helium via Hormuz) only
+  // applies to the products that use that input, not every product on its lanes.
+  let input = inputFor(ix, x);
+  const coverProducts = input ? x.products.filter((p) => input!.used_in.includes(p)) : [];
+  if (input && !coverProducts.length) input = undefined;
+  const ex = exposureOf(ix, input ? coverProducts : x.products);
+  const exAll = exposureOf(ix, x.products);
   const [sevClass, sevLabel] = sev(x.score);
   const top = x.evidence.slice().sort((a, b) => b.points - a.points)[0];
   const newest = x.evidence.map((e) => e.at).filter(Boolean).sort().pop();
-  const item = readItem(ix, x, input, ex);
+  const item = readItem(ix, x, input, coverProducts, ex);
   const base = input?.tts_days && input.ttr_days ? atRisk(ex, daysShort(STEPS[BASE_STEP]![1], input.tts_days, input.ttr_days)) : null;
   const draftItem: Record<string, unknown> = {
     title: x.title, subtitle: x.subtitle, score: x.score, products: item.products,
@@ -249,7 +270,7 @@ export function openDrawer(ix: Indexed, x: Hotspot, result: ExposureResult | nul
   if (briefDecision) {
     optionsHost.replaceChildren(optionsView(
       briefDecision.options.map((o) => ({ ...o, owner_function: briefDecision.owner_function })),
-      briefDecision.decide_by, briefDecision.why, 'From the current Command brief. The model recommends; people decide.'));
+      briefDecision.decide_by, briefDecision.why, 'From the current Command brief. The model recommends; people decide. Costs, timings and confidence are model estimates, not company data.'));
     draftItem.options = briefDecision.options.map((o) => o.action);
   }
 
@@ -257,16 +278,16 @@ export function openDrawer(ix: Indexed, x: Hotspot, result: ExposureResult | nul
     h('aside', { className: 'lodestar-drawer ld', role: 'dialog', 'aria-modal': 'true', 'aria-label': `Evidence: ${x.title}` },
       h('section', { className: 'ld-sec ld-top' },
         h('button', { type: 'button', className: 'ld-back', onClick: close }, '← Back to map'),
-        h('div', { className: 'ld-kicker' }, h('span', { className: `ld-sev ${sevClass}` }, `${sevLabel} · ${x.score}`), category, h('span', null, 'Live')),
+        h('div', { className: 'ld-kicker' }, h('span', { className: `ld-sev ${sevClass}` }, `${sevLabel} · ${x.score}`), category, h('span', null, top?.stale ? 'Last good copy' : top?.prov === 'live' ? 'Live' : top?.prov === 'S' ? 'Sourced' : top?.prov === 'est' ? 'Estimate' : 'Synthetic')),
         title,
         h('div', { className: 'ld-place' }, h('b', null, x.title), ` · ${x.subtitle}${newest ? ` · latest ${newest}` : ''}`),
         lede, story, aiNote),
       chatter(x, input, result),
       whyFlagged(x, input),
-      cascade(ix, x, input, ex),
+      cascade(ix, x, input, coverProducts, exAll),
       input?.tts_days && input.ttr_days
         ? h('section', { className: 'ld-sec' },
-          h('div', { className: 'ld-h4' }, 'Survive vs recover ', h('em', null, `${input.name} · synthetic cover`)),
+          h('div', { className: 'ld-h4' }, 'Survive vs recover ', h('em', null, `${input.name} · ${coverProducts.map((p) => ix.productById.get(p)?.family).filter((v, i, a) => v && a.indexOf(v) === i).join(', ')} · synthetic cover`)),
           clock(input.tts_days, input.ttr_days),
           ex.installs90 ? whatIf(ex, input.tts_days, input.ttr_days) : null)
         : null,
@@ -300,7 +321,7 @@ export function openDrawer(ix: Indexed, x: Hotspot, result: ExposureResult | nul
     aiNote.textContent = `AI-written from the evidence below (${r.model ?? 'model'}${cost}${r.cached ? ' · cached' : ''}). It recommends; people decide.`;
     if (!briefDecision) {
       optionsHost.replaceChildren(rd.options.length
-        ? optionsView(rd.options, rd.decide_by, rd.decide_why, 'Options written by the model from the evidence above. Synthetic figures are labelled.')
+        ? optionsView(rd.options, rd.decide_by, rd.decide_why, 'Options written by the model from the evidence above. Costs, timings and confidence are model estimates; synthetic figures are labelled.')
         : h('p', { className: 'ld-quiet' }, 'Watch only. No action recommended; re-scored every 5 minutes.'));
       draftItem.options = rd.options.map((o) => o.action);
     }

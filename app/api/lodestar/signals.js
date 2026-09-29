@@ -19,7 +19,7 @@ import { scrubDeep, scrubReady } from './_scrub.js';
 
 export const config = { runtime: 'edge' };
 
-const CACHE_KEY = 'lodestar:signals:v3';
+const CACHE_KEY = 'lodestar:signals:v4';
 const CACHE_TTL_S = 1800;
 const DAY = 86_400_000;
 let memo = null;
@@ -72,6 +72,14 @@ async function federalRegister(term) {
 const genericDevice = (name, code) =>
   String(name || (code ? `FDA product code ${code}` : 'Device')).slice(0, 120);
 
+// Imaging device classes only: other classes (e.g. patient monitors) aren't
+// part of this network and would fingerprint the firm.
+const IMAGING = /tomograph|magnetic resonance|x-ray|radiograph|mammograph|fluorosc|ultrason|sonograph|emission|nuclear|gamma camera|scintillation|image processing|radiolog|imaging/i;
+
+// Link to FDA's device-class page, never the recall/510(k) record: those
+// print the applicant's name (CLAUDE.md rule 1).
+const classUrl = (code) => (code ? `https://www.accessdata.fda.gov/scripts/cdrh/cfdocs/cfpcd/classification.cfm?id=${encodeURIComponent(code)}` : undefined);
+
 async function openFda() {
   // OEM_FDA_APPLICANT may list several registered names separated by '|'.
   const names = String(process.env.OEM_FDA_APPLICANT || '').split('|').map((n) => n.trim()).filter(Boolean);
@@ -98,15 +106,15 @@ async function openFda() {
       status: r.recall_status,
       initiated: r.event_date_initiated,
       productCode: r.product_code,
-      url: r.res_event_number ? `https://www.accessdata.fda.gov/scripts/cdrh/cfdocs/cfRES/res.cfm?id=${encodeURIComponent(r.cfres_id ?? '')}` : undefined,
-    })),
+      url: classUrl(r.product_code),
+    })).filter((r) => IMAGING.test(r.product)),
     clearances: (k510.results ?? []).map((r) => ({
       device: genericDevice(r.openfda?.device_name, r.product_code),
-      kNumber: r.k_number,
       decision: r.decision_description,
       date: r.decision_date,
-      url: r.k_number ? `https://www.accessdata.fda.gov/scripts/cdrh/cfdocs/cfpmn/pmn.cfm?ID=${encodeURIComponent(r.k_number)}` : undefined,
-    })),
+      productCode: r.product_code,
+      url: classUrl(r.product_code),
+    })).filter((c) => IMAGING.test(c.device)),
   };
 }
 

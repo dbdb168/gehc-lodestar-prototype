@@ -20,7 +20,7 @@ const KINDS = {
   sop: {
     label: 'S&OP escalation',
     to: 'S&OP council',
-    ask: 'an S&OP escalation note: summary, what changed (with dates and sources), exposure (installs and revenue at risk, marked synth), decisions requested with a decide-by date, owner function and next review',
+    ask: 'an S&OP escalation note: summary, what changed (with dates and sources), exposure (installs and revenue at risk, marked synth), decisions requested with a [decide-by date] placeholder, owner function and a [next review date] placeholder (use a real date only if the facts give one)',
   },
   customer: {
     label: 'Customer install notice',

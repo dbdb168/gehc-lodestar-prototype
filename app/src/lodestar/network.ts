@@ -53,6 +53,8 @@ export interface Input {
   origin: InputOrigin[];
   industry_suppliers?: string[];
   controls?: string;
+  /** Source URL for sourced (S) facts on this input. */
+  src?: string;
   tts_days?: number;
   ttr_days?: number;
   cover_prov?: string;

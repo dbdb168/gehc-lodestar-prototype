@@ -5,7 +5,7 @@
 
 import { Panel } from '@/components/Panel';
 import { h } from '@/utils/dom-utils';
-import type { ExposureResult, Hotspot } from './exposure';
+import { installsAtRisk, HOT, type ExposureResult, type Hotspot } from './exposure';
 import type { FamilyFilter, Indexed } from './network';
 import { setBriefDecisions } from './store';
 
@@ -19,7 +19,7 @@ const money = (usd: number) => usd >= 1e9 ? `$${(usd / 1e9).toFixed(1)}B` : `$${
 
 export interface RevenueAtRisk { usd: number; installs: number; byProduct: Array<{ name: string; usd: number; installs: number; score: number }> }
 
-/** Synthetic: installs due in 90 days x mid list price x exposure/100, per product in the filter. */
+/** Synthetic: installs due in 90 days x exposure/100 (products at HOT or above only) x mid list price, per product in the filter. */
 export function revenueAtRisk(ix: Indexed, result: ExposureResult, filter: FamilyFilter): RevenueAtRisk {
   const byProduct = result.products
     .filter((p) => filter === 'ALL' || p.family === filter)
@@ -27,7 +27,7 @@ export function revenueAtRisk(ix: Indexed, result: ExposureResult, filter: Famil
       const prod = ix.productById.get(p.productId)!;
       const installs = prod.installs_next_90d ?? 0;
       const [lo, hi] = prod.price_usd ?? [0, 0];
-      const atRisk = Math.round(installs * (p.score / 100));
+      const atRisk = installsAtRisk(installs, p.score);
       return { name: prod.name, usd: atRisk * ((lo + hi) / 2), installs: atRisk, score: p.score };
     });
   return {
@@ -50,7 +50,7 @@ export class LodestarBriefPanel extends Panel {
     super({
       id: 'lodestar-brief',
       title: 'Command brief',
-      infoTooltip: 'Model-written from the top live exposure items and their evidence. It recommends; people decide. Revenue at risk is synthetic: installs due in 90 days (synth) x mid list price (est) x live exposure score.',
+      infoTooltip: `Model-written from the top exposure items and their evidence. It recommends; people decide. Revenue at risk is synthetic: installs due in 90 days (synth) x exposure score, for products scoring ${HOT} or more, x mid list price (est). Option costs and timings are the model's estimates.`,
     });
     this.showLoading('Waiting for live exposure scores…');
   }
@@ -83,7 +83,7 @@ export class LodestarBriefPanel extends Panel {
           id: x.id, title: x.title, kind: x.kind, subtitle: x.subtitle, score: x.score,
           products: x.products.map((p) => ix.productById.get(p)?.name ?? p),
           oem: { tts_days: inp?.tts_days, ttr_days: inp?.ttr_days, installs_next_90d: installs || undefined },
-          evidence: x.evidence.map((e) => ({ text: e.text, source: e.source, at: e.at, prov: e.prov })),
+          evidence: x.evidence.slice().sort((a, b) => b.points - a.points).map((e) => ({ text: e.text, source: e.source, at: e.at, prov: e.prov })),
         };
       });
   }
@@ -163,11 +163,12 @@ export class LodestarBriefPanel extends Panel {
         h('div', { className: 'lodestar-decision-why' }, d.why),
         h('ol', { className: 'lodestar-options' }, ...d.options.map((o) => h('li', null,
           h('span', { className: 'lodestar-opt-action' }, o.action),
-          h('span', { className: 'lodestar-opt-meta' }, `Cost ${o.cost} · Protects ${o.protects} · Regulatory ${o.regulatory_time} · Confidence ${o.confidence}`)))),
+          h('span', { className: 'lodestar-opt-meta' }, `Cost ${o.cost} · Protects ${o.protects} · Regulatory ${o.regulatory_time} · Confidence ${o.confidence} · `,
+            h('span', { className: 'lodestar-prov prov-est', title: 'Cost, timing and confidence are the model\'s estimates from the evidence, not company data' }, 'model estimate'))))),
       )),
       b.watch?.length ? h('div', { className: 'lodestar-watch' }, h('span', { className: 'lodestar-ev-kind' }, 'Watch'),
         h('ul', null, ...b.watch.map((w) => h('li', null, w)))) : null,
-      h('div', { className: 'lodestar-ai-note' }, 'Model-written from the live evidence shown in Hotspots. It recommends options; people decide. Figures marked synthetic are demo values, not company data.'),
+      h('div', { className: 'lodestar-ai-note' }, 'Model-written from the evidence shown in Hotspots. It recommends options; people decide. Figures marked synthetic are demo values, not company data; option costs and timings are model estimates.'),
     );
   }
 }

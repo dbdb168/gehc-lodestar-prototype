@@ -15,6 +15,7 @@ import { validateApiKey } from '../_api-key.js';
 import { readJsonFromUpstash, setCachedData } from '../_upstash-json.js';
 import { chatWithFallback, underDailyCap, streamJson } from './_openrouter.js';
 import { scrubDeep, scrubReady } from './_scrub.js';
+import { unsupportedMoneyToText } from './_claims.js';
 
 export const config = { runtime: 'edge' };
 
@@ -46,15 +47,16 @@ const SCHEMA = {
             type: 'array',
             minItems: 2,
             maxItems: 3,
+            description: 'Recommended option first.',
             items: {
               type: 'object',
               additionalProperties: false,
               required: ['action', 'cost', 'protects', 'regulatory_time', 'confidence'],
               properties: {
                 action: { type: 'string' },
-                cost: { type: 'string' },
+                cost: { type: 'string', description: 'Qualitative only, e.g. "None until triggered", "Low: expedite premium", "High: dual-source qualification". No currency figures unless the figure is in the evidence.' },
                 protects: { type: 'string' },
-                regulatory_time: { type: 'string', description: 'e.g. "None", "Letter to file", "510(k) change: 6-9 months"' },
+                regulatory_time: { type: 'string', description: 'Qualitative, e.g. "None", "Letter to file", "510(k) change assessment". No durations unless they are in the evidence.' },
                 confidence: { type: 'string', enum: ['High', 'Medium', 'Low'] },
               },
             },
@@ -70,7 +72,8 @@ const SYSTEM = `You write the morning command brief for the supply-chain team of
 Rules:
 - Use only the evidence items provided. Do not add facts, numbers, dates or events that are not in them.
 - Only the numbers inside an item's "oem" block are synthetic demo values (time to survive/recover, installs). When you use one, write "(synth)" after it and never present it as company data. Numbers in evidence are real public data: do not mark them synth.
-- Recommend; don't decide. Decisions are options for people to choose between.
+- Recommend; don't decide. Decisions are options for people to choose between; put the recommended option first.
+- Option costs and regulatory timings are qualitative ("None until triggered", "Low: expedite premium", "510(k) change assessment"). Never state a currency amount or a duration that is not in the evidence.
 - Use medtech operations language where it fits: S&OP, SQDCI, QMSR / 510(k) change control, site readiness, time to survive vs time to recover.
 - Never name a company or a person. Say "the OEM" for the manufacturer. Owners are functions (Procurement, Install PMO, S&OP council, Quality/RA, Logistics, Trade compliance, Commercial).
 - If the evidence is calm for the selected product line, say so plainly: telling the team what not to worry about is part of the job.
@@ -98,10 +101,11 @@ function firstSentences(s, n) {
   return parts.slice(0, n).join(' ').trim().slice(0, 600);
 }
 
-function tidy(brief) {
+function tidy(brief, source = '') {
   const deep = (v) => (typeof v === 'string' ? plain(v) : Array.isArray(v) ? v.map(deep) : v && typeof v === 'object' ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, deep(x)])) : v);
   const out = deep(brief);
   out.brief = firstSentences(brief.brief, 3);
+  for (const d of out.decisions ?? []) for (const o of d.options ?? []) o.cost = unsupportedMoneyToText(o.cost, source);
   return out;
 }
 
@@ -138,12 +142,12 @@ async function callModel(model, userContent) {
     schema: SCHEMA, schemaName: 'command_brief', maxTokens: 4000,
     validate: (b) => !!(b?.headline && b?.brief),
   });
-  return { brief: scrubDeep(tidy(r.content)), model: r.model, usage: r.usage, cost: r.cost, ...(r.fallbackFrom ? { fallbackFrom: r.fallbackFrom } : {}) };
+  return { brief: scrubDeep(tidy(r.content, userContent)), model: r.model, usage: r.usage, cost: r.cost, ...(r.fallbackFrom ? { fallbackFrom: r.fallbackFrom } : {}) };
 }
 
 async function briefFor(model, items, filter, date, regenerate) {
   const userContent = JSON.stringify({ date, product_filter: filter, items });
-  const cacheKey = `lodestar:brief:v3:${await sha(`${model}|${userContent}`)}`;
+  const cacheKey = `lodestar:brief:v4:${await sha(`${model}|${userContent}`)}`;
   if (!regenerate) {
     try {
       const hit = await readJsonFromUpstash(cacheKey, 2000);

@@ -35,7 +35,9 @@ export function scoreColor(score: number, alpha = 230): RGBA {
 }
 
 const PROV_LABEL: Record<string, string> = { S: 'sourced', est: 'estimate', synth: 'synthetic' };
-const prov = (p?: string) => (p ? `<span class="lodestar-prov">${escapeHtml(PROV_LABEL[p.split(/[\s/(]/)[0]!] ?? p)}</span>` : '');
+// Every provenance token with its qualifier, e.g. "S (state); location est" -> "sourced (state); location estimate".
+const provText = (p: string) => p.replace(/\b(S|est|synth)\b/g, (t) => PROV_LABEL[t] ?? t);
+const prov = (p?: string) => (p ? `<span class="lodestar-prov">${escapeHtml(provText(p))}</span>` : '');
 
 export function buildOverlay(state: OverlayState, onSelect: (h: Hotspot) => void): LodestarOverlay {
   const { ix, result, filter } = state;
@@ -249,12 +251,12 @@ export function buildOverlay(state: OverlayState, onSelect: (h: Hotspot) => void
       const s = o as Site;
       const score = siteScore(s);
       const products = [...(ix.productsBySite.get(s.id) ?? [])].map((p) => ix.productById.get(p)?.name).filter(Boolean);
-      return `<strong>${escapeHtml(s.name)}</strong> ${prov(s.prov)}<br/>${escapeHtml(s.role ?? s.type)}${products.length ? `<br/>${escapeHtml(products.join(' · '))}` : ''}${s.type !== 'demand' ? `<br/>Live exposure ${score}` : ''}`;
+      return `<strong>${escapeHtml(s.name)}</strong> ${prov(s.prov)}<br/>${escapeHtml(s.role ?? s.type)}${products.length ? `<br/>${escapeHtml(products.join(' · '))}` : ''}${s.type !== 'demand' ? `<br/>Exposure ${score}` : ''}`;
     }
     if (id === 'lodestar-inputs') {
       const { input, origin } = o;
       const h = hotspotById.get(o.id as string);
-      return `<strong>${escapeHtml(input.name)}</strong><br/>${escapeHtml(origin.place)}${origin.share ? ` · ${escapeHtml(origin.share)}` : ''}<br/>Used in ${input.used_in.length} product(s) · live exposure ${h?.score ?? 0}${input.tts_days ? `<br/>Time to survive ${input.tts_days} d vs recover ${input.ttr_days} d ${prov(input.cover_prov)}` : ''}`;
+      return `<strong>${escapeHtml(input.name)}</strong><br/>${escapeHtml(origin.place)}${origin.share ? ` · ${escapeHtml(origin.share)}` : ''}<br/>Used in ${input.used_in.length} product(s) · exposure ${h?.score ?? 0}${input.tts_days ? `<br/>Time to survive ${input.tts_days} d vs recover ${input.ttr_days} d ${prov(input.cover_prov)}` : ''}`;
     }
     if (id === 'lodestar-ports') {
       const s = o as Site;

@@ -24,6 +24,8 @@ export interface Evidence {
   points: number;
   /** Provenance: live feed, or S/est/synth for OEM-side facts. */
   prov: 'live' | 'S' | 'est' | 'synth';
+  /** Live evidence restored from a last-good copy because its feed failed. */
+  stale?: boolean;
 }
 
 export type HotspotKind = 'site' | 'input' | 'chokepoint' | 'regulatory';
@@ -72,7 +74,7 @@ async function getJson<T>(path: string): Promise<T> {
   return r.json() as Promise<T>;
 }
 
-interface ChokepointStatus { id: string; name: string; status: string; disruptionScore: number; activeWarnings: number }
+interface ChokepointStatus { id: string; name: string; status: string; disruptionScore: number; activeWarnings: number; warRiskTier?: string; fetchedAt?: string }
 interface HistoryPoint { date: string; total: number }
 interface Quake { id: string; place: string; magnitude: number; location: { latitude: number; longitude: number }; occurredAt: number; sourceUrl?: string }
 interface NaturalEvent { id: string; title: string; category: string; categoryTitle?: string; lat: number; lon: number; date: number; sourceUrl?: string; sourceName?: string; closed?: boolean; windKt?: number }
@@ -136,7 +138,7 @@ function chokepointTrafficEvidence(name: string, history: HistoryPoint[]): Evide
   const pct = Math.round(drop * 100);
   return {
     signal: 'chokepoint',
-    text: `${name}: ${latest.total} transit${latest.total === 1 ? '' : 's'} on ${latest.date} vs a 90-day average of ${baseAvg.toFixed(1)}/day (${pct >= 0 ? '−' : '+'}${Math.abs(pct)}%). Last 7 days: ${recentAvg.toFixed(1)}/day.`,
+    text: `${name}: ${latest.total} transit${latest.total === 1 ? '' : 's'} on ${latest.date} vs a 90-day average of ${baseAvg.toFixed(1)}/day in the 90 days before last week (${pct === 0 ? 'no change' : `${pct > 0 ? '−' : '+'}${Math.abs(pct)}%`}). Last 7 days: ${recentAvg.toFixed(1)}/day.`,
     source: 'IMF PortWatch',
     url: 'https://portwatch.imf.org/pages/port-monitor',
     at: latest.date,
@@ -145,16 +147,37 @@ function chokepointTrafficEvidence(name: string, history: HistoryPoint[]): Evide
   };
 }
 
-function chokepointStatusEvidence(cp: ChokepointStatus): Evidence | null {
-  if (!cp.disruptionScore) return null;
-  return {
+// Upstream's chokepoint "disruption score" is mostly a fixed editorial threat
+// level (Lloyd's Joint War Committee listed areas + OSINT; THREAT_CONFIG_LAST_REVIEWED
+// in server/worldmonitor/supply-chain/v1/get-chokepoint-status.ts). Only the
+// navigational warnings are live, so the two are separate evidence items.
+const WAR_RISK: Record<string, [string, number]> = {
+  WAR_RISK_TIER_WAR_ZONE: ['war zone', 70], WAR_RISK_TIER_CRITICAL: ['critical', 40],
+  WAR_RISK_TIER_HIGH: ['high', 30], WAR_RISK_TIER_ELEVATED: ['elevated', 15],
+};
+const THREAT_CONFIG_REVIEWED = '4 Mar 2026';
+
+function chokepointStatusEvidence(cp: ChokepointStatus): Evidence[] {
+  const out: Evidence[] = [];
+  const n = cp.activeWarnings ?? 0;
+  if (n > 0) out.push({
     signal: 'chokepoint',
-    text: `${cp.name}: status ${cp.status}, disruption score ${cp.disruptionScore}/100 (${cp.activeWarnings} active navigational warning${cp.activeWarnings === 1 ? '' : 's'}).`,
-    source: 'NGA maritime safety warnings + threat config',
+    text: `${cp.name}: ${n} active navigational warning${n === 1 ? '' : 's'} in the area.`,
+    source: 'NGA maritime safety information',
     url: 'https://msi.nga.mil/NavWarnings',
-    points: Math.round(cp.disruptionScore * 0.4),
+    at: cp.fetchedAt ? fmtDate(cp.fetchedAt) : undefined,
+    points: Math.min(15, n * 5),
     prov: 'live',
-  };
+  });
+  const tier = cp.warRiskTier ? WAR_RISK[cp.warRiskTier] : undefined;
+  if (tier) out.push({
+    signal: 'chokepoint',
+    text: `${cp.name}: war-risk tier "${tier[0]}" (Lloyd's Joint War Committee listed areas and OSINT; threat configuration last reviewed ${THREAT_CONFIG_REVIEWED}).`,
+    source: 'Editorial threat configuration (not a live feed)',
+    points: Math.round(tier[1] * 0.4),
+    prov: 'est',
+  });
+  return out;
 }
 
 function quakeEvidence(lat: number, lon: number, quakes: Quake[]): Evidence[] {
@@ -221,25 +244,30 @@ function advisoryEvidence(iso: string | null, byCountry: Record<string, string>,
   };
 }
 
-function countryRiskEvidence(iso: string | null, cii: Map<string, { name: string; score: number; level: string; trend: string }>): Evidence | null {
+type CiiEntry = { name: string; score: number; level: string; trend: string; lastUpdated?: string | null };
+
+function countryRiskEvidence(iso: string | null, cii: Map<string, CiiEntry>): Evidence | null {
   if (!iso) return null;
   const c = cii.get(iso);
-  if (!c || c.score < 45) return null;
+  // A country the index itself rates normal or low adds nothing.
+  if (!c || c.score < 45 || c.level === 'normal' || c.level === 'low') return null;
   return {
     signal: 'country-risk',
     text: `Country instability for ${c.name}: ${Math.round(c.score)}/100 (${c.level}, ${c.trend}).`,
-    source: 'Country Instability Index (conflict, unrest, advisories, sanctions, hazards)',
+    source: 'Country Instability Index (World Monitor composite: conflict, unrest, advisories, sanctions, hazards)',
+    at: c.lastUpdated ? fmtDate(c.lastUpdated) : undefined,
     points: Math.round(clamp((c.score - 40) * 1.1, 0, 55)),
     prov: 'live',
   };
 }
 
-function exportControlEvidence(controls: string | undefined): Evidence | null {
+function exportControlEvidence(controls: string | undefined, src?: string): Evidence | null {
   if (!controls || !/export control|licens|ban|restrict|authoris/i.test(controls)) return null;
   return {
     signal: 'export-control',
     text: `Export controls on this input: ${controls}`,
     source: 'OEM network research (public reporting)',
+    url: src,
     points: 30,
     prov: 'S',
   };
@@ -268,19 +296,49 @@ function inputSignalEvidence(inputId: string, yahoo: string | undefined, signals
       signal: 'news',
       text: `News volume on "${p.query}" is ${p.z.toFixed(1)} standard deviations above its 4-week norm.${top ? ` Top story: ${top.title}` : ''}`,
       source: `GDELT${top?.domain ? ` · ${top.domain}` : ''}`,
-      url: top?.url, points: Math.round(clamp(10 + p.z * 5, 0, 35)), prov: 'live',
+      url: top?.url, at: signals?.newsPulse?.fetchedAt ? fmtDate(signals.newsPulse.fetchedAt) : undefined,
+      points: Math.round(clamp(10 + p.z * 5, 0, 35)), prov: 'live',
     });
   }
   const q = yahoo ? quotes.find((x) => x.symbol === yahoo) : undefined;
   if (q && Number.isFinite(q.change) && Math.abs(q.change) >= 1) {
     out.push({
       signal: 'commodity',
-      text: `${yahoo} ${q.change > 0 ? 'up' : 'down'} ${Math.abs(q.change).toFixed(2)}% today at ${q.price}. A cost signal, not a supply one (daily move).`,
-      source: 'Yahoo Finance (via commodity quotes)',
+      text: `${yahoo} ${q.change > 0 ? 'up' : 'down'} ${Math.abs(q.change).toFixed(2)}% on the latest daily move, at ${q.price}. A cost signal, not a supply one.`,
+      source: 'Yahoo Finance (via commodity quotes, refreshed every 2 hours)',
+      url: `https://finance.yahoo.com/quote/${encodeURIComponent(yahoo!)}`,
       points: Math.round(clamp(Math.abs(q.change) * 3, 0, 15)), prov: 'live',
     });
   }
   return out;
+}
+
+/** The feed an evidence item came from (names as in `feeds`). */
+function feedOf(e: Evidence): string {
+  switch (e.signal) {
+    case 'chokepoint': return e.source.startsWith('IMF PortWatch') ? 'Chokepoint transits (IMF PortWatch)' : 'Chokepoint status (NGA)';
+    case 'quake': return 'Earthquakes (USGS)';
+    case 'natural': return 'Natural events (EONET/GDACS/NHC)';
+    case 'advisory': return 'Travel advisories';
+    case 'country-risk': return 'Country instability (CII)';
+    case 'commodity': return 'Commodity quotes (Yahoo)';
+    case 'regulatory': case 'device-regulatory': case 'news': return 'Federal Register, openFDA, GDELT pulse';
+    default: return '';
+  }
+}
+
+/** Score items "worth diving into" start here (map markers, heat, installs at risk). */
+export const HOT = 35;
+
+/** Installs at risk shown on the board and brief: exposure-weighted, and none below HOT. Synthetic. */
+export function installsAtRisk(installsDue: number, score: number): number {
+  return score >= HOT ? Math.round(installsDue * (score / 100)) : 0;
+}
+
+/** What each item actually adds to the score under combine(): the strongest in full, the rest at 25%. */
+export function contributions(evidence: Evidence[]): Map<Evidence, number> {
+  const sorted = evidence.slice().sort((a, b) => b.points - a.points);
+  return new Map(sorted.map((e, i) => [e, i === 0 ? e.points : Math.round(e.points * 0.25)]));
 }
 
 function combine(evidence: Evidence[]): number {
@@ -297,9 +355,10 @@ function combine(evidence: Evidence[]): number {
 /** Product families an FDA generic device class belongs to ([] if it spans modalities). */
 export function familiesForDeviceClass(name: string): Family[] {
   const n = name.toLowerCase();
+  // Emission tomography (PET/SPECT) first: its class name also says "tomography, computed".
+  if (/emission|nuclear|positron|gamma camera|scintillation/.test(n)) return ['MI'];
   if (/tomography, computed|computed tomography/.test(n)) return ['CT'];
   if (/magnetic resonance/.test(n)) return ['MR'];
-  if (/emission|nuclear|positron|gamma camera|scintillation/.test(n)) return ['MI'];
   if (/ultrason|sonograph|echocardiograph/.test(n)) return ['US'];
   if (/x-ray|radiograph|mammograph|fluorosc/.test(n)) return ['XR'];
   return [];
@@ -398,7 +457,8 @@ export async function computeExposure(ix: Indexed): Promise<ExposureResult> {
   }
 
   const [status, quakes, natural, advisories, cii, signals, quotes] = await Promise.all([
-    track('Chokepoint status (NGA)', () => getJson<{ chokepoints: ChokepointStatus[] }>('/api/supply-chain/v1/get-chokepoint-status').then((d) => d.chokepoints ?? []), [] as ChokepointStatus[]),
+    track('Chokepoint status (NGA)', () => getJson<{ chokepoints: ChokepointStatus[]; fetchedAt?: string }>('/api/supply-chain/v1/get-chokepoint-status')
+      .then((d) => (d.chokepoints ?? []).map((c) => ({ ...c, fetchedAt: d.fetchedAt }))), [] as ChokepointStatus[]),
     track('Earthquakes (USGS)', () => getJson<{ earthquakes: Quake[] }>('/api/seismology/v1/list-earthquakes').then((d) => d.earthquakes ?? []), [] as Quake[]),
     track('Natural events (EONET/GDACS/NHC)', () => getJson<{ events: NaturalEvent[] }>('/api/natural/v1/list-natural-events').then((d) => d.events ?? []), [] as NaturalEvent[]),
     // Only levels that score are kept (smaller last-good copies; nothing else is read).
@@ -409,15 +469,17 @@ export async function computeExposure(ix: Indexed): Promise<ExposureResult> {
     track('Country instability (CII)', async () => {
       const r = await fetchCachedRiskScores();
       if (!r) throw new Error('no scores');
-      return new Map(r.cii.map((c) => [c.code, { name: c.name, score: c.score, level: c.level, trend: c.trend }]));
-    }, new Map<string, { name: string; score: number; level: string; trend: string }>()),
+      return new Map<string, CiiEntry>(r.cii.map((c) => [c.code, { name: c.name, score: c.score, level: c.level, trend: c.trend, lastUpdated: c.lastUpdated }]));
+    }, new Map<string, CiiEntry>()),
     track('Federal Register, openFDA, GDELT pulse', () => getJson<Signals>('/api/lodestar/signals'), null as Signals | null),
     track('Commodity quotes (Yahoo)', () => getJson<{ quotes: Quote[] }>('/api/market/v1/list-commodity-quotes').then((d) => d.quotes ?? []), [] as Quote[]),
   ]);
 
   const histories = await track('Chokepoint transits (IMF PortWatch)', async () => {
+    // One chokepoint without history must not sink the others.
     const results = await Promise.all([...historyIds].map(async (id) => {
-      const d = await getJson<{ history?: HistoryPoint[] }>(`/api/supply-chain/v1/get-chokepoint-history?chokepointId=${encodeURIComponent(id)}`);
+      const d = await getJson<{ history?: HistoryPoint[] }>(`/api/supply-chain/v1/get-chokepoint-history?chokepointId=${encodeURIComponent(id)}`)
+        .catch(() => ({ history: [] as HistoryPoint[] }));
       return [id, d.history ?? []] as const;
     }));
     if (!results.some(([, h]) => h.length)) throw new Error('no history');
@@ -436,8 +498,7 @@ export async function computeExposure(ix: Indexed): Promise<ExposureResult> {
     const traffic = chokepointTrafficEvidence(cp.displayName, histories.get(id) ?? []);
     if (traffic) ev.push(traffic);
     const st = status.find((s) => s.id === id || s.name === cp.displayName);
-    const stEv = st ? chokepointStatusEvidence(st) : null;
-    if (stEv) ev.push(stEv);
+    if (st) ev.push(...chokepointStatusEvidence(st));
     const products = new Set<string>();
     for (const lane of ix.net.lanes) if (lane.via.includes(pwName)) lane.products.forEach((p) => products.add(p));
     const score = combine(ev);
@@ -471,7 +532,7 @@ export async function computeExposure(ix: Indexed): Promise<ExposureResult> {
 
   // Critical-input origins.
   for (const input of ix.net.inputs) {
-    const control = exportControlEvidence(input.controls);
+    const control = exportControlEvidence(input.controls, input.src);
     input.origin.forEach((o, i) => {
       const iso = countryOf(o.place);
       const ev: Evidence[] = [
@@ -484,8 +545,12 @@ export async function computeExposure(ix: Indexed): Promise<ExposureResult> {
       if (risk) ev.push(risk);
       // Export controls attach to the origins they apply to: China/Russia
       // origins when the controls name them, otherwise the primary origin.
-      if (control && iso && /China|Russia/i.test(input.controls ?? '') && ['CN', 'RU'].includes(iso)) ev.push(control);
-      else if (control && i === 0 && !/China|Russia/i.test(input.controls ?? '')) ev.push(control);
+      // (If no origin is in China/Russia, e.g. tellurium or indium processed
+      // elsewhere, the control still bears on the primary origin.)
+      const namesCnRu = /China|Russia/i.test(input.controls ?? '');
+      const hasCnRuOrigin = input.origin.some((x) => ['CN', 'RU'].includes(countryOf(x.place) ?? ''));
+      if (control && iso && namesCnRu && hasCnRuOrigin && ['CN', 'RU'].includes(iso)) ev.push(control);
+      else if (control && i === 0 && !(namesCnRu && hasCnRuOrigin)) ev.push(control);
       // The input's own chokepoint hook (network.json live.portwatch_chokepoint)
       // applies to its primary origin, e.g. Gulf helium through Hormuz.
       const hook = input.live?.portwatch_chokepoint;
@@ -516,8 +581,12 @@ export async function computeExposure(ix: Indexed): Promise<ExposureResult> {
     });
   }
   if (signals?.fda?.configured) {
+    // Terminated recalls are closed; recalls whose device class maps to a
+    // product line score, cross-modality ones only when nothing else does.
+    const openRecalls = groupRecalls(signals.fda.recalls).filter((r) => !/terminated/i.test(r.status ?? ''));
+    const mapped = openRecalls.filter((r) => familiesForDeviceClass(r.product).length);
     const ev: Evidence[] = [
-      ...groupRecalls(signals.fda.recalls).slice(0, 5).map((r) => ({
+      ...(mapped.length ? mapped : openRecalls).slice(0, 5).map((r) => ({
         signal: 'device-regulatory' as const,
         text: `FDA recall (${r.status ?? 'status n/a'}): ${r.product}${r.count > 1 ? ` (${r.count} product entries)` : ''}${r.reason ? ` — root cause: ${r.reason}` : ''}`,
         source: 'openFDA device recalls', url: r.url, at: r.initiated, points: 25, prov: 'live' as const,
@@ -526,7 +595,7 @@ export async function computeExposure(ix: Indexed): Promise<ExposureResult> {
     // A recall only bears on the product lines of its FDA device class; a
     // cross-modality class (e.g. image-processing software) stays on the
     // regulatory watch without driving any product's exposure.
-    const recallFamilies = new Set(groupRecalls(signals.fda.recalls).slice(0, 5).flatMap((r) => familiesForDeviceClass(r.product)));
+    const recallFamilies = new Set(mapped.slice(0, 5).flatMap((r) => familiesForDeviceClass(r.product)));
     const fdaProducts = allProducts.filter((p) => recallFamilies.has(ix.productById.get(p)!.family));
     if (ev.length) hotspots.push({
       id: 'reg:fda', kind: 'regulatory', title: 'Device regulatory (FDA)',
@@ -545,7 +614,9 @@ export async function computeExposure(ix: Indexed): Promise<ExposureResult> {
 
   // Product exposure: max over its sites, inputs and lanes, plus TTS/TTR gap.
   const products: ProductExposure[] = ix.net.products.map((p) => {
-    const drivers = hotspots.filter((h) => h.products.includes(p.id) && h.score > 0).sort((a, b) => b.score - a.score);
+    // Ties go to the input (e.g. helium at Ras Laffan over the Hormuz chokepoint it depends on).
+    const drivers = hotspots.filter((h) => h.products.includes(p.id) && h.score > 0)
+      .sort((a, b) => b.score - a.score || Number(b.kind === 'input') - Number(a.kind === 'input'));
     const base = drivers[0]?.score ?? 0;
     let gap = 0;
     for (const inputId of p.inputs) {
@@ -560,6 +631,10 @@ export async function computeExposure(ix: Indexed): Promise<ExposureResult> {
       gapPenalty: Math.round(gap), drivers: drivers.slice(0, 5),
     };
   });
+
+  // Mark live evidence that came from a last-good copy, so the page never shows it as current.
+  const staleFeeds = new Set(feeds.filter((f) => f.stale).map((f) => f.name));
+  if (staleFeeds.size) for (const h of hotspots) for (const e of h.evidence) if (e.prov === 'live' && staleFeeds.has(feedOf(e))) e.stale = true;
 
   hotspots.sort((a, b) => b.score - a.score);
   return { computedAt: now, hotspots, products, laneScores, feeds, signals };

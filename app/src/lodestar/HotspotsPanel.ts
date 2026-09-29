@@ -4,7 +4,7 @@
 import { Panel } from '@/components/Panel';
 import { h } from '@/utils/dom-utils';
 import { extLink } from './links';
-import type { ExposureResult, Hotspot, Evidence } from './exposure';
+import { contributions, type ExposureResult, type Hotspot, type Evidence } from './exposure';
 import type { FamilyFilter } from './network';
 import { scoreColor } from './overlay';
 
@@ -37,7 +37,7 @@ export class LodestarHotspotsPanel extends Panel {
       id: 'lodestar-hotspots',
       title: 'Hotspots worth diving into',
       showCount: true,
-      infoTooltip: 'Live exposure of the OEM network (0-100): chokepoint traffic vs baseline, hazards within 300 km, travel advisories, country instability and export controls, per site, input origin and chokepoint. Every point links to its evidence.',
+      infoTooltip: 'Exposure 0-100 per site, input origin and chokepoint. Live signals: chokepoint traffic vs the prior 90 days (IMF PortWatch), NGA navigational warnings, hazards within 300 km, travel advisories, country instability, Federal Register, FDA recalls, news spikes, commodity moves. Plus sourced export controls and an editorial chokepoint threat level (marked). The strongest signal counts in full, the others at 25%. Every item links to its source.',
     });
     this.showLoading('Scoring the network against live signals…');
   }
@@ -104,14 +104,15 @@ export class LodestarHotspotsPanel extends Panel {
       h('span', { className: 'lodestar-hotspot-families' }, x.families.join(' ')),
     );
     if (!open) return h('li', { className: 'lodestar-hotspot' }, header);
+    const contrib = contributions(x.evidence);
     return h('li', { className: 'lodestar-hotspot open' }, header,
       h('ul', { className: 'lodestar-evidence' }, ...top.map((e) => h('li', null,
         h('span', { className: 'lodestar-ev-kind' }, SIGNAL_LABEL[e.signal]),
         h('span', { className: 'lodestar-ev-text' },
           extLink(e.url, e.text)),
         h('span', { className: 'lodestar-ev-meta' },
-          `${e.source}${e.at ? ` · ${e.at}` : ''} · +${e.points} · `,
-          h('span', { className: `lodestar-prov prov-${e.prov}` }, PROV_LABEL[e.prov])),
+          `${e.source}${e.at ? ` · ${e.at}` : ''} · +${contrib.get(e) ?? 0} · `,
+          h('span', { className: `lodestar-prov prov-${e.prov}` }, e.stale ? 'last good copy' : PROV_LABEL[e.prov])),
       ))),
       h('button', { type: 'button', className: 'lodestar-btn ghost lodestar-open-drawer', onClick: () => this.onDrawer?.(x) }, 'Open evidence drawer: cascade, options, drafts'),
     );
