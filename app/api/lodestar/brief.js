@@ -149,8 +149,14 @@ async function callModel(model, userContent) {
   return { brief: scrubDeep(tidy(r.content, userContent, JSON.parse(userContent).items)), model: r.model, usage: r.usage, cost: r.cost, ...(r.fallbackFrom ? { fallbackFrom: r.fallbackFrom } : {}) };
 }
 
+// Spelled out for the model: "US" alone reads as the United States.
+const FILTER_NAMES = {
+  ALL: 'all product lines', MR: 'MR', CT: 'CT', MI: 'molecular imaging (PET/CT, SPECT/CT)',
+  US: 'ultrasound', XR: 'mammography and digital X-ray',
+};
+
 async function briefFor(model, items, filter, date, regenerate) {
-  const userContent = JSON.stringify({ date, product_filter: filter, items });
+  const userContent = JSON.stringify({ date, product_filter: FILTER_NAMES[filter] ?? filter, items });
   const cacheKey = `lodestar:brief:v6:${await sha(`${model}|${userContent}`)}`;
   if (!regenerate) {
     try {

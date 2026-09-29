@@ -75,6 +75,9 @@ Sources are listed in `docs/DEMO_SCRIPT.md`.
 - **GDELT:** the domain scrub matches whole words only.
 - **Service parts:** the flow is modelled as one air lane (L21). The researched arrivals at LA/LB, NY/NJ and Tacoma are not modelled.
 - **`prototype/data.js`:** the static prototype's wording is left as supplied.
+- **GDELT news pulse is still empty.** On 29 Sep GDELT's DOC API refused every query: 503 from this sandbox, and 429s and dropped connections from GitHub's runners.
+  - The seeder now fails fast, and the feed line says "GDELT news pulse: unavailable".
+  - A durable fix is to derive the pulse from GDELT's bulk files. The upstream materializer already downloads them from CI without trouble, but a spike needs a 4-week baseline, which would have to build up in Redis over time.
 
 ## Changes to supplied content
 - `data/network.json` (accuracy review, 29 Sep): added destination ports Kobe/Osaka, Nhava Sheva, Santos, Port Botany, Dammam (prov est). Lane `via` corrected to the chokepoints a ship physically crosses: L04 +Dover; L05 now Charleston → Gibraltar → Suez → Bab el-Mandeb → **Hormuz** → Dammam (was missing Hormuz and a Gulf port — needs owner confirmation; Jeddah via Red Sea only is the alternative); L07 +Korea Strait → Kobe; L08/L10/L11 +Taiwan Strait; L10 +Gibraltar +Dover; L16 +Dover → Rotterdam (Haifa → Trieste/Koper → road would be more realistic — owner to confirm); L06 → Santos; L12 → Port Botany; L22 → Kobe.
