@@ -509,6 +509,51 @@
       "prov": "S"
     },
     {
+      "id": "p_kobe",
+      "name": "Kobe / Osaka",
+      "type": "port",
+      "lat": 34.66,
+      "lon": 135.21,
+      "portwatch": "Kobe",
+      "prov": "est"
+    },
+    {
+      "id": "p_nhava",
+      "name": "Nhava Sheva (Mumbai)",
+      "type": "port",
+      "lat": 18.95,
+      "lon": 72.95,
+      "portwatch": "Nhava Sheva",
+      "prov": "est"
+    },
+    {
+      "id": "p_santos",
+      "name": "Santos",
+      "type": "port",
+      "lat": -23.98,
+      "lon": -46.3,
+      "portwatch": "Santos",
+      "prov": "est"
+    },
+    {
+      "id": "p_botany",
+      "name": "Port Botany (Sydney)",
+      "type": "port",
+      "lat": -33.97,
+      "lon": 151.22,
+      "portwatch": "Sydney",
+      "prov": "est"
+    },
+    {
+      "id": "p_dammam",
+      "name": "Dammam (King Abdulaziz Port)",
+      "type": "port",
+      "lat": 26.48,
+      "lon": 50.21,
+      "portwatch": "Dammam",
+      "prov": "est"
+    },
+    {
       "id": "a_ord",
       "name": "Chicago O'Hare",
       "type": "airport",
@@ -1181,6 +1226,7 @@
       ],
       "via": [
         "p_chs",
+        "Dover Strait",
         "p_rtm"
       ]
     },
@@ -1194,8 +1240,11 @@
       ],
       "via": [
         "p_chs",
+        "Gibraltar Strait",
         "Suez Canal",
-        "Bab el-Mandeb Strait"
+        "Bab el-Mandeb Strait",
+        "Strait of Hormuz",
+        "p_dammam"
       ],
       "alt": "Cape of Good Hope + Salalah/Duqm"
     },
@@ -1208,7 +1257,8 @@
         "mr_conv"
       ],
       "via": [
-        "p_chs"
+        "p_chs",
+        "p_santos"
       ]
     },
     {
@@ -1220,7 +1270,9 @@
         "mr_conv"
       ],
       "via": [
-        "p_tianjin"
+        "p_tianjin",
+        "Korea Strait",
+        "p_kobe"
       ]
     },
     {
@@ -1233,7 +1285,9 @@
       ],
       "via": [
         "p_tianjin",
-        "Malacca Strait"
+        "Taiwan Strait",
+        "Malacca Strait",
+        "p_nhava"
       ]
     },
     {
@@ -1261,9 +1315,12 @@
       ],
       "via": [
         "p_tianjin",
+        "Taiwan Strait",
         "Malacca Strait",
         "Bab el-Mandeb Strait",
         "Suez Canal",
+        "Gibraltar Strait",
+        "Dover Strait",
         "p_rtm"
       ],
       "alt": "Cape of Good Hope (+10–14 d)"
@@ -1278,6 +1335,7 @@
       ],
       "via": [
         "p_tianjin",
+        "Taiwan Strait",
         "Malacca Strait",
         "Strait of Hormuz",
         "p_jebelali"
@@ -1292,7 +1350,8 @@
         "ct_main"
       ],
       "via": [
-        "p_tianjin"
+        "p_tianjin",
+        "p_botany"
       ]
     },
     {
@@ -1341,7 +1400,9 @@
       ],
       "via": [
         "p_haifa",
-        "Gibraltar Strait"
+        "Gibraltar Strait",
+        "Dover Strait",
+        "p_rtm"
       ]
     },
     {
@@ -1412,7 +1473,8 @@
         "pet_bgo"
       ],
       "via": [
-        "p_lalb"
+        "p_lalb",
+        "p_kobe"
       ]
     }
   ],

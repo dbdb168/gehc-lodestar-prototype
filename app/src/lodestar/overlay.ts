@@ -6,7 +6,7 @@ import type { Layer, PickingInfo } from '@deck.gl/core';
 import { ScatterplotLayer, PathLayer, ArcLayer, TextLayer } from '@deck.gl/layers';
 import { HeatmapLayer } from '@deck.gl/aggregation-layers';
 import { escapeHtml } from '@/utils/sanitize';
-import { type Indexed, type FamilyFilter, type Site, type Lane, laneWaypoints, productMatches } from './network';
+import { type Indexed, type FamilyFilter, type Site, type Lane, laneWaypoints, laneGeometry, productMatches } from './network';
 import type { ExposureResult, Hotspot } from './exposure';
 
 type RGBA = [number, number, number, number];
@@ -42,6 +42,7 @@ export function buildOverlay(state: OverlayState, onSelect: (h: Hotspot) => void
   const layers: Layer[] = [];
   const hotspotById = new Map((result?.hotspots ?? []).map((h) => [h.id, h]));
   const siteScore = (s: Site) => hotspotById.get(`site:${s.id}`)?.score ?? 0;
+  let portLanes = new Map<string, Lane[]>();
   const visibleHotspots = (result?.hotspots ?? []).filter((h) => filter === 'ALL' || h.families.includes(filter as never));
 
   // Heat: only items worth diving into (score >= 35), tight radius, weight
@@ -75,7 +76,7 @@ export function buildOverlay(state: OverlayState, onSelect: (h: Hotspot) => void
     layers.push(new PathLayer<Lane>({
       id: 'lodestar-lanes-sea',
       data: seaLanes,
-      getPath: (l) => laneWaypoints(ix, l).map((w) => [w.lon, w.lat] as [number, number]),
+      getPath: (l) => laneGeometry(ix, l),
       getColor: (l) => (laneScore(l) >= 35 ? scoreColor(laneScore(l), 220) : [140, 180, 220, 70]),
       getWidth: (l) => (laneScore(l) >= 35 ? 2.5 : 1),
       widthUnits: 'pixels',
@@ -157,6 +158,48 @@ export function buildOverlay(state: OverlayState, onSelect: (h: Hotspot) => void
     }));
   }
 
+  // Ports the visible sea lanes use (Charleston carries most US exports),
+  // sized by lane count and always labelled.
+  if (state.showNetwork) {
+    const laneCount = new Map<string, Lane[]>();
+    for (const l of ix.net.lanes) {
+      if (l.mode !== 'sea' || !productMatches(ix, l.products, filter)) continue;
+      for (const v of l.via) if (ix.siteById.get(v)?.type === 'port') laneCount.set(v, [...(laneCount.get(v) ?? []), l]);
+    }
+    const ports = [...laneCount.keys()].map((id) => ix.siteById.get(id)!).filter(Boolean);
+    if (ports.length) {
+      layers.push(new ScatterplotLayer<Site>({
+        id: 'lodestar-ports',
+        data: ports,
+        getPosition: (s) => [s.lon, s.lat],
+        getRadius: (s) => 4 + 1.5 * (laneCount.get(s.id)?.length ?? 1),
+        radiusUnits: 'pixels',
+        getFillColor: [12, 16, 22, 230],
+        stroked: true,
+        getLineColor: [120, 200, 235, 255],
+        lineWidthMinPixels: 2,
+        pickable: true,
+      }));
+      layers.push(new TextLayer<Site>({
+        id: 'lodestar-port-labels',
+        data: ports,
+        getPosition: (s) => [s.lon, s.lat],
+        getText: (s) => s.name.split(/[,(/]/)[0]!.trim(),
+        getSize: 11,
+        getPixelOffset: [0, 14],
+        getTextAnchor: 'middle',
+        getAlignmentBaseline: 'top',
+        getColor: [150, 210, 240, 235],
+        outlineWidth: 2,
+        outlineColor: [10, 12, 16, 255],
+        fontSettings: { sdf: true },
+        characterSet: 'auto',
+        pickable: false,
+      }));
+    }
+    portLanes = laneCount;
+  }
+
   // Hotspot markers: the entries worth diving into, clickable.
   const markers = visibleHotspots.filter((h) => h.score >= HOT);
   if (markers.length) {
@@ -212,6 +255,12 @@ export function buildOverlay(state: OverlayState, onSelect: (h: Hotspot) => void
       const { input, origin } = o;
       const h = hotspotById.get(o.id as string);
       return `<strong>${escapeHtml(input.name)}</strong><br/>${escapeHtml(origin.place)}${origin.share ? ` · ${escapeHtml(origin.share)}` : ''}<br/>Used in ${input.used_in.length} product(s) · live exposure ${h?.score ?? 0}${input.tts_days ? `<br/>Time to survive ${input.tts_days} d vs recover ${input.ttr_days} d ${prov(input.cover_prov)}` : ''}`;
+    }
+    if (id === 'lodestar-ports') {
+      const s = o as Site;
+      const lanes = portLanes.get(s.id) ?? [];
+      const products = [...new Set(lanes.flatMap((l) => l.products))].map((p) => ix.productById.get(p)?.name).filter(Boolean);
+      return `<strong>⚓ ${escapeHtml(s.name)}</strong> ${prov(s.prov)}<br/>Port on ${lanes.length} OEM sea lane(s)${products.length ? `<br/>${escapeHtml(products.join(' · '))}` : ''}`;
     }
     if (id.startsWith('lodestar-lanes')) {
       const l = o as Lane;

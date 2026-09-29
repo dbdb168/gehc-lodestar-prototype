@@ -4,6 +4,7 @@
 // est (estimate) or synth (synthetic demo value).
 
 import { CHOKEPOINT_REGISTRY } from '@/config/chokepoint-registry';
+import { buildSeaGraph, seaPath, unwrap, type SeaGraph } from './searoute';
 
 export type Family = 'MR' | 'CT' | 'MI' | 'US' | 'XR';
 export type FamilyFilter = Family | 'ALL';
@@ -139,6 +140,45 @@ export function productMatches(ix: Indexed, productIds: Iterable<string>, filter
 }
 
 /** Waypoints for a lane: site ids resolve to sites, other names to chokepoints. */
+const seaGraphs = new WeakMap<Indexed, SeaGraph>();
+function seaGraphFor(ix: Indexed): SeaGraph {
+  let g = seaGraphs.get(ix);
+  if (!g) {
+    const extra: Record<string, [number, number]> = {};
+    for (const s of ix.net.sites) if (s.type === 'port') extra[s.id] = [s.lon, s.lat];
+    for (const c of CHOKEPOINT_REGISTRY) extra[c.id] = [c.lon, c.lat];
+    g = buildSeaGraph(extra);
+    seaGraphs.set(ix, g);
+  }
+  return g;
+}
+
+/**
+ * Drawn path of a lane. Sea legs between ports and chokepoints follow the
+ * sea-routing graph (searoute.ts); legs to and from inland sites are straight;
+ * air and road lanes are straight. Longitudes are unwrapped, so trans-Pacific
+ * lanes cross the Pacific.
+ */
+export function laneGeometry(ix: Indexed, lane: Lane): Array<[number, number]> {
+  const refs = [lane.from, ...lane.via, lane.to];
+  const g = seaGraphFor(ix);
+  const nodeOf = (ref: string): { id: string; sea: boolean; pos: [number, number] } | null => {
+    const site = ix.siteById.get(ref);
+    if (site) return { id: site.id, sea: site.type === 'port', pos: [site.lon, site.lat] };
+    const cp = chokepointByPortwatchName(ref);
+    return cp ? { id: cp.id, sea: true, pos: [cp.lon, cp.lat] } : null;
+  };
+  const nodes = refs.map(nodeOf).filter((n): n is NonNullable<typeof n> => !!n);
+  const out: Array<[number, number]> = [];
+  nodes.forEach((n, i) => {
+    if (i === 0) { out.push(n.pos); return; }
+    const prev = nodes[i - 1]!;
+    const leg = lane.mode === 'sea' && prev.sea && n.sea ? seaPath(g, prev.id, n.id) : null;
+    out.push(...(leg ? leg.slice(1) : [n.pos]));
+  });
+  return unwrap(out);
+}
+
 export function laneWaypoints(ix: Indexed, lane: Lane): Array<{ lon: number; lat: number; label: string; chokepointId?: string }> {
   const pts: Array<{ lon: number; lat: number; label: string; chokepointId?: string }> = [];
   const push = (ref: string) => {

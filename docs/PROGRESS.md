@@ -36,6 +36,7 @@ Feeds live (25 Sep, checked in Chromium against production): all 8 exposure-engi
 - **Snapshot age.** `public/snapshot/last-good.json` is from 24 Sep 22:59 UTC. Refresh it before a demo (`docs/runbooks/refresh-snapshot.md`).
 
 ## Changes to supplied content
+- `data/network.json` (accuracy review, 29 Sep): added destination ports Kobe/Osaka, Nhava Sheva, Santos, Port Botany, Dammam (prov est). Lane `via` corrected to the chokepoints a ship physically crosses: L04 +Dover; L05 now Charleston → Gibraltar → Suez → Bab el-Mandeb → **Hormuz** → Dammam (was missing Hormuz and a Gulf port — needs owner confirmation; Jeddah via Red Sea only is the alternative); L07 +Korea Strait → Kobe; L08/L10/L11 +Taiwan Strait; L10 +Gibraltar +Dover; L16 +Dover → Rotterdam (Haifa → Trieste/Koper → road would be more realistic — owner to confirm); L06 → Santos; L12 → Port Botany; L22 → Kobe.
 - `prototype/data.js`: role titles replaced with functions (rule 2): "Procurement", "Supplier quality + Cyber security". One confidence note on the sealed-magnet decision card reworded to "Medium: depends on how fast sealed-magnet output can ramp".
 - `docs/RESEARCH_NOTES.md`: chemical symbols for gallium and germanium spelled out (tripped `lint:names`).
 - openFDA rows: the firm's own free text (trade names) is replaced by FDA generic device classes and root causes.
