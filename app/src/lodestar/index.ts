@@ -25,6 +25,9 @@ export function onLodestarUpdate(fn: Listener): () => void {
 }
 
 function readFilter(): FamilyFilter {
+  // ?product=MR in the URL wins (demo links), then this browser's last choice.
+  const q = new URLSearchParams(location.search).get('product')?.toUpperCase();
+  if (q && (q === 'ALL' || (FAMILIES as string[]).includes(q))) return q as FamilyFilter;
   try {
     const v = localStorage.getItem(FILTER_KEY);
     return v === 'ALL' || (FAMILIES as string[]).includes(v ?? '') ? (v as FamilyFilter) : 'ALL';

@@ -294,6 +294,17 @@ function combine(evidence: Evidence[]): number {
 
 // ---------- engine ----------
 
+/** Product families an FDA generic device class belongs to ([] if it spans modalities). */
+export function familiesForDeviceClass(name: string): Family[] {
+  const n = name.toLowerCase();
+  if (/tomography, computed|computed tomography/.test(n)) return ['CT'];
+  if (/magnetic resonance/.test(n)) return ['MR'];
+  if (/emission|nuclear|positron|gamma camera|scintillation/.test(n)) return ['MI'];
+  if (/ultrason|sonograph|echocardiograph/.test(n)) return ['US'];
+  if (/x-ray|radiograph|mammograph|fluorosc/.test(n)) return ['XR'];
+  return [];
+}
+
 type Recall = Signals['fda']['recalls'][number];
 /** One row per recall event: openFDA lists each affected product separately. */
 export function groupRecalls(recalls: Recall[]): Array<Recall & { count: number }> {
@@ -512,10 +523,15 @@ export async function computeExposure(ix: Indexed): Promise<ExposureResult> {
         source: 'openFDA device recalls', url: r.url, at: r.initiated, points: 25, prov: 'live' as const,
       })),
     ];
+    // A recall only bears on the product lines of its FDA device class; a
+    // cross-modality class (e.g. image-processing software) stays on the
+    // regulatory watch without driving any product's exposure.
+    const recallFamilies = new Set(groupRecalls(signals.fda.recalls).slice(0, 5).flatMap((r) => familiesForDeviceClass(r.product)));
+    const fdaProducts = allProducts.filter((p) => recallFamilies.has(ix.productById.get(p)!.family));
     if (ev.length) hotspots.push({
       id: 'reg:fda', kind: 'regulatory', title: 'Device regulatory (FDA)',
-      subtitle: 'Recalls initiated in the last 120 days',
-      lat: 39.03, lon: -76.98, score: combine(ev), evidence: ev, products: allProducts, families: familiesOf(allProducts),
+      subtitle: fdaProducts.length ? 'Recalls initiated in the last 120 days' : 'Recalls in the last 120 days (no single product line)',
+      lat: 39.03, lon: -76.98, score: combine(ev), evidence: ev, products: fdaProducts, families: familiesOf(fdaProducts),
     });
   }
 
