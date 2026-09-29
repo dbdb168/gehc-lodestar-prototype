@@ -40,13 +40,13 @@ async function gdeltOnce(params) {
 // Shared CI runner IPs hit GDELT's per-IP limit often: back off and retry
 // rate limits and network failures; query errors fail at once.
 async function gdelt(params) {
-  let wait = 10_000;
+  let wait = 8_000;
   for (let attempt = 1; ; attempt++) {
     try {
       return await gdeltOnce(params);
     } catch (err) {
       const retryable = err.retry || err.name === 'TimeoutError' || /fetch failed/.test(err.message);
-      if (!retryable || attempt >= 4) throw err;
+      if (!retryable || attempt >= 3) throw err;
       await sleep(wait);
       wait *= 2;
     }
@@ -64,36 +64,50 @@ function pulse(timeline) {
   return { recentAvg, baselineAvg: mean, z: (recentAvg - mean) / sd, days: pts.length };
 }
 
+// The engine only reads a pulse at z >= 2 (app/src/lodestar/exposure.ts), so
+// articles are fetched only then. The runner kills a seeder at 10 minutes, so
+// stop starting inputs well before that and publish what finished.
+const SPIKE_Z = 2;
+const BUDGET_MS = 5.5 * 60_000; // + one input worst case (~3 min of retries) < fetchPhaseTimeoutMs
+
 async function build() {
   const path = NETWORK_PATHS.find((p) => existsSync(p));
   if (!path) throw new Error('network.json not found');
   const net = JSON.parse(readFileSync(path, 'utf8'));
+  const started = Date.now();
   const inputs = {};
+  const failed = [];
   let ok = 0;
   for (const input of net.inputs) {
     if (!input.live?.gdelt) continue;
+    if (Date.now() - started > BUDGET_MS) {
+      console.warn(`  ${input.id}: skipped (time budget reached)`);
+      failed.push(input.id);
+      continue;
+    }
     const query = gdeltQuery(input.live.gdelt);
     try {
       const timeline = await gdelt({ query, mode: 'timelinevol', timespan: '30d' });
       await sleep(SPACING_MS);
-      const arts = await gdelt({ query, mode: 'artlist', maxrecords: '3', sort: 'hybridrel', timespan: '3d' });
-      await sleep(SPACING_MS);
       const p = pulse(timeline);
-      inputs[input.id] = {
-        query,
-        ...(p ?? { recentAvg: null, baselineAvg: null, z: null, days: 0 }),
-        articles: (arts.articles ?? []).slice(0, 3).map((a) => ({
+      let articles = [];
+      if (p && p.z >= SPIKE_Z) {
+        const arts = await gdelt({ query, mode: 'artlist', maxrecords: '3', sort: 'hybridrel', timespan: '3d' });
+        await sleep(SPACING_MS);
+        articles = (arts.articles ?? []).slice(0, 3).map((a) => ({
           title: String(a.title ?? '').slice(0, 200), url: a.url, domain: a.domain, seendate: a.seendate,
-        })),
-      };
+        }));
+      }
+      inputs[input.id] = { query, ...(p ?? { recentAvg: null, baselineAvg: null, z: null, days: 0 }), articles };
       ok++;
-      console.log(`  ${input.id}: z=${p ? p.z.toFixed(2) : 'n/a'} articles=${inputs[input.id].articles.length}`);
+      console.log(`  ${input.id}: z=${p ? p.z.toFixed(2) : 'n/a'} articles=${articles.length}`);
     } catch (err) {
       console.warn(`  ${input.id}: ${err.message}`);
+      failed.push(input.id);
       await sleep(SPACING_MS);
     }
   }
-  return { inputs, fetchedAt: Date.now(), covered: ok };
+  return { inputs, failed, fetchedAt: Date.now(), covered: ok };
 }
 
 const isMain = process.argv[1]?.endsWith('seed-lodestar-news-pulse.mjs');
@@ -106,8 +120,8 @@ if (isMain) {
     declareRecords: (d) => d?.covered ?? 0,
     schemaVersion: 1,
     maxStaleMin: 720,
-    // 9 inputs x 2 GDELT calls, 6 s apart, plus 429 back-off: well past the 4-min default.
-    fetchPhaseTimeoutMs: 12 * 60_000,
+    // Above BUDGET_MS plus one input's worst-case retries; below the runner's 10-minute kill.
+    fetchPhaseTimeoutMs: 9 * 60_000,
   }).catch((err) => {
     // Best-effort feed: GDELT being unreachable from CI must not fail the whole
     // seeder group. The previous pulse (if any) stays, with its own fetchedAt.
