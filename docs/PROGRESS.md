@@ -32,7 +32,7 @@ Feeds live (25 Sep, checked in Chromium against production): all 8 exposure-engi
 - **Upstream static fetches remain:** country-boundary overrides from maps.worldmonitor.app and the widget relay at proxy.worldmonitor.app. Several background calls return 503 (x-feed, telegram-feed, gpsjam, outages, climate): no panel shows them.
 - **Non-English locales** still carry upstream branding; only English is rebranded.
 - **Repo name** contains the client name (hard rule 1). Accepted for now by the owner; rename before connecting Vercel's Git integration.
-- **Snapshot age.** `public/snapshot/last-good.json` is from 24 Sep 22:59 UTC. Refresh it before a demo (`docs/runbooks/refresh-snapshot.md`).
+- **Snapshot age.** `public/snapshot/last-good.json` is from 29 Sep 18:36 UTC (all 8 feeds). Refresh it the day before a demo (`docs/runbooks/refresh-snapshot.md`).
 
 ## Accuracy review (29 Sep)
 A full pass over the engine, drawer, panels, prompts, `network.json` and on-screen copy. The demo plan is in `docs/DEMO_SCRIPT.md`.

@@ -104,7 +104,7 @@ In **Hotspots worth diving into**, click **Strait of Hormuz**, then **Open evide
    - installs short go from 24 to 61;
    - revenue at risk goes from $54M to $137M (synth);
    - the formula is printed under the slider.
-6. **What we can do.** The Command brief's decision, recommended option first (on 29 Sep: decide by 6 Oct, owner Procurement).
+6. **What we can do.** The Command brief's decision, recommended option first. On 29 Sep: "Protect MR helium supply from the Ras Laffan and Hormuz exposure", decide by 6 Oct, owner S&OP council.
 
 Under **Have the agent draft it**, click **S&OP escalation**.
 - The draft takes a few seconds.
@@ -129,7 +129,7 @@ Close the drawer (← Back to map) and switch to the CT tab.
 
 ### 4. Ultrasound (30 seconds)
 
-Switch to the ultrasound tab. It scores 8, with no installs and $0 at risk.
+Switch to the ultrasound tab. It scores 8, with no installs and $0 at risk. The brief says it's a calm day and makes **no decisions**; memory and FPGAs sit on its watch list at 8, after an M4.6 earthquake off Taiwan.
 
 > "It also tells you what not to worry about."
 
