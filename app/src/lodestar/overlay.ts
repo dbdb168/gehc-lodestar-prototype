@@ -268,7 +268,7 @@ export function buildOverlay(state: OverlayState, onSelect: (h: Hotspot) => void
       const l = o as Lane;
       const names = l.products.map((p) => ix.productById.get(p)?.name).filter(Boolean);
       const via = laneWaypoints(ix, l).slice(1, -1).map((w) => w.label);
-      return `<strong>${escapeHtml(ix.siteById.get(l.from)?.name ?? l.from)} → ${escapeHtml(ix.siteById.get(l.to)?.name ?? l.to)}</strong> (${escapeHtml(l.mode)})<br/>${escapeHtml(names.join(' · '))}${via.length ? `<br/>via ${escapeHtml(via.join(', '))}` : ''}<br/>Worst chokepoint exposure ${result?.laneScores.get(l.id) ?? 0}`;
+      return `<strong>${escapeHtml(ix.siteById.get(l.from)?.name ?? l.from)} → ${escapeHtml(ix.siteById.get(l.to)?.name ?? l.to)}</strong> (${escapeHtml(l.mode)})<br/>${escapeHtml(names.join(' · '))}${l.note ? `<br/><em>${escapeHtml(l.note)}</em>` : ''}${via.length ? `<br/>via ${escapeHtml(via.join(', '))}` : ''}<br/>Worst chokepoint exposure ${result?.laneScores.get(l.id) ?? 0}`;
     }
     return null;
   };

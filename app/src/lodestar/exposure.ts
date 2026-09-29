@@ -269,7 +269,8 @@ function exportControlEvidence(controls: string | undefined, src?: string): Evid
     source: 'OEM network research (public reporting)',
     url: src,
     points: 30,
-    prov: 'S',
+    // The control text carries its own tags: sourced if any part is (S), else an estimate.
+    prov: /\(S\)/.test(controls) ? 'S' : 'est',
   };
 }
 

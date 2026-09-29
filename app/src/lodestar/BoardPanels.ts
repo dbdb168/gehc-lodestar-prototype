@@ -174,11 +174,17 @@ export class LodestarRegWatchPanel extends Panel {
           : h('p', { className: 'lodestar-quiet' }, 'No recalls or 510(k) decisions in the window.')));
     }
     const kindOf = (t: string) => (/export control|licens|ban|restrict/i.test(t) ? 'Export control' : /232|tariff|duty|duties/i.test(t) ? 'Import tariff' : 'Market constraint');
-    sections.push(h('section', null, h('h4', null, 'Trade controls and supply constraints ', h('span', { className: 'lodestar-prov prov-S' }, 'sourced')),
+    const tagOf = (t: string): [string, string] => {
+      const s = /\(S\)|\bS\)/.test(t);
+      const e = /\best\b/.test(t);
+      return s && e ? ['S', 'sourced + est'] : s ? ['S', 'sourced'] : ['est', 'estimate'];
+    };
+    sections.push(h('section', null, h('h4', null, 'Trade controls and supply constraints'),
       h('ul', { className: 'lodestar-evidence' }, ...controls.map((i) => h('li', null,
         h('span', { className: 'lodestar-ev-kind' }, kindOf(i.controls ?? '')),
         h('span', { className: 'lodestar-ev-text' }, extLink(i.src, `${i.name}: ${i.controls}`)),
-        h('span', { className: 'lodestar-ev-meta' }, `Used in ${i.used_in.map((p) => ix.productById.get(p)?.family).filter((v, k, a) => v && a.indexOf(v) === k).join(', ')}`))))));
+        h('span', { className: 'lodestar-ev-meta' }, `Used in ${i.used_in.map((p) => ix.productById.get(p)?.family).filter((v, k, a) => v && a.indexOf(v) === k).join(', ')} · `,
+          h('span', { className: `lodestar-prov prov-${tagOf(i.controls ?? '')[0]}` }, tagOf(i.controls ?? '')[1])))))));
     this.setContentNodes(h('div', { className: 'lodestar-regwatch' }, ...sections));
   }
 }

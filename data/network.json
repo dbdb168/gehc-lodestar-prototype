@@ -18,6 +18,7 @@
         "waukesha",
         "tianjin"
       ],
+      "final_assembly_prov": "est",
       "subassembly": [
         "florence",
         "aurora"
@@ -36,10 +37,12 @@
       "lead_prov": "S",
       "lead_src": "https://www.qualityshielding.com/knowledge-base/mri-suite-project-planning-budget",
       "ship_mode": "sea (magnet), air (electronics)",
+      "ship_mode_prov": "est",
       "magnet_weight_lb": [
         8000,
         18000
       ],
+      "magnet_weight_prov": "est",
       "installs_next_90d": 112,
       "backlog_units": 410,
       "installs_prov": "synth",
@@ -60,12 +63,13 @@
       "final_assembly": [
         "waukesha"
       ],
+      "final_assembly_prov": "est",
       "subassembly": [
         "florence"
       ],
       "helium_l_per_fill": 15,
-      "helium_prov": "S",
-      "helium_note": "under 1% of a conventional fill; no quench pipe; FDA-cleared Feb 2026",
+      "helium_prov": "est",
+      "helium_note": "about 1% of a conventional fill (est; sourced: under 1%); no quench pipe (est); FDA-cleared Feb 2026 (est)",
       "price_usd": [
         1000000,
         1800000
@@ -92,6 +96,7 @@
         "buc",
         "bengaluru"
       ],
+      "final_assembly_prov": "S",
       "subassembly": [
         "west_milwaukee",
         "ohio_anode",
@@ -116,6 +121,7 @@
         "gadolinium",
         "photodiode",
         "slipring",
+        "copper",
         "memory",
         "fpga",
         "gpu"
@@ -137,7 +143,7 @@
         3500000
       ],
       "price_prov": "est",
-      "note": "510(k) cleared Mar 2026; CE mark expected H2 2026; volume mainly 2027 (S)",
+      "note": "510(k) cleared Mar 2026; CE mark expected H2 2026; volume mainly 2027 (est)",
       "installs_next_90d": 6,
       "backlog_units": 40,
       "installs_prov": "synth",
@@ -155,7 +161,8 @@
       "final_assembly": [
         "waukesha"
       ],
-      "fa_note": "moved from Israel to Waukesha in 2025 (S)",
+      "final_assembly_prov": "S",
+      "fa_note": "moved to Waukesha in 2025 (S); previously Israel (est)",
       "price_usd": [
         2000000,
         3500000
@@ -178,6 +185,7 @@
       "final_assembly": [
         "haifa"
       ],
+      "final_assembly_prov": "S",
       "subassembly": [
         "yavne_czt"
       ],
@@ -202,6 +210,7 @@
         "zipf",
         "seongnam"
       ],
+      "final_assembly_prov": "S",
       "subassembly": [
         "state_college"
       ],
@@ -211,6 +220,7 @@
       ],
       "price_prov": "est",
       "ship_mode": "air / LCL (est.)",
+      "ship_mode_prov": "est",
       "installs_next_90d": 2100,
       "installs_prov": "synth",
       "inputs": [
@@ -252,7 +262,7 @@
       "type": "plant",
       "lat": 43.01,
       "lon": -88.23,
-      "role": "MR, CT, PET/CT final assembly; global imaging hub",
+      "role": "CT, PET/CT final assembly; MR final assembly (est); global imaging hub (est)",
       "prov": "S/est"
     },
     {
@@ -297,8 +307,8 @@
       "type": "plant",
       "lat": 39.08,
       "lon": 117.2,
-      "role": "MR magnets and systems; Eastern Hemisphere MR HQ",
-      "prov": "S"
+      "role": "MR magnets; MR systems and Eastern Hemisphere MR HQ (est)",
+      "prov": "S/est"
     },
     {
       "id": "beijing",
@@ -306,8 +316,8 @@
       "type": "plant",
       "lat": 39.79,
       "lon": 116.5,
-      "role": "CT systems & detectors (>60% exported; lights-out detector line Apr 2026); X-ray",
-      "prov": "S"
+      "role": "CT systems & detectors (>60% exported; lights-out detector line Apr 2026); X-ray (est)",
+      "prov": "S/est"
     },
     {
       "id": "hino",
@@ -333,8 +343,8 @@
       "type": "plant",
       "lat": 12.97,
       "lon": 77.59,
-      "role": "Value CT under PLI; ultrasound",
-      "prov": "S"
+      "role": "CT final assembly; value-CT focus and PLI status (est); ultrasound (est)",
+      "prov": "S/est"
     },
     {
       "id": "haifa",
@@ -361,8 +371,8 @@
       "type": "plant",
       "lat": 48.03,
       "lon": 13.6,
-      "role": "Women's health ultrasound global production",
-      "prov": "S"
+      "role": "Women's health ultrasound; global production role (est)",
+      "prov": "S/est"
     },
     {
       "id": "seongnam",
@@ -370,8 +380,8 @@
       "type": "plant",
       "lat": 37.42,
       "lon": 127.13,
-      "role": "Ultrasound (~20k units/yr site-wide)",
-      "prov": "S"
+      "role": "Ultrasound (~20k units/yr site-wide, est)",
+      "prov": "S/est"
     },
     {
       "id": "horten",
@@ -379,8 +389,8 @@
       "type": "plant",
       "lat": 59.42,
       "lon": 10.48,
-      "role": "Cardiac and handheld ultrasound",
-      "prov": "S"
+      "role": "Cardiac ultrasound; handheld (est)",
+      "prov": "S/est"
     },
     {
       "id": "state_college",
@@ -681,14 +691,13 @@
         {
           "place": "Amur, Russia",
           "lat": 51.9,
-          "lon": 128.0,
-          "share": "export-authorised since 14 Apr 2026 (S)"
+          "lon": 128.0
         },
         {
           "place": "Arzew, Algeria",
           "lat": 35.85,
           "lon": -0.32,
-          "share": "secondary"
+          "share": "secondary (est)"
         }
       ],
       "industry_suppliers": [
@@ -699,7 +708,7 @@
         "Messer",
         "Airgas"
       ],
-      "controls": "China helium export ban 10 Jul 2026 (S); Russia authorisation (S)",
+      "controls": "Russia restricted helium exports from 14 Apr 2026 (S); China restricted helium exports from 10 Jul 2026 (S)",
       "tts_days": 41,
       "ttr_days": 120,
       "cover_prov": "synth",
@@ -718,22 +727,22 @@
       ],
       "origin": [
         {
-          "place": "Araxá, Brazil (niobium, CBMM)",
+          "place": "Araxá, Brazil (niobium)",
           "lat": -19.6,
           "lon": -46.94
         },
         {
-          "place": "Hanau, Germany (Bruker EST)",
+          "place": "Hanau, Germany",
           "lat": 50.13,
           "lon": 8.92
         },
         {
-          "place": "Pori, Finland (Luvata)",
+          "place": "Pori, Finland",
           "lat": 61.48,
           "lon": 21.8
         },
         {
-          "place": "Japan (JASTEC / Furukawa)",
+          "place": "Japan",
           "lat": 34.7,
           "lon": 135.2
         }
@@ -773,7 +782,7 @@
           "lon": -77.04
         }
       ],
-      "controls": "US Section 232: 50% semi-finished (2025); derivatives 25–50% from 6 Apr 2026 (S)",
+      "controls": "US Section 232: 50% semi-finished (2025, est); derivatives 25–50% from 6 Apr 2026 (est)",
       "tts_days": 90,
       "ttr_days": 30,
       "cover_prov": "synth",
@@ -820,23 +829,23 @@
           "place": "Ganzhou, Jiangxi, China",
           "lat": 25.85,
           "lon": 114.93,
-          "share": "~80% world (est)"
+          "share": "China: ~80% of world output (est)"
         },
         {
-          "place": "Sangdong, Korea (Almonty)",
+          "place": "Sangdong, Korea",
           "lat": 37.15,
-          "lon": 128.8,
-          "share": "Phase 1 Mar 2026 (S)"
+          "lon": 128.8
         }
       ],
-      "controls": "China export control Feb 2025; 15 licensed exporters 2026–27 (S)",
+      "controls": "China export control in force (S), since Feb 2025 (est); 15 licensed exporters 2026–27 (est)",
       "tts_days": 75,
       "ttr_days": 150,
       "cover_prov": "synth",
       "live": {
         "gdelt": "tungsten export OR \"tungsten price\"",
         "federal_register": "tungsten"
-      }
+      },
+      "note": "Sangdong, Korea: new non-China supply, Phase 1 from Mar 2026 (est)"
     },
     {
       "id": "gadolinium",
@@ -855,7 +864,7 @@
         "Proterial",
         "Toshiba Materials"
       ],
-      "controls": "China licensing since Apr 2025 (S); Oct 2025 expansion suspended to ~10 Nov 2026 (S)",
+      "controls": "China licensing in force (S), since Apr 2025 (est); Oct 2025 expansion suspended to ~10 Nov 2026 (S)",
       "tts_days": 60,
       "ttr_days": 45,
       "cover_prov": "synth",
@@ -873,7 +882,7 @@
       ],
       "origin": [
         {
-          "place": "Shanghai (SICCAS)",
+          "place": "Shanghai, China",
           "lat": 31.23,
           "lon": 121.47
         }
@@ -883,7 +892,7 @@
         "EBO",
         "Epic Crystal"
       ],
-      "controls": "Bismuth under China export control Feb 2025 (S); germanium ban to US suspended to Nov 2026 (S)",
+      "controls": "Bismuth under China export control (S), since Feb 2025 (est); germanium ban to US suspended to Nov 2026 (S)",
       "tts_days": 70,
       "ttr_days": 180,
       "cover_prov": "synth",
@@ -905,7 +914,7 @@
           "lon": 34.74
         }
       ],
-      "controls": "Tellurium under China export control (S); Israel conflict exposure (S)",
+      "controls": "Tellurium under China export control (S); Israel conflict exposure (est)",
       "tts_days": 45,
       "ttr_days": 120,
       "cover_prov": "synth",
@@ -969,7 +978,8 @@
       ],
       "tts_days": 80,
       "ttr_days": 150,
-      "cover_prov": "synth"
+      "cover_prov": "synth",
+      "note": "map marker at Hsinchu, Taiwan is illustrative, not a known supplier site (est)"
     },
     {
       "id": "slipring",
@@ -1008,22 +1018,22 @@
       ],
       "origin": [
         {
-          "place": "Icheon, Korea (SK hynix)",
+          "place": "Icheon, Korea",
           "lat": 37.27,
           "lon": 127.44
         },
         {
-          "place": "Pyeongtaek, Korea (Samsung)",
+          "place": "Pyeongtaek, Korea",
           "lat": 36.99,
           "lon": 127.11
         },
         {
-          "place": "Boise / Taiwan (Micron)",
+          "place": "Boise, Idaho / Taiwan",
           "lat": 24.8,
           "lon": 120.97
         }
       ],
-      "controls": "AI-driven allocation; lead times 12–18+ months; memory named as a leading OEM cost driver in 2026 (S)",
+      "controls": "AI-driven allocation, lead times 12–18+ months (est); memory chips named a sector cost driver in 2026 (S)",
       "tts_days": 95,
       "ttr_days": 180,
       "cover_prov": "synth",
@@ -1031,7 +1041,8 @@
         "yahoo": "MU",
         "gdelt": "DRAM shortage OR \"memory chip\" price",
         "fred": "PCU33443344"
-      }
+      },
+      "note": "Boise, Idaho / Taiwan origin: map marker at Hsinchu, Taiwan is illustrative (est)"
     },
     {
       "id": "fpga",
@@ -1083,7 +1094,7 @@
       "tts_days": 60,
       "ttr_days": 120,
       "cover_prov": "synth",
-      "oem_link": "S (photon-counting CT)"
+      "oem_link": "est (photon-counting CT)"
     },
     {
       "id": "pzt",
@@ -1106,7 +1117,8 @@
       "tts_days": 120,
       "ttr_days": 40,
       "cover_prov": "synth",
-      "oem_link": "unverified"
+      "oem_link": "unverified",
+      "note": "map marker at State College, PA is illustrative; supplier sites in US / UK / Japan unverified (est)"
     },
     {
       "id": "display",
@@ -1123,7 +1135,8 @@
       ],
       "tts_days": 60,
       "ttr_days": 30,
-      "cover_prov": "synth"
+      "cover_prov": "synth",
+      "note": "map marker near Seoul is illustrative (est)"
     },
     {
       "id": "indium_detector",
@@ -1141,7 +1154,8 @@
       ],
       "tts_days": 70,
       "ttr_days": 120,
-      "cover_prov": "synth"
+      "cover_prov": "synth",
+      "note": "map marker at Buc is illustrative; detector site unverified (est)"
     },
     {
       "id": "molybdenum",
@@ -1159,7 +1173,8 @@
       ],
       "tts_days": 90,
       "ttr_days": 90,
-      "cover_prov": "synth"
+      "cover_prov": "synth",
+      "note": "map marker in Shaanxi, China is illustrative (est)"
     },
     {
       "id": "lithium_battery",
@@ -1176,7 +1191,8 @@
       ],
       "tts_days": 60,
       "ttr_days": 60,
-      "cover_prov": "synth"
+      "cover_prov": "synth",
+      "note": "map marker at Wuhan, China is illustrative (est)"
     }
   ],
   "lanes": [
@@ -1323,7 +1339,8 @@
         "Dover Strait",
         "p_rtm"
       ],
-      "alt": "Cape of Good Hope (+10–14 d)"
+      "alt": "Cape of Good Hope (+10–14 d)",
+      "note": "From the mammography/X-ray line this lane carries digital X-ray only (est); mammography is made in Buc (S)"
     },
     {
       "id": "L11",
@@ -1492,7 +1509,7 @@
   ],
   "regulatory_watch": {
     "federal_register_terms": [
-      "section 232 medical",
+      "section 232 medical devices",
       "section 301",
       "tungsten",
       "copper section 232",
