@@ -897,7 +897,9 @@ const COMMODITY_MAP_LAYERS: MapLayers = {
   // Commodity layers (enabled)
   miningSites: false,
   processingPlants: false,
-  commodityPorts: true,
+  // Lodestar: our own ports layer labels the OEM's ports; upstream's LNG and crude
+  // terminals would be mistaken for them.
+  commodityPorts: import.meta.env.VITE_LODESTAR !== 'true',
   webcams: false,
   diseaseOutbreaks: false,
 };
@@ -961,7 +963,7 @@ const COMMODITY_MOBILE_MAP_LAYERS: MapLayers = {
   // Commodity layers (limited on mobile)
   miningSites: true,
   processingPlants: false,
-  commodityPorts: true,
+  commodityPorts: import.meta.env.VITE_LODESTAR !== 'true', // Lodestar: see COMMODITY_MAP_LAYERS
   webcams: false,
   diseaseOutbreaks: false,
 };

@@ -15,7 +15,7 @@ interface Brief { headline: string; brief: string; decisions: Decision[]; watch:
 interface BriefResult { brief: Brief; model: string; usage: { prompt: number; completion: number; total: number } | null; cost: number | null; cached: boolean; generatedAt: string }
 interface BriefResponse extends Partial<BriefResult> { error?: string; compare?: (BriefResult & { error?: string }) | { error: string } | null }
 
-const money = (usd: number) => usd >= 1e9 ? `$${(usd / 1e9).toFixed(1)}B` : `$${Math.round(usd / 1e6)}M`;
+const money = (usd: number) => (usd >= 1e9 ? `$${(usd / 1e9).toFixed(1)}B` : usd >= 1e6 ? `$${Math.round(usd / 1e6)}M` : usd > 0 ? `$${Math.round(usd / 1e3)}K` : '$0');
 
 export interface RevenueAtRisk { usd: number; installs: number; byProduct: Array<{ name: string; usd: number; installs: number; score: number }> }
 
@@ -122,7 +122,7 @@ export class LodestarBriefPanel extends Panel {
         h('span', { className: 'lodestar-prov prov-synth' }, 'synthetic')),
       h('div', { className: 'lodestar-rar-sub' },
         h('span', null, h('b', null, String(rar.installs)), ' installs at risk ', h('span', { className: 'lodestar-prov prov-synth' }, 'synth')),
-        h('span', null, h('b', null, String(decisions)), ' decisions')),
+        h('span', null, h('b', null, decisions ? String(decisions) : 'No'), decisions === 1 ? ' decision' : ' decisions')),
     );
 
     const controls = h('div', { className: 'lodestar-brief-controls' },

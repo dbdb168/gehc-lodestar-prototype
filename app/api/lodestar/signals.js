@@ -136,11 +136,12 @@ async function build(origin) {
   let newsPulse = null;
   // Seeder-owned key: read raw (no preview prefix).
   try { newsPulse = await readJsonFromUpstash('lodestar:news-pulse:v1', 3000, true); } catch { newsPulse = null; }
-  if (!newsPulse) errors.push('GDELT news pulse: not seeded yet');
+  if (!newsPulse) errors.push('GDELT news pulse: unavailable');
+  else if (newsPulse.failed?.length) errors.push(`GDELT news pulse: ${newsPulse.failed.length} input(s) missed the last refresh`);
   // Telegram watch (scripts/seed-lodestar-telegram.mjs): unverified posts, display only.
   let telegram = null;
   try { telegram = await readJsonFromUpstash('lodestar:telegram:v1', 3000, true); } catch { telegram = null; }
-  if (!telegram) errors.push('Telegram watch: not seeded yet');
+  if (!telegram) errors.push('Telegram watch: unavailable');
   return scrubDeep({ federalRegister: federal, fda, newsPulse, telegram, errors, fetchedAt: new Date().toISOString() });
 }
 

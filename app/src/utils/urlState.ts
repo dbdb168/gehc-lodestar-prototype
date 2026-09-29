@@ -39,6 +39,8 @@ const LAYER_KEYS: (keyof MapLayers)[] = [
   'satellites',
   'ciiChoropleth',
   'resilienceScore',
+  // Lodestar: demo links must be able to switch upstream's commodity terminals off.
+  ...(import.meta.env.VITE_LODESTAR === 'true' ? ['commodityPorts' as const] : []),
 ];
 
 const TIME_RANGES: TimeRange[] = ['1h', '6h', '24h', '48h', '7d', 'all'];

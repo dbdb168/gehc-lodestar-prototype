@@ -53,7 +53,7 @@ export interface ProductExposure {
   drivers: Hotspot[];
 }
 
-export interface FeedStatus { name: string; ok: boolean; at: string; detail?: string; stale?: boolean }
+export interface FeedStatus { name: string; ok: boolean; at: string; detail?: string; stale?: boolean; /** Parts of a live feed that are missing (e.g. the GDELT pulse). */ partial?: string[] }
 
 export interface ExposureResult {
   computedAt: string;
@@ -475,6 +475,10 @@ export async function computeExposure(ix: Indexed): Promise<ExposureResult> {
     track('Federal Register, openFDA, GDELT pulse', () => getJson<Signals>('/api/lodestar/signals'), null as Signals | null),
     track('Commodity quotes (Yahoo)', () => getJson<{ quotes: Quote[] }>('/api/market/v1/list-commodity-quotes').then((d) => d.quotes ?? []), [] as Quote[]),
   ]);
+
+  // The signals feed can answer while one of its parts is missing: say which.
+  const signalsFeed = feeds.find((f) => f.name === 'Federal Register, openFDA, GDELT pulse');
+  if (signalsFeed?.ok && signals?.errors?.length) signalsFeed.partial = signals.errors;
 
   const histories = await track('Chokepoint transits (IMF PortWatch)', async () => {
     // One chokepoint without history must not sink the others.

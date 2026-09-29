@@ -22,6 +22,8 @@ export const config = { runtime: 'edge' };
 const CACHE_TTL_S = 1800;
 const DAILY_CAP = Number(process.env.LODESTAR_BRIEF_DAILY_CAP || 200);
 const MAX_ITEMS = 10;
+// The input clock's "exposed" level. Below it an item is watch-only, so a calm day has no decisions.
+const DECIDE_MIN = 30;
 
 const SCHEMA = {
   type: 'object',
@@ -77,7 +79,7 @@ Rules:
 - Option costs and regulatory timings are qualitative ("None until triggered", "Low: expedite premium", "510(k) change assessment"). Never state a currency amount or a duration that is not in the evidence.
 - Use medtech operations language where it fits: S&OP, SQDCI, QMSR / 510(k) change control, site readiness, time to survive vs time to recover.
 - Never name a company or a person. Say "the OEM" for the manufacturer. Owners are functions (Procurement, Install PMO, S&OP council, Quality/RA, Logistics, Trade compliance, Commercial).
-- If the evidence is calm for the selected product line, say so plainly: telling the team what not to worry about is part of the job.
+- Decisions only for items scoring 30 or more (the level at which the input clock calls an input exposed); anything lower goes in watch. If no item scores 30 or more, return no decisions and say plainly that it is a calm day for this product line: telling the team what not to worry about is part of the job.
 - decide_by must be a date within the next 21 days of the given date.
 - Format: every field is plain text (no markdown, no headings, no bullet characters, no tables). "brief" is exactly three sentences.`;
 
@@ -102,10 +104,11 @@ function firstSentences(s, n) {
   return parts.slice(0, n).join(' ').trim().slice(0, 600);
 }
 
-function tidy(brief, source = '') {
+function tidy(brief, source = '', items = []) {
   const deep = (v) => (typeof v === 'string' ? plain(v) : Array.isArray(v) ? v.map(deep) : v && typeof v === 'object' ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, deep(x)])) : v);
   const out = deep(brief);
   out.brief = firstSentences(brief.brief, 3);
+  if (!(items ?? []).some((i) => i.score >= DECIDE_MIN)) out.decisions = [];
   for (const d of out.decisions ?? []) for (const o of d.options ?? []) o.cost = unsupportedMoneyToText(o.cost, source);
   return out;
 }
@@ -143,12 +146,12 @@ async function callModel(model, userContent) {
     schema: SCHEMA, schemaName: 'command_brief', maxTokens: 4000,
     validate: (b) => !!(b?.headline && b?.brief),
   });
-  return { brief: scrubDeep(tidy(r.content, userContent)), model: r.model, usage: r.usage, cost: r.cost, ...(r.fallbackFrom ? { fallbackFrom: r.fallbackFrom } : {}) };
+  return { brief: scrubDeep(tidy(r.content, userContent, JSON.parse(userContent).items)), model: r.model, usage: r.usage, cost: r.cost, ...(r.fallbackFrom ? { fallbackFrom: r.fallbackFrom } : {}) };
 }
 
 async function briefFor(model, items, filter, date, regenerate) {
   const userContent = JSON.stringify({ date, product_filter: filter, items });
-  const cacheKey = `lodestar:brief:v5:${await sha(`${model}|${userContent}`)}`;
+  const cacheKey = `lodestar:brief:v6:${await sha(`${model}|${userContent}`)}`;
   if (!regenerate) {
     try {
       const hit = await readJsonFromUpstash(cacheKey, 2000);

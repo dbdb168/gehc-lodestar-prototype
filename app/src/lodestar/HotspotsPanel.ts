@@ -77,6 +77,8 @@ export class LodestarHotspotsPanel extends Panel {
           `Scored ${new Date(r.computedAt).toUTCString().replace(' GMT', ' UTC')} from ${r.feeds.length - failed.length}/${r.feeds.length} live feeds.`,
           ...failed.map((f) => h('span', { className: 'lodestar-feed-failed' },
             f.stale ? ` ${f.name}: feed unavailable, ${f.detail?.split('; ').pop()}.` : ` ${f.name}: feed unavailable.`)),
+          ...r.feeds.filter((f) => f.ok && f.partial?.length).map((f) => h('span', { className: 'lodestar-feed-failed' },
+            ` ${f.partial!.join('; ')}.`)),
         ),
       ),
     );
