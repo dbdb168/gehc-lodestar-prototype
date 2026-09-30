@@ -2,7 +2,7 @@
 
 About 12 minutes. Lead with **MR**, then **CT**, and close on **ultrasound**.
 
-- Command centre: https://lodestar-command.vercel.app
+- Command centre: https://lodestar-prototype.buildfirst.io (password: Vercel env `LODESTAR_SITE_PASSWORD`)
 - Fallback: the static prototype at https://lodestar-prototype.vercel.app
 
 The numbers below were read off production on 29 Sep 2026 at about 18:00 UTC. On the day, read the live values off the screen and don't quote this page:
@@ -34,11 +34,11 @@ Before the meeting, open steps 1, 2, 3 and 4 in four browser tabs, in order, and
 
 | Step | Link | Map layers on |
 |---|---|---|
-| 1. Open (all lines) | https://lodestar-command.vercel.app/dashboard?product=ALL&view=global&lat=28&lon=30&zoom=1.4&timeRange=7d&layers=conflicts,waterways | Conflict Zones, Chokepoints |
-| 2. MR | https://lodestar-command.vercel.app/dashboard?product=MR&view=global&lat=28&lon=30&zoom=1.4&timeRange=7d&layers=conflicts,waterways | Conflict Zones, Chokepoints |
-| 2a. Hormuz close-up (if you want the map zoomed in) | https://lodestar-command.vercel.app/dashboard?product=MR&view=global&lat=25.5&lon=53&zoom=4&timeRange=7d&layers=conflicts,waterways | Conflict Zones, Chokepoints |
-| 3. CT | https://lodestar-command.vercel.app/dashboard?product=CT&view=global&lat=28&lon=75&zoom=1.6&timeRange=7d&layers=conflicts,waterways,minerals | Conflict Zones, Chokepoints, Critical Minerals |
-| 4. Ultrasound | https://lodestar-command.vercel.app/dashboard?product=US&view=global&lat=28&lon=30&zoom=1.4&timeRange=7d&layers=conflicts,waterways | Conflict Zones, Chokepoints |
+| 1. Open (all lines) | https://lodestar-prototype.buildfirst.io/dashboard?product=ALL&view=global&lat=28&lon=30&zoom=1.4&timeRange=7d&layers=conflicts,waterways | Conflict Zones, Chokepoints |
+| 2. MR | https://lodestar-prototype.buildfirst.io/dashboard?product=MR&view=global&lat=28&lon=30&zoom=1.4&timeRange=7d&layers=conflicts,waterways | Conflict Zones, Chokepoints |
+| 2a. Hormuz close-up (if you want the map zoomed in) | https://lodestar-prototype.buildfirst.io/dashboard?product=MR&view=global&lat=25.5&lon=53&zoom=4&timeRange=7d&layers=conflicts,waterways | Conflict Zones, Chokepoints |
+| 3. CT | https://lodestar-prototype.buildfirst.io/dashboard?product=CT&view=global&lat=28&lon=75&zoom=1.6&timeRange=7d&layers=conflicts,waterways,minerals | Conflict Zones, Chokepoints, Critical Minerals |
+| 4. Ultrasound | https://lodestar-prototype.buildfirst.io/dashboard?product=US&view=global&lat=28&lon=30&zoom=1.4&timeRange=7d&layers=conflicts,waterways | Conflict Zones, Chokepoints |
 
 Layers that are **off** on purpose (names as in the Layers panel):
 - **Intel Hotspots:** World Monitor's own news hotspots. They pulse and would be confused with our exposure heat.
