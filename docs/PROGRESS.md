@@ -14,6 +14,15 @@
 Deployed URL: prototype https://lodestar-prototype.vercel.app · command centre https://lodestar-command.vercel.app
 Feeds live (25 Sep, checked in Chromium against production): all 8 exposure-engine feeds; chokepoints (NGA + PortWatch transits), Hormuz (WTO), commodities & FX (Yahoo), security advisories (106), earthquakes (USGS), natural events, fires (NASA FIRMS), cyber threats, disaster correlation (13 cards), news digest (125 publishers, 14/14 categories), world / Middle East / Asia news, CII, sanctions (OFAC), Federal Register, openFDA. UCDP armed-conflict events live since 28 Sep. Not live: live AIS vessel counts (upstream relay can't run on Vercel), Canada SEMA sanctions list (parse error upstream; tile says "feed unavailable"), sector summary (503, no panel uses it here).
 
+## Access (30 Sep)
+- **Custom domain:** https://lodestar-prototype.buildfirst.io is on the `lodestar-command` project. DNS is a Cloudflare CNAME, DNS only (grey cloud), to Vercel. The API allows this origin (`api/_cors.js`, `server/cors.ts`).
+- **Password:** every host, including the vercel.app URLs, asks for a password (`middleware.ts`, `siteGate`).
+  - The password is the Vercel env var `LODESTAR_SITE_PASSWORD`. Change it there, then redeploy; changing it signs everyone out.
+  - Unset means no gate. The browser remembers a login for 30 days.
+  - `/api/health` and `/api/version` stay open. Static assets (JS, `data/network.json`, the snapshot) are not gated.
+  - This keeps casual visitors out; it is not strong authentication. Vercel's own password protection needs a paid add-on on Pro.
+- **Walkthrough:** `docs/Lodestar-walkthrough.pdf` links to the new domain.
+
 ## How deploys work in this environment
 - Vercel, OpenRouter and Upstash credentials are **API credentials**: the proxy injects them on requests to those hosts, and the session never sees them. `VERCEL_TOKEN` is not an env var here.
 - The Vercel CLI refuses to run without a local token, so deploy through the Vercel REST API (`POST https://api.vercel.com/v13/deployments?teamId=$VERCEL_ORG_ID`) or the Vercel connector. `VERCEL_ORG_ID` = team "David's projects".
