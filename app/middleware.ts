@@ -185,8 +185,91 @@ function uaConditionedRedirectHeaders(location: URL): Record<string, string> {
   };
 }
 
-export default function middleware(request: Request) {
+
+// ---------- Lodestar: site password (LODESTAR_SITE_PASSWORD) ----------
+// A light gate to keep a prototype away from casual visitors, not strong auth.
+// The password lives in the Vercel env var; changing it signs everyone out.
+// Unset = no gate. The cookie holds a hash of the password, never the password.
+const GATE_COOKIE = 'lodestar_gate';
+const GATE_PATH = '/__gate';
+const GATE_MAX_AGE = 30 * 24 * 3600;
+const GATE_OPEN_PATHS = new Set(['/api/health', '/api/version']);
+
+async function gateToken(password: string): Promise<string> {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(`lodestar-gate:v1:${password}`));
+  return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+function sameString(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return diff === 0;
+}
+
+function cookieValue(request: Request, name: string): string {
+  const m = (request.headers.get('cookie') ?? '').match(new RegExp(`(?:^|;\\s*)${name}=([^;]+)`));
+  return m ? m[1]! : '';
+}
+
+function safeNext(next: string | null): string {
+  return next && next.startsWith('/') && !next.startsWith('//') ? next : '/dashboard';
+}
+
+function gatePage(next: string, failed: boolean): Response {
+  const esc = (v: string) => v.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+  const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex, nofollow"><title>Lodestar</title>
+<style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#0b0d10;color:#e8e8e8;font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
+form{width:min(340px,90vw);padding:28px;border:1px solid #2a2f36;border-radius:10px;background:#12161b}
+h1{font-size:20px;margin:0 0 4px;letter-spacing:.5px}p{margin:0 0 18px;color:#9aa3ad;font-size:13px}
+input{width:100%;box-sizing:border-box;padding:10px 12px;border-radius:6px;border:1px solid #3a414a;background:#0b0d10;color:#fff;font-size:15px}
+button{margin-top:12px;width:100%;padding:10px;border:0;border-radius:6px;background:#e0662e;color:#fff;font-size:15px;font-weight:600;cursor:pointer}
+.err{color:#ff8a70;font-size:13px;margin:10px 0 0}</style></head><body>
+<form method="post" action="${GATE_PATH}"><h1>LODESTAR</h1><p>Supply-chain command centre prototype. Enter the password to continue.</p>
+<input type="hidden" name="next" value="${esc(next)}"><input type="password" name="password" placeholder="Password" autofocus autocomplete="current-password" required>
+<button type="submit">Continue</button>${failed ? '<p class="err">That password didn\'t match. Try again.</p>' : ''}</form></body></html>`;
+  return new Response(html, {
+    status: 401,
+    headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex, nofollow' },
+  });
+}
+
+async function siteGate(request: Request, url: URL): Promise<Response | null> {
+  const password = (process.env.LODESTAR_SITE_PASSWORD ?? '').trim();
+  if (!password) return null;
+  const path = url.pathname;
+  if (GATE_OPEN_PATHS.has(path)) return null;
+  const expected = await gateToken(password);
+
+  if (path === GATE_PATH) {
+    if (request.method !== 'POST') return gatePage('/dashboard', false);
+    const form = await request.formData().catch(() => null);
+    const next = safeNext(String(form?.get('next') ?? ''));
+    const given = await gateToken(String(form?.get('password') ?? '').trim());
+    if (!sameString(given, expected)) return gatePage(next, true);
+    return new Response(null, {
+      status: 303,
+      headers: {
+        location: next,
+        'cache-control': 'no-store',
+        'set-cookie': `${GATE_COOKIE}=${expected}; Path=/; Max-Age=${GATE_MAX_AGE}; HttpOnly; Secure; SameSite=Lax`,
+      },
+    });
+  }
+
+  if (sameString(cookieValue(request, GATE_COOKIE), expected)) return null;
+  if (path.startsWith('/api/')) {
+    return new Response(JSON.stringify({ error: 'password required' }), {
+      status: 401, headers: { 'content-type': 'application/json', 'cache-control': 'no-store' },
+    });
+  }
+  return gatePage(`${path}${url.search}`, false);
+}
+
+export default async function middleware(request: Request) {
   const url = new URL(request.url);
+  const gated = await siteGate(request, url);
+  if (gated) return gated;
   const ua = request.headers.get('user-agent') ?? '';
   const path = url.pathname;
   const host = normalizeMcpHost(request.headers.get('host') ?? url.hostname);
