@@ -65,6 +65,18 @@ Layers that are **off** on purpose (names as in the Layers panel):
 5. In each tab, collapse the **Layers** panel (click its header) so it doesn't cover the Americas.
 6. Close any browser tab that has the prototype open, so the two don't get mixed up.
 
+## Opening (about 45 seconds)
+
+> "Thanks for the time. What you're about to see is Lodestar, a working prototype of a supply-chain command centre for medical imaging.
+>
+> It answers one question every morning: what is happening in the world right now that could stop us building, shipping or installing a system, and what should we decide about it today?
+>
+> Everything outside the company's walls is real public data: shipping transits, export controls, earthquakes, travel advisories, FDA notices. Each item is time-stamped and linked to its source. Everything inside the walls (stock cover, installs, revenue) is synthetic for now, and it's labelled that way on every screen.
+>
+> The AI reads the evidence and recommends. People decide.
+>
+> I'll show you two product lines where the picture is most interesting today, MR and CT, and then one where it's calm."
+
 ## The walk-through
 
 ### 1. Open on All (1 minute)
