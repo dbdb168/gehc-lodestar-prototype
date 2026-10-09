@@ -1507,6 +1507,24 @@
     "Taiwan Strait",
     "Korea Strait"
   ],
+  "chokepoint_norms": {
+    "period": "2025",
+    "basis": "Average daily transits (all vessel types) in calendar 2025, from IMF PortWatch daily chokepoint data; fetched 9 Oct 2026. Bab el-Mandeb and Suez were already disrupted in 2025.",
+    "src": "https://portwatch.imf.org/pages/port-monitor",
+    "prov": "S",
+    "per_day": {
+      "Strait of Hormuz": 85.5,
+      "Bab el-Mandeb Strait": 33.5,
+      "Suez Canal": 38.5,
+      "Panama Canal": 31.1,
+      "Malacca Strait": 234.5,
+      "Cape of Good Hope": 89.5,
+      "Gibraltar Strait": 135.4,
+      "Dover Strait": 174.7,
+      "Taiwan Strait": 238.8,
+      "Korea Strait": 219.4
+    }
+  },
   "regulatory_watch": {
     "federal_register_terms": [
       "section 232 medical devices",

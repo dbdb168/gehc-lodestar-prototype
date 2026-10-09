@@ -123,22 +123,35 @@ const ADVISORY_POINTS: Record<string, number> = { 'do-not-travel': 30, reconside
 const ADVISORY_LABEL: Record<string, string> = { 'do-not-travel': 'Do not travel', reconsider: 'Reconsider travel' };
 
 /** PortWatch: (1 - latest day / 90-day baseline) x 60, per the brief; 7-day average as context. */
-function chokepointTrafficEvidence(name: string, history: HistoryPoint[]): Evidence | null {
+// Traffic is the last 7 days' average against the chokepoint's long-run normal
+// (2025 average, network.json chokepoint_norms), so a closure that drags on
+// keeps reading as a closure. A rolling baseline drifts down with it: by 9 Oct
+// Hormuz at ~3/day read as only -38% against its own crisis-era 90 days.
+// Without a normal, it falls back to the 90 days before last week.
+function chokepointTrafficEvidence(name: string, history: HistoryPoint[], norm?: { perDay: number; period: string; src: string }): Evidence | null {
   const days = [...history].filter((h) => Number.isFinite(h.total)).sort((a, b) => b.date.localeCompare(a.date));
-  if (days.length < 30) return null;
+  if (days.length < 7) return null;
   const recent = days.slice(0, 7);
-  const base = days.slice(7, 97);
   const avg = (xs: HistoryPoint[]) => xs.reduce((s, x) => s + x.total, 0) / xs.length;
   const recentAvg = avg(recent);
-  const baseAvg = avg(base);
-  if (baseAvg < 2) return null;
   const latest = days[0]!;
-  const drop = 1 - latest.total / baseAvg;
+  let baseAvg: number;
+  let baseLabel: string;
+  if (norm && norm.perDay >= 2) {
+    baseAvg = norm.perDay;
+    baseLabel = `${baseAvg.toFixed(1)}/day in ${norm.period}`;
+  } else {
+    if (days.length < 30) return null;
+    baseAvg = avg(days.slice(7, 97));
+    if (baseAvg < 2) return null;
+    baseLabel = `a 90-day average of ${baseAvg.toFixed(1)}/day before last week`;
+  }
+  const drop = 1 - recentAvg / baseAvg;
   const points = Math.round(clamp(drop * 60, 0, 60));
   const pct = Math.round(drop * 100);
   return {
     signal: 'chokepoint',
-    text: `${name}: ${latest.total} transit${latest.total === 1 ? '' : 's'} on ${latest.date} vs a 90-day average of ${baseAvg.toFixed(1)}/day in the 90 days before last week (${pct === 0 ? 'no change' : `${pct > 0 ? '−' : '+'}${Math.abs(pct)}%`}). Last 7 days: ${recentAvg.toFixed(1)}/day.`,
+    text: `${name}: ${recentAvg.toFixed(1)} transits/day over the 7 days to ${latest.date} vs ${baseLabel} (${pct === 0 ? 'no change' : `${pct > 0 ? '−' : '+'}${Math.abs(pct)}%`}). Latest day: ${latest.total}.`,
     source: 'IMF PortWatch',
     url: 'https://portwatch.imf.org/pages/port-monitor',
     at: latest.date,
@@ -495,12 +508,15 @@ export async function computeExposure(ix: Indexed): Promise<ExposureResult> {
   const familiesOf = (productIds: Iterable<string>): Family[] =>
     [...new Set([...productIds].map((p) => ix.productById.get(p)?.family).filter(Boolean) as Family[])];
 
+  const norms = ix.net.chokepoint_norms;
+  const normFor = (pwName: string) => (norms?.per_day?.[pwName] ? { perDay: norms.per_day[pwName]!, period: norms.period, src: norms.src } : undefined);
+
   // Chokepoints on OEM lanes.
   const chokepointScore = new Map<string, number>();
   for (const [id, pwName] of laneChokepoints) {
     const cp = chokepointByPortwatchName(pwName)!;
     const ev: Evidence[] = [];
-    const traffic = chokepointTrafficEvidence(cp.displayName, histories.get(id) ?? []);
+    const traffic = chokepointTrafficEvidence(cp.displayName, histories.get(id) ?? [], normFor(pwName));
     if (traffic) ev.push(traffic);
     const st = status.find((s) => s.id === id || s.name === cp.displayName);
     if (st) ev.push(...chokepointStatusEvidence(st));
@@ -561,7 +577,7 @@ export async function computeExposure(ix: Indexed): Promise<ExposureResult> {
       const hook = input.live?.portwatch_chokepoint;
       if (hook && i === 0) {
         const cp = chokepointByPortwatchName(hook);
-        const traffic = cp ? chokepointTrafficEvidence(cp.displayName, histories.get(cp.id) ?? []) : null;
+        const traffic = cp ? chokepointTrafficEvidence(cp.displayName, histories.get(cp.id) ?? [], normFor(hook)) : null;
         if (traffic) ev.push(traffic);
       }
       if (i === 0) ev.push(...inputSignalEvidence(input.id, input.live?.yahoo, signals, quotes));

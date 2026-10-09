@@ -81,6 +81,8 @@ export interface Network {
   inputs: Input[];
   lanes: Lane[];
   chokepoints_portwatch: string[];
+  /** Long-run normal transits per day by PortWatch name (2025 average, sourced). */
+  chokepoint_norms?: { period: string; basis: string; src: string; prov: string; per_day: Record<string, number> };
   regulatory_watch?: { federal_register_terms?: string[] };
 }
 
