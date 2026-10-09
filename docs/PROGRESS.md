@@ -43,6 +43,12 @@ Feeds live (25 Sep, checked in Chromium against production): all 8 exposure-engi
 - **Repo name** contains the client name (hard rule 1). Accepted for now by the owner; rename before connecting Vercel's Git integration.
 - **Snapshot age.** `public/snapshot/last-good.json` is from 29 Sep 18:36 UTC (all 8 feeds). Refresh it the day before a demo (`docs/runbooks/refresh-snapshot.md`).
 
+## Chokepoint traffic baseline (9 Oct)
+- **The problem:** chokepoint traffic was scored as the latest day against the 90 days before last week. During a long closure that baseline drifts down with the closure. By 9 Oct, Hormuz at about 3 ships a day read as only −38%, and it dropped under the heat line (60 → 34; Qatar helium 57 → 27).
+- **The fix:** traffic now compares the last 7 days' average with each chokepoint's 2025 daily average from IMF PortWatch. The averages are stored in `network.json` under `chokepoint_norms` (prov S, fetched 9 Oct 2026). If a chokepoint has no listed normal, it falls back to the old rolling baseline.
+- **Result on production:** Hormuz 65 and Qatar helium 62. Other chokepoints did not rise.
+- **Caveat:** Bab el-Mandeb and Suez were already disrupted in 2025, so measured against 2025 they read near normal. Their war-risk tiers still score.
+
 ## Accuracy review (29 Sep)
 A full pass over the engine, drawer, panels, prompts, `network.json` and on-screen copy. The demo plan is in `docs/DEMO_SCRIPT.md`.
 

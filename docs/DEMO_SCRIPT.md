@@ -88,7 +88,7 @@ The map:
 
 Hover the **Strait of Hormuz** marker. The tooltip gives the live IMF PortWatch count. The line to say:
 
-> "One transit on 27 September [read the day's figure off the tooltip]. In 2025 this strait averaged about 85 a day."
+> "About [figure on the tooltip] ships a day this past week. In 2025 this strait averaged about 85 a day."
 
 The 85 is sourced: see "Sourced talking points" below. The on-screen comparison is the last 90 days, which were already depressed (8.7 a day).
 
