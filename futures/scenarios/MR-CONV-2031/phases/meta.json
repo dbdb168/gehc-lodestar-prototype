@@ -1,0 +1,11 @@
+{
+  "run": "MR-CONV-2031",
+  "product": "MR conventional magnet line (1.5 tesla and 3 tesla scanners built around a helium-cooled superconducting magnet)",
+  "horizon": "2026 to 2031",
+  "read_date": "2026-10-11",
+  "next_read": "2027-01-11",
+  "tolerance_line": "An install more than 30 days late breaches tolerance, and a line stop longer than 30 days breaches tolerance.",
+  "tolerance_tag": "Placeholder",
+  "confidence": "moderate",
+  "confidence_basis": "Eleven lenses agreed on both axes and on which node each future breaks on. The dates after 2028 are votes on undated events, and the numbers that decide whether a break is real, helium cover days, logic stock weeks and the cold-head parent's revenue share, are Placeholders that no owner has confirmed. Every internal value in this run is synthetic."
+}

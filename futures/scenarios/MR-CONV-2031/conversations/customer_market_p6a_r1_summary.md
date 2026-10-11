@@ -1,0 +1,9 @@
+# Customer and market, phase 6a, round 1, summary
+
+## Key points
+
+All four futures breach the tolerance line with a plant stop longer than 30 days, but only F3 and F4 move share, because in F1 and F2 every competitor is short of the same helium or cold head at the same time and a tender committee cannot score one supplier as unreliable for a lateness the market shares (N16, N17, N36; Panel judgement). In F3 the China plant stops in the second half of 2027 and Japan and India sit one tender cycle from a China-built competitor that keeps delivering, so a two-quarter gap becomes lost share (N17, N10, N29, N36; Panel judgement). In F2 and F4 the hospital sees a dark scanner rather than a slow install, because a sealed fleet warms when the sole cold head fails, and whether share moves depends on whether competitors buy from the same maker (N05, N33, N34; AI-suggested, Sourcing confirms). The 35-day encryption break is the one break where share can move in every future, because competitors are not hit together and a committee reads it as the supplier's own failure (N23, N26, N05, N17; Panel judgement). Whether tenders score delivery reliability at all is unverified; if they do not, the F3 and F4 cost is margin, not share (N36; Panel judgement).
+
+## In one hundred words
+
+Every future stops at least one plant for more than 30 days, and the China plant breaks in all four. Share moves only where a competitor keeps delivering: in F3 in Japan and India within one tender cycle, and in F4 on Europe's replacement peak. Helium shortages in F1 and the sealed market's single cold head in F2 are common to the market, so lateness there is forgiven. The encryption break is different: it is the supplier's own failure in the committee's eyes and can cost share anywhere. The unverified fact that decides all of this is whether tenders score late delivery.

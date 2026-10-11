@@ -1,0 +1,149 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Lodestar futures output: what the screens read",
+  "type": "object",
+  "required": ["meta", "risks", "uncertainties", "futures", "indicators", "actions", "brief"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["run", "product", "horizon", "read_date", "next_read", "tolerance_line", "confidence", "confidence_basis"],
+      "properties": {
+        "run": {"type": "string"},
+        "product": {"type": "string"},
+        "horizon": {"type": "string"},
+        "read_date": {"type": "string"},
+        "next_read": {"type": "string"},
+        "tolerance_line": {"type": "string", "description": "A full sentence. Placeholder until the owner sets it."},
+        "tolerance_tag": {"enum": ["Placeholder", "Confirmed"]},
+        "confidence": {"enum": ["high", "moderate", "low"]},
+        "confidence_basis": {"type": "string"}
+      }
+    },
+    "risks": {
+      "type": "array", "minItems": 1, "maxItems": 10,
+      "items": {
+        "type": "object",
+        "required": ["rank", "node", "name", "sentence", "threats", "replace_months", "tag", "confirm_by"],
+        "properties": {
+          "rank": {"type": "integer"},
+          "node": {"type": "string"},
+          "name": {"type": "string"},
+          "sentence": {"type": "string", "description": "One plain sentence a product owner reads: what fails and why it is on the list."},
+          "threats": {"type": "array", "items": {"type": "string"}},
+          "replace_months": {"type": "integer"},
+          "tag": {"enum": ["AI-suggested", "Confirmed", "Placeholder"]},
+          "confirm_by": {"type": "string"},
+          "confirmed_on": {"type": "string"}
+        }
+      }
+    },
+    "uncertainties": {
+      "type": "array", "minItems": 2, "maxItems": 2,
+      "items": {
+        "type": "object",
+        "required": ["id", "question", "end_a", "end_b", "kind", "moves_risks", "lean", "lean_sentence", "settles_a", "settles_b", "reads"],
+        "properties": {
+          "id": {"type": "string"},
+          "question": {"type": "string", "description": "A question the owner can answer without a glossary."},
+          "end_a": {"type": "string"},
+          "end_b": {"type": "string"},
+          "kind": {"enum": ["actions", "outcomes", "causation", "value"]},
+          "moves_risks": {"type": "array", "items": {"type": "string"}},
+          "lean": {"type": "number", "minimum": -1, "maximum": 1, "description": "-1 fully toward end_a, +1 fully toward end_b, 0 no lean."},
+          "lean_sentence": {"type": "string"},
+          "settles_a": {"type": "string", "description": "The event that settles it toward end_a, as a sentence."},
+          "settles_b": {"type": "string"},
+          "reads": {"type": "array", "items": {"type": "object", "required": ["date", "lean"], "properties": {"date": {"type": "string"}, "lean": {"type": "number"}}}}
+        }
+      }
+    },
+    "futures": {
+      "type": "array", "minItems": 4, "maxItems": 4,
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "position", "sentence", "what_happens", "what_fails_first", "how_soon", "what_it_costs", "what_prevents_it", "how_sure", "what_would_change_this", "path"],
+        "properties": {
+          "id": {"type": "string"},
+          "name": {"type": "string"},
+          "position": {"type": "object", "required": ["u1", "u2"], "properties": {"u1": {"enum": ["a", "b"]}, "u2": {"enum": ["a", "b"]}}},
+          "sentence": {"type": "string", "description": "The future in one plain sentence, in terms of the two answers."},
+          "leans_here": {"type": "boolean"},
+          "what_happens": {"type": "string"},
+          "what_fails_first": {"type": "object", "required": ["node", "sentence", "tag"], "properties": {"node": {"type": "string"}, "sentence": {"type": "string"}, "tag": {"type": "string"}}},
+          "how_soon": {"type": "string"},
+          "what_it_costs": {"type": "string"},
+          "what_prevents_it": {"type": "string"},
+          "how_sure": {"type": "object", "required": ["level", "basis"], "properties": {"level": {"enum": ["high", "moderate", "low"]}, "basis": {"type": "string"}}},
+          "what_would_change_this": {"type": "string"},
+          "path": {"type": "array", "items": {"type": "object", "required": ["period", "sentence"], "properties": {"period": {"type": "string"}, "sentence": {"type": "string"}}}}
+        }
+      }
+    },
+    "indicators": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "uncertainty", "name", "what_is_measured", "source_name", "source_url", "cadence", "mode", "settles_a_when", "settles_b_when", "false_signal", "last_read", "leans_toward"],
+        "properties": {
+          "id": {"type": "string"},
+          "uncertainty": {"type": "string"},
+          "name": {"type": "string"},
+          "what_is_measured": {"type": "string"},
+          "source_name": {"type": "string"},
+          "source_url": {"type": "string"},
+          "cadence": {"type": "string"},
+          "mode": {"enum": ["live", "manual"]},
+          "settles_a_when": {"type": "string"},
+          "settles_b_when": {"type": "string"},
+          "false_signal": {"type": "string"},
+          "last_read": {"type": "string", "description": "The last reading in words, with its date."},
+          "leans_toward": {"enum": ["a", "b", "neither"]},
+          "series": {"type": "array", "items": {"type": "object", "properties": {"date": {"type": "string"}, "value": {"type": "number"}, "basis": {"type": "string"}}}},
+          "threshold": {"type": "number"}
+        }
+      }
+    },
+    "actions": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "owner", "principle", "verdict", "protects", "why_now", "start_by", "too_late_after", "act_if", "pause_if", "look_again_if", "case_tag", "cost_of_waiting"],
+        "properties": {
+          "id": {"type": "string"},
+          "name": {"type": "string"},
+          "owner": {"type": "string"},
+          "principle": {"type": "string"},
+          "verdict": {"enum": ["works in all four futures", "works in some futures", "a bet on one future"]},
+          "futures_where_it_works": {"type": "array", "items": {"type": "string"}},
+          "protects": {"type": "string"},
+          "why_now": {"type": "string"},
+          "start_by": {"type": "string"},
+          "too_late_after": {"type": "string"},
+          "act_if": {"type": "string"},
+          "pause_if": {"type": "string"},
+          "look_again_if": {"type": "string"},
+          "case_tag": {"enum": ["AI-suggested", "Confirmed", "Panel judgement", "Placeholder"]},
+          "cost_of_waiting": {"type": "string"},
+          "status": {"enum": ["waiting for an owner", "accepted", "paused", "declined"]}
+        }
+      }
+    },
+    "brief": {
+      "type": "object",
+      "required": ["bottom_line", "where_we_are_heading", "what_fails_first", "what_it_costs", "right_in_every_future", "right_only_if_the_lean_holds", "one_action_waiting"],
+      "properties": {
+        "bottom_line": {"type": "string"},
+        "where_we_are_heading": {"type": "string"},
+        "what_fails_first": {"type": "string"},
+        "what_it_costs": {"type": "string"},
+        "right_in_every_future": {"type": "string"},
+        "right_only_if_the_lean_holds": {"type": "string"},
+        "one_action_waiting": {"type": "string"}
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {"type": "object", "required": ["claim", "source", "tag", "changes_if", "confirm_by"], "properties": {"claim": {"type": "string"}, "source": {"type": "string"}, "source_url": {"type": "string"}, "tag": {"type": "string"}, "changes_if": {"type": "string"}, "confirm_by": {"type": "string"}, "nodes": {"type": "array", "items": {"type": "string"}}}}
+    }
+  }
+}

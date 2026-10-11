@@ -1,0 +1,9 @@
+# Labor, phase 5, round 1, summary
+
+## Key points
+
+Labour resolves U1 through one lane, the export port, and the only machine-readable record of whether a labour stop ever reaches 30 days is the BLS work stoppages listing, which showed five major stoppages in effect in September 2026 and none at a port (N26, N25, N23; BLS, read 11 October 2026). The one dated labour event inside the horizon is the longshore master contract expiry on 30 September 2030, so U1 leans toward end A on labour grounds until mid-2030 and must be read monthly after that (N26; ILA, 7 February 2025). The labour meaning of U2 is which trades the plant needs, and the public indicator is the sealed share of new MR clearances in product code LNH, whose count is machine-readable from openFDA but whose sealed tag needs a person to read each summary (N16, N20, N05, N33; openFDA, last updated 28 September 2026). The disclosure feed that would show a supplier parent leaving the business returned a 403 today, so U1 end B by owner exit has no labour indicator and stays a watch item for Sourcing (N03, N05; Panel judgement). The age of the magnet winders moves on no external uncertainty and remains a Placeholder for Human resources (N20; Placeholder).
+
+## In one hundred words
+
+Three indicators, none to be built. LAB-1, BLS major work stoppages, is live and settles U1 toward B only when a stoppage at the export port or carriers passes 30 days; it reads A today. LAB-2, the longshore contract calendar, is manual and quiet until the 30 September 2030 expiry. LAB-3, the sealed share of LNH clearances, is half live and reads A, with conventional builds still dominant and no 3 tesla sealed clearance. The supplier-parent disclosure indicator could not be confirmed and is withheld. Short strikes and software clearances are the false signals to ignore.

@@ -1,0 +1,9 @@
+# Customer and market, phase 4, round 2, summary
+
+## Key points
+
+In F2 trade stays a cost and helium stops deciding, and tender committees pull sealed designs through carbon scoring and the European Union origin rule rather than through the OEM's push, so the sealed fleet grows faster than its spares stock (N36, N35, N34; NHS England, October 2020; Regulation 2025/1197, 20 June 2025; Panel judgement). The first break is the cold head, because the one qualified Japanese maker supplies every new magnet and every service swap of a fleet that warms up without helium, and the trigger is a parent's allocation or a Nankai Trough event with no schedule, largest from 2029 (N05, N16, N17; AI-suggested, Engineering and Sourcing confirm). The cost is a line stop past 30 days at both plants and running scanners going dark in the same quarter, which is where the hospital feels it first (N05, N33, N34; Panel judgement, moderate confidence). This lens rejects Labor's technicians and the Contrarian's no-break reading because the line is measured at the hospital, where a slow install can be planned around and a dark scanner cannot (N20, N36; Panel judgement). Whether any share moves turns on whether competitors share the cold-head source (N05; AI-suggested, Sourcing confirms).
+
+## In one hundred words
+
+In F2 the buyer gets what the committee scored for and loses what it never scored. Carbon rules and origin rules pull sealed magnets into most new builds by 2031, and the cold head becomes the part that keeps every magnet cold, new and installed. Its sole maker is one board decision or one earthquake from stopping both plants past 30 days and darkening running scanners, largest from 2029. Labor and the Contrarian put the first break on the technicians or on nothing; this lens does not, because the hospital feels a dark scanner, not a slow install.

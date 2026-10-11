@@ -1,0 +1,120 @@
+[
+  {
+    "rank": 1,
+    "node": "N16",
+    "name": "United States magnet plant",
+    "sentence": "One plant winds and tests every magnet for the Americas and Europe, and a storm, a strike or a grid curtailment stops it with nothing to cover.",
+    "threats": [
+      "natural disasters",
+      "labor",
+      "security",
+      "infrastructure"
+    ],
+    "replace_months": 36,
+    "tag": "AI-suggested",
+    "confirm_by": "Site operations"
+  },
+  {
+    "rank": 2,
+    "node": "N17",
+    "name": "China plant",
+    "sentence": "One plant builds every magnet and system for Asia inside a counterparty's borders, and a listing or a trade rupture strands it.",
+    "threats": [
+      "geopolitical",
+      "foreign trade and payments",
+      "natural disasters",
+      "security"
+    ],
+    "replace_months": 36,
+    "tag": "AI-suggested",
+    "confirm_by": "Site operations"
+  },
+  {
+    "rank": 3,
+    "node": "N18",
+    "name": "United States hub",
+    "sentence": "One site assembles every system for two regions, so any stop there delays every install at once.",
+    "threats": [
+      "natural disasters",
+      "labor",
+      "security",
+      "infrastructure"
+    ],
+    "replace_months": 36,
+    "tag": "AI-suggested",
+    "confirm_by": "Site operations"
+  },
+  {
+    "rank": 4,
+    "node": "N03",
+    "name": "Superconducting wire",
+    "sentence": "Every conventional magnet is wound from one mill's superconducting wire, and qualifying a second mill takes longer than the backlog covers.",
+    "threats": [
+      "geopolitical",
+      "foreign trade and payments",
+      "financial",
+      "security",
+      "labor"
+    ],
+    "replace_months": 18,
+    "tag": "AI-suggested",
+    "confirm_by": "Engineering"
+  },
+  {
+    "rank": 5,
+    "node": "N05",
+    "name": "Cold heads",
+    "sentence": "One maker in Japan supplies the cold heads that keep every magnet cold, and without one a magnet cannot ship or stay cold in the field.",
+    "threats": [
+      "natural disasters",
+      "geopolitical",
+      "financial",
+      "infrastructure"
+    ],
+    "replace_months": 18,
+    "tag": "AI-suggested",
+    "confirm_by": "Engineering"
+  },
+  {
+    "rank": 6,
+    "node": "N10",
+    "name": "Programmable logic",
+    "sentence": "The control electronics for every system use programmable logic that a foundry interruption or an entity listing can stop.",
+    "threats": [
+      "geopolitical",
+      "foreign trade and payments",
+      "natural disasters",
+      "security"
+    ],
+    "replace_months": 18,
+    "tag": "AI-suggested",
+    "confirm_by": "Engineering"
+  },
+  {
+    "rank": 7,
+    "node": "N20",
+    "name": "Technicians",
+    "sentence": "The winding and cryogenic trades at the United States plant live in one town, and a strike or a retirement cliff cuts output without any supplier failing.",
+    "threats": [
+      "labor",
+      "macroeconomic"
+    ],
+    "replace_months": 18,
+    "tag": "AI-suggested",
+    "confirm_by": "Human resources"
+  },
+  {
+    "rank": 8,
+    "node": "N19",
+    "name": "Helium cover",
+    "sentence": "Helium cover at the United States plant is shorter than the time to reroute a shipment, so any interruption to power, road or port reaches the line.",
+    "threats": [
+      "infrastructure",
+      "geopolitical",
+      "foreign trade and payments"
+    ],
+    "replace_months": 12,
+    "tag": "Placeholder",
+    "confirm_by": "Site operations"
+  }
+]

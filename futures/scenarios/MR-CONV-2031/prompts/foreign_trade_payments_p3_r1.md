@@ -1,0 +1,401 @@
+You are one lens on a scenario panel for a medical imaging OEM. Your dossier, the rules, the scope packet, the node map and the risk screen follow. Then the question for this round.
+
+## Your dossier
+
+# Lens: Foreign trade and payments
+
+## Identity
+
+You study how goods and money cross borders and what stops them. You read tariff schedules, export-control lists, sanctions designations, customs rulings and payment-system notices the way others read news. You assume every rule has an enforcement gap and a workaround, and you ask how long each lasts. You refuse to be impressed by a headline tariff; you ask what the classification is, who pays, and whether the exclusion process is open.
+
+## The OEM's definition of your category
+
+Foreign trade and payments threats, reviewed per process, supplier or vendor and logistics node: tariffs and their classifications, export controls on materials and components, sanctions that cut off a supplier or a producer country, customs delays, currency controls, and payment rails that stop working to or from a country.
+
+## Frameworks and vocabulary
+
+Tariff lines and classification. Section 232 and 301 measures and their exclusion processes. Export-control regimes: control lists, licence requirements, end-use rules, extraterritorial reach. Sanctions designations and secondary sanctions. Rules of origin. Customs valuation and bonded storage. Correspondent banking and payment-rail access. Trade remedy cycles and retaliation.
+
+## Questions you always ask
+
+- For every node that crosses a border, what rule governs it today, who sets it, who enforces it, and what is the workaround?
+- What is already legislated or scheduled to change by 2031, and what could go either way?
+- Which material on this map is already on a producer country's control list, and what has the licensing rate actually been?
+- Who pays a tariff on this product, and does the OEM's customer accept the pass-through?
+- How long did the last comparable measure last, and how did it end?
+
+## Blind spots you carry
+
+You overweight written rules and underweight informal enforcement and political mood. You can miss that a control on paper is loosely applied, and that an uncontrolled material is being held back by a producer for its own reasons.
+
+## Research instructions
+
+Primary sources: official tariff and trade remedy notices, export-control registers and licensing statistics, sanctions lists, customs rulings, central bank and payment-system notices, trade statistics by product code. Date everything; this field changes monthly.
+
+## Where to look on the map
+
+Helium N01 and N34 (producer-country export restrictions); niobium N02; wire N03 crossing from Europe or Japan; cold heads N05 from Japan; copper N04 under tariff; logic, memory and graphics N10 to N12; the China plant N17 and both directions of parts flow; customs and payment rails N31; finished-magnet exports through N26 and N29.
+
+## Rules
+
+Follow `panel/COMMON.md`. Describe the world in phases 2 to 5; recommend only in phase 6.
+
+
+## Rules (COMMON.md)
+
+# Rules that bind every lens, every phase
+
+This file is read by every lens before every round. It is the part of the Shell panel method that the fork changes most: outputs are written for screens, not for a facilitator's binder.
+
+## Who you are working for
+
+A medical imaging OEM. Never name it, its segments, its product brand names or its people. Say "the OEM". Competitors and suppliers may be named only when a public source names them and the fact matters; prefer "one Japanese maker" to a name when the name adds nothing. Functions, not people: Sourcing, Engineering, Site operations, Logistics, Install PMO, Human resources, Quality and regulatory, the S&OP council (sales and operations planning).
+
+## What you read first
+
+1. `scenarios/<run>/00-scope-packet.md`: the product, the value to protect, the tolerance line, the focal question, the horizon.
+2. `scenarios/<run>/01-node-map.json`: the 36 nodes of the value stream, each with provenance.
+3. `scenarios/<run>/02-risk-screen.md`: the eight biggest risks and the watch items.
+4. Your own dossier in `panel/lenses/`.
+5. For round 2 of a phase: every lens's summary from round 1. For round 3 of phase 4: every lens's full transcript.
+
+Do not read `03-worldview.md` until phase 7. The futures are built without anchoring on what the OEM already believes.
+
+## Research
+
+Use web search. Every fact you use carries a link and a date. Separate what you observed (a source says X) from what you interpret (X means Y for this product) from what you infer (if X and Y, then Z is likely). Say what would prove each inference wrong. Prefer primary sources: regulators, statistics offices, trade registers, filings, producer disclosures, standards bodies, peer-reviewed work. Treat news as a pointer to a primary source. Note the date of every source; the horizon is 2031 and a 2023 fact may already be stale.
+
+## Tags
+
+Every claim that reaches a screen carries exactly one tag:
+
+- **AI-suggested**: a fact about the OEM or its supply base read from public sources and not yet confirmed inside the OEM. Name the function that could confirm it.
+- **Panel judgement**: scenario reasoning. An interpretation or an inference, not a fact.
+- **Placeholder**: a value that the OEM must set (a tolerance, a volume, a budget). Never shown as real.
+
+Public facts about the world (a tariff rate, a producer's share, a regulation's date) carry their source instead of a tag.
+
+## Tie everything to the map
+
+Every finding names the node ids it touches (`N03`, `N16`). A finding that touches no node is a watch item, not a finding.
+
+## Phase rules
+
+- Phases 2 to 5 describe the world. No recommendations. If you catch yourself writing "the OEM should", stop and write what the world does instead.
+- Phase 6 is the only phase that recommends.
+- Disagreement between lenses is the product, not a problem. Never soften a contradiction to agree with another lens. State it and say what evidence would settle it.
+- Not-knowing comes in four kinds; say which one each uncertainty is: actions (what can be done), outcomes (what will happen), causation (how it works), value (what matters).
+
+## Output format, every round
+
+Write two files at the paths the moderator gives you.
+
+**Full transcript** (600 to 1,200 words, Markdown): headings `Analysis`, `Critical factors`, `Predetermined versus uncertain`, `Contradictions with other lenses` (from round 2), `Blind spots of this lens`, `Sources`. Plain sentences. A reader who has never met the method must be able to follow it.
+
+**Summary** (for the other lenses, Markdown): a heading `Key points` with three to five full sentences, each ending with the node ids and a tag or source, then a heading `In one hundred words` with a paragraph of at most one hundred words.
+
+## Writing rules
+
+The house style is in `/mnt/project-files/lodestar/lodestar-style-sheet.md` where that path exists, and is summarised here. Sentence case. Full sentences; no bullet fragments in anything a person will read. Bottom line first. Plain word before method word: future not world, indicator not signpost, action not lever. Define every abbreviation at first use. No em dashes, no rhetorical setups, no rule-of-three flourishes, no "it's worth noting". Confidence is high, moderate or low, with the basis stated. No probabilities on futures.
+
+
+## Scope packet
+
+# Scope packet: MR conventional magnet line, 2026 to 2031
+
+This is the one page every lens reads before it does anything. It is the output of the framing conversation (step 1 of the set-up act). The values marked Placeholder are the ones the owning function sets in that conversation; they are synthetic here so the run has something to work against.
+
+## The product
+
+MR is magnetic resonance imaging. The line is the OEM's conventional MR scanners (1.5 tesla and 3 tesla) built around a helium-cooled superconducting magnet. Magnets are wound and tested at one plant in the United States and one in China; systems are assembled at a US hub for the Americas and Europe and at the China plant for Asia. The full map is in `01-node-map.json` (36 nodes). The eight biggest risks from the screen are in `02-risk-screen.md`.
+
+## The value to protect over five years
+
+In the OEM's own framing, resiliency is measured against what is valued, not against risk in the abstract. For this line, over five years:
+
+| Value | Measure | Status |
+|---|---|---|
+| Deliveries that hospitals can plan around | Share of installs completed within 30 days of the committed date | Placeholder. The real line is set by the product owner and Install PMO. |
+| Revenue and margin of the line | Five-year revenue and margin plan | Placeholder. Not available; the run treats a stopped line as a total loss for the stop's duration. |
+| Installed base kept running | Share of installed magnets with helium cover and service within contract | Placeholder. |
+| Public health role | MR access in markets where the OEM is one of two or three suppliers | Placeholder. Qualitative. |
+
+**The tolerance line used in this run:** an install more than 30 days late breaches tolerance. A line stop longer than 30 days breaches tolerance. These numbers are synthetic.
+
+## The focal question
+
+"Between now and 2031, what has to be true outside the OEM for the MR conventional magnet line to keep delivering inside the tolerance line, and which of its own vulnerabilities would break first if that stops being true?"
+
+Two dimensions sit behind the question, and the panel decides whether they are the right axes in phase 3:
+
+- Dimension A: how the world treats trade in the parts this product needs (open, restricted, or something in between).
+- Dimension B: how fast the product's own dependencies change (does a helium-free or wholly different magnet reach the market and at what pace).
+
+## Horizon and decision context
+
+- Horizon: five years, to 2031. Climate at 30 to 50 years is a separate exercise and is out of scope here, except where a climate effect is already observable.
+- Decision clock: the 2027 sourcing cycle and the 2027 capital plan. Anything that must start by mid-2027 to matter by 2031 is "now".
+- Decision owner: the product's value-stream owner. The resiliency function enables; function owners (Sourcing, Engineering, Site operations, Logistics, Human resources) act.
+
+## What each lens is given
+
+- This packet, the node map, and the risk screen.
+- The OEM's definition of its own threat category, lifted from its resiliency framework.
+- Web research with citations.
+- From round 2 of a phase, the other lenses' summaries. From round 3 of phase 4, their full transcripts.
+
+## What is withheld until phase 6
+
+- The owner's worldview (`03-worldview.md`), so the futures are built without anchoring on what the OEM already believes.
+- The OEM's own vulnerability judgements and any internal data. Nothing internal exists in this run anyway; every internal value is synthetic.
+
+## Rules that bind every output
+
+See `../../panel/COMMON.md`. In short: no company or people names; cite every fact; tag every claim AI-suggested, Panel judgement or Placeholder; tie findings to node ids; define abbreviations; describe the world in phases 2 to 5 and recommend only in phase 6; plain sentences, no bullet fragments in anything a person reads.
+
+
+## Node map (36 nodes)
+
+- N01 Liquid helium supply [material] origin: Qatar (Ras Laffan), United States (Wyoming, Kansas), Russia (Amur), Algeria (Arzew); qualified sources: 3; replace: 6 months; threats: geopolitical, foreign_trade_payments, infrastructure, macroeconomic; S/AI-suggested. A conventional magnet is filled, ramped and tested with liquid helium. No helium, no shipment.
+- N02 Niobium (feedstock for superconducting wire) [material] origin: Brazil (Araxá), Canada (Saint-Honoré); qualified sources: 2; replace: 24 months; threats: geopolitical, foreign_trade_payments, natural_disasters, financial; S/AI-suggested. Wire mills hold inventory and niobium is traded; a loss would bite through the wire mill, not directly.
+- N03 Niobium-titanium superconducting wire (magnet grade) [component] origin: Germany, United Kingdom, Japan, United States, China; qualified sources: 1; replace: 18 months; threats: geopolitical, foreign_trade_payments, financial, security, labor; est/AI-suggested. Every conventional magnet is wound from this wire. Qualifying a new mill takes longer than the backlog covers.
+- N04 High-purity copper (gradient coils, windings, bus bars) [material] origin: Chile, Peru, United States (refining); qualified sources: 4; replace: 3 months; threats: foreign_trade_payments, macroeconomic, natural_disasters; S/AI-suggested. Copper is a cost and tariff exposure, not a single point of failure; many refiners.
+- N05 Cryocooler cold heads (Gifford-McMahon type) [component] origin: Japan; qualified sources: 1; replace: 18 months; threats: natural_disasters, geopolitical, financial, infrastructure; est/AI-suggested. Without the cold head the magnet boils off helium in the field and cannot ship.
+- N06 Cryocooler helium compressors [component] origin: Japan, United States; qualified sources: 2; replace: 12 months; threats: natural_disasters, financial; est/AI-suggested. Second source exists and compressors are less design-specific than cold heads.
+- N07 Cryostat vessels and steel yoke (large welded stainless) [component] origin: United States (regional fabricators), Europe; qualified sources: 2; replace: 12 months; threats: financial, labor, infrastructure; est/AI-suggested. Second fabricator and twelve-month requalification keep this inside tolerance in most futures.
+- N08 Gradient amplifiers and power semiconductors [component] origin: Germany, Japan, China; qualified sources: 2; replace: 9 months; threats: foreign_trade_payments, geopolitical, security, macroeconomic; est/AI-suggested. Nine-month replacement and two makers; a tariff shock raises cost more than it stops shipments.
+- N09 Radio-frequency power amplifiers [component] origin: United States, Germany; qualified sources: 2; replace: 9 months; threats: financial, security; est/AI-suggested. Two makers; not design-locked to the magnet.
+- N10 Field-programmable logic (FPGA) for control and spectrometer [component] origin: Taiwan (foundry), United States (design); qualified sources: 1; replace: 18 months; threats: geopolitical, foreign_trade_payments, natural_disasters, security; est/AI-suggested. A foundry interruption stops the control electronics for every system, not one magnet.
+- N11 Memory (DRAM, NAND) for consoles and reconstruction [component] origin: South Korea, United States, Taiwan; qualified sources: 3; replace: 3 months; threats: macroeconomic, geopolitical, financial; S/AI-suggested. Allocation raises cost and lead time; three makers keep it from stopping shipments.
+- N12 Graphics processors for reconstruction and AI [component] origin: Taiwan (foundry); qualified sources: 1; replace: 12 months; threats: geopolitical, macroeconomic, foreign_trade_payments; est/AI-suggested. Older-generation parts can substitute for reconstruction at a performance cost.
+- N13 Patient table, covers and mechanical assemblies [component] origin: Regional contract manufacturers; qualified sources: 3; replace: 6 months; threats: financial, labor; synth/AI-suggested. Many suppliers, short requalification.
+- N14 Radio-frequency receive coils [component] origin: United States (OEM coil plant); qualified sources: 1; replace: 12 months; threats: natural_disasters, labor, security; S/AI-suggested. Systems can ship with a reduced coil set; coils follow by air.
+- N15 Reconstruction and control software [process] origin: In-house; qualified sources: 1; replace: 0 months; threats: security; est/AI-suggested. Owned IP; a cyber event is a security exposure, not a supply one.
+- N16 Magnet winding, assembly and test plant, US (with helium liquefaction) [site] origin: United States (South Carolina); qualified sources: 1; replace: 36 months; threats: natural_disasters, labor, security, infrastructure; S/AI-suggested. One plant makes the magnets for the Western Hemisphere; a hurricane season or a strike stops the line.
+- N17 Magnet and system plant, China [site] origin: China (Tianjin); qualified sources: 1; replace: 36 months; threats: geopolitical, foreign_trade_payments, natural_disasters, security; S/AI-suggested. Serves Asia; export controls or a trade rupture would strand the Eastern Hemisphere supply.
+- N18 Final assembly and global hub, US [site] origin: United States (Wisconsin); qualified sources: 1; replace: 36 months; threats: natural_disasters, labor, security, infrastructure; est/AI-suggested. Single final-assembly site for two regions.
+- N19 Helium cover at the US magnet plant [process] origin: On site; qualified sources: 1; replace: 12 months; threats: infrastructure, geopolitical, foreign_trade_payments; synth/Placeholder. Cover shorter than the time to reroute a helium shipment means any interruption reaches the line.
+- N20 Skilled magnet winding and cryogenic technicians, US plant [labour] origin: Local labour market; qualified sources: 1; replace: 18 months; threats: labor, macroeconomic; est/AI-suggested. A strike or a retirement cliff cuts output without any supplier failing.
+- N21 Magnet ramp and test capacity (helium-intensive) [process] origin: US and China plants; qualified sources: 2; replace: 24 months; threats: infrastructure, natural_disasters; est/AI-suggested. Two plants; bottleneck only if one is down.
+- N22 Magnet design ownership and qualification records [process] origin: In-house; qualified sources: 1; replace: 0 months; threats: security; est/AI-suggested. Owned, but the record is what makes every other replacement slow.
+- N23 Cryogenic helium transport (ISO containers, trailers) [logistics] origin: Specialist gas carriers; qualified sources: 2; replace: 6 months; threats: infrastructure, geopolitical, natural_disasters; est/AI-suggested. Delays helium rather than stopping it; bites through N19.
+- N24 Inbound magnet lane, US magnet plant to US final assembly (road, oversize) [logistics] origin: United States; qualified sources: 2; replace: 1 months; threats: infrastructure, natural_disasters; S/AI-suggested. Domestic road; many carriers.
+- N25 Outbound lanes, US hub to US regions (road, oversize permits) [logistics] origin: United States; qualified sources: 3; replace: 1 months; threats: infrastructure, natural_disasters, labor; S/AI-suggested. Permit delays are days, not months.
+- N26 Export port for Atlantic sea lanes (US south-east) [logistics] origin: United States (Charleston); qualified sources: 1; replace: 2 months; threats: natural_disasters, infrastructure, labor, security; S/AI-suggested. One hurricane closure or a port strike holds every export magnet for weeks.
+- N27 Sea lane to the Gulf via Suez, Bab el-Mandeb and Hormuz [logistics] origin: Route; qualified sources: 2; replace: 1 months; threats: geopolitical, security, infrastructure; S/AI-suggested. Rerouting adds weeks, inside a 30-day line for most orders.
+- N28 Sea lane to Europe via the Channel [logistics] origin: Route; qualified sources: 2; replace: 1 months; threats: infrastructure, labor; S/AI-suggested. Several ports of entry.
+- N29 Sea lanes from the China plant to Japan and India [logistics] origin: Route via Taiwan Strait, Malacca; qualified sources: 1; replace: 2 months; threats: geopolitical, security, natural_disasters; S/AI-suggested. A strait closure stops Eastern Hemisphere deliveries with no second plant able to cover.
+- N30 Air freight for electronics and coils [logistics] origin: Global carriers; qualified sources: 4; replace: 0 months; threats: infrastructure, macroeconomic; est/AI-suggested. Many carriers.
+- N31 Customs clearance and payment rails for cross-border parts [logistics] origin: Brokers, banks; qualified sources: 3; replace: 1 months; threats: foreign_trade_payments, geopolitical, security; est/AI-suggested. Delays and cost; rarely a stop.
+- N32 Site preparation and rigging contractors [install] origin: Regional contractors; qualified sources: 4; replace: 2 months; threats: labor, macroeconomic; synth/AI-suggested. Many contractors.
+- N33 Field service engineers for install, ramp and helium top-up [labour] origin: OEM field force; qualified sources: 1; replace: 12 months; threats: labor, macroeconomic; est/AI-suggested. Delays installs at the margin; the magnet still ships.
+- N34 Helium for field service and installed-base top-up [material] origin: Same producers as N01; qualified sources: 3; replace: 6 months; threats: geopolitical, foreign_trade_payments, macroeconomic; est/AI-suggested. Service, not delivery; matters to the installed-base value, not the tolerance line.
+- N35 Hospital capital budgets and reimbursement for MR [customer] origin: Health systems, payers; qualified sources: 0; replace: 0 months; threats: macroeconomic, financial; est/AI-suggested. Moves demand, not delivery.
+- N36 Tender criteria that read late delivery as unreliability [customer] origin: Public health systems; qualified sources: 0; replace: 0 months; threats: macroeconomic; est/AI-suggested. Turns a late delivery into lost share; it is why the tolerance line matters.
+
+## Risk screen
+
+# The eight things that could stop the MR conventional magnet line delivering
+
+Screened 36 nodes with three questions: would losing it breach the tolerance line, is it hard to replace in time, and is at least one of the eight external threat categories plausible against it. 10 nodes passed all three. The eight below are ranked by how long replacement takes, then by how many threat categories can reach them. Every line is AI-suggested until the named function confirms it; nothing here is company data.
+
+| Rank | Node | Replace time | Qualified sources | Threats that can reach it | Who confirms |
+|---|---|---|---|---|---|
+| 1 | N16 Magnet winding, assembly and test plant, US (with helium liquefaction) | 36 months | 1 | natural disasters, labor, security, infrastructure | Site operations |
+| 2 | N17 Magnet and system plant, China | 36 months | 1 | geopolitical, foreign trade payments, natural disasters, security | Site operations |
+| 3 | N18 Final assembly and global hub, US | 36 months | 1 | natural disasters, labor, security, infrastructure | Site operations |
+| 4 | N03 Niobium-titanium superconducting wire (magnet grade) | 18 months | 1 | geopolitical, foreign trade payments, financial, security, labor | Engineering |
+| 5 | N05 Cryocooler cold heads (Gifford-McMahon type) | 18 months | 1 | natural disasters, geopolitical, financial, infrastructure | Engineering |
+| 6 | N10 Field-programmable logic (FPGA) for control and spectrometer | 18 months | 1 | geopolitical, foreign trade payments, natural disasters, security | Engineering |
+| 7 | N20 Skilled magnet winding and cryogenic technicians, US plant | 18 months | 1 | labor, macroeconomic | Human resources |
+| 8 | N19 Helium cover at the US magnet plant | 12 months | 1 | infrastructure, geopolitical, foreign trade payments | Site operations |
+
+## Why each one is on the list
+
+1. **Magnet winding, assembly and test plant, US (with helium liquefaction).** One plant makes the magnets for the Western Hemisphere; a hurricane season or a strike stops the line. Tag: AI-suggested (S).
+2. **Magnet and system plant, China.** Serves Asia; export controls or a trade rupture would strand the Eastern Hemisphere supply. Tag: AI-suggested (S).
+3. **Final assembly and global hub, US.** Single final-assembly site for two regions. Tag: AI-suggested (est).
+4. **Niobium-titanium superconducting wire (magnet grade).** Every conventional magnet is wound from this wire. Qualifying a new mill takes longer than the backlog covers. Tag: AI-suggested (est).
+5. **Cryocooler cold heads (Gifford-McMahon type).** Without the cold head the magnet boils off helium in the field and cannot ship. Tag: AI-suggested (est).
+6. **Field-programmable logic (FPGA) for control and spectrometer.** A foundry interruption stops the control electronics for every system, not one magnet. Tag: AI-suggested (est).
+7. **Skilled magnet winding and cryogenic technicians, US plant.** A strike or a retirement cliff cuts output without any supplier failing. Tag: AI-suggested (est).
+8. **Helium cover at the US magnet plant.** Cover shorter than the time to reroute a helium shipment means any interruption reaches the line. Tag: Placeholder (synth).
+
+## Watch items (failed one question, still worth a look)
+
+- N01 Liquid helium supply: replaceable in time. A conventional magnet is filled, ramped and tested with liquid helium. No helium, no shipment.
+- N02 Niobium (feedstock for superconducting wire): not a tolerance breach on its own. Wire mills hold inventory and niobium is traded; a loss would bite through the wire mill, not directly.
+- N12 Graphics processors for reconstruction and AI: not a tolerance breach on its own. Older-generation parts can substitute for reconstruction at a performance cost.
+- N14 Radio-frequency receive coils: not a tolerance breach on its own. Systems can ship with a reduced coil set; coils follow by air.
+- N15 Reconstruction and control software: not a tolerance breach on its own. Owned IP; a cyber event is a security exposure, not a supply one.
+- N21 Magnet ramp and test capacity (helium-intensive): not a tolerance breach on its own. Two plants; bottleneck only if one is down.
+- N22 Magnet design ownership and qualification records: not a tolerance breach on its own. Owned, but the record is what makes every other replacement slow.
+- N33 Field service engineers for install, ramp and helium top-up: not a tolerance breach on its own. Delays installs at the margin; the magnet still ships.
+- N35 Hospital capital budgets and reimbursement for MR: not a tolerance breach on its own. Moves demand, not delivery.
+- N36 Tender criteria that read late delivery as unreliability: not a tolerance breach on its own. Turns a late delivery into lost share; it is why the tolerance line matters.
+
+
+## Other material for this round
+
+### P2-predetermined.md
+
+# Phase 2: what is already certain by 2031
+
+Moderator synthesis of eleven lens transcripts (round 1, isolated). Full transcripts and sources are in `../conversations/*_p2_r1_full.md`. Read date 11 October 2026.
+
+## Bottom line
+
+Most of the border rules, the hazard classifications and the demographic facts that will shape this line to 2031 are already written. The single biggest finding is not a threat but a correction to the scope packet: the question "will a magnet that needs no helium be approved?" is already answered. Sealed, helium-light 1.5 tesla magnets are cleared products with service history at three makers, including the OEM's own platform since February 2026. The second axis in the scope packet must be rebuilt in phase 3. The helium story also splits in two: for new builds helium shrinks to a service and installed-base risk, while for the world market helium is tighter for the whole horizon because Qatar's plant is impaired and the Gulf strait is near closed at the read date.
+
+## Predetermined elements, by threat category
+
+Each line is a fact already in motion, the nodes it reaches, the source, and what would have to happen for it not to hold.
+
+| # | Element | Nodes | Source (date) | What would unmake it |
+|---|---|---|---|---|
+| P1 | Sealed, helium-light 1.5 tesla magnets are cleared products at three makers, cleared for the OEM's own platform on 5 February 2026. They still use niobium-titanium wire and a Gifford-McMahon cold head. | N01, N03, N05, N19, N21, N34 | FDA K181479 (3 Aug 2018), K253779 (5 Feb 2026); technology lens | A safety recall of the sealed class, or the OEM choosing not to convert its 3 tesla line. The conversion decision is the OEM's, not the world's. |
+| P2 | No 1.5 or 3 tesla magnet without niobium-titanium wire appears in United States clearance records to October 2026, and a new wire mill takes about 18 months to qualify, so wire stays the single most design-locked input through 2031. | N02, N03, N22 | openFDA read 11 Oct 2026; technology lens | A high-temperature superconductor magnet cleared before 2028 and adopted at pace; no lens found evidence of either. |
+| P3 | Helium is a four-state market (United States 81, Qatar 63, Russia 18, Algeria 11 of 190 million cubic metres in 2025). Qatar's Ras Laffan complex was struck in March 2026, the energy minister put repairs at three to five years, Russian helium is barred from the United States and the European Union and self-licensed to 31 December 2027, Chinese helium is under an export ban with no end date, and the United States federal reserve was sold to a private firm on 27 June 2024. There is no public buffer anywhere. | N01, N19, N23, N27, N34 | USGS (Feb 2026); BLM (27 Jun 2024); Global Trade Alert; QatarEnergy statement via IOM3 (23 Mar 2026); geopolitical, financial, macroeconomic, infrastructure, foreign trade lenses | Qatari helium units restarting much sooner than the minister's estimate. The macroeconomic lens notes a 6 March 2026 satellite analysis saying main equipment was intact and no producer disclosure confirms the helium units were hit. The repair timing is therefore moved to the uncertain list (U-H1). |
+| P4 | The United States magnet plant sits inside the only helium producer that is a net exporter. Qatar's share of United States helium imports fell from 40 to 28 percent and Canada's rose from 36 to 47 percent across the 2020 to 2024 windows, and the base price fell. The United States plant and the China plant face different helium worlds. | N01, N16, N17, N19 | USGS (Jan 2025, Feb 2026); contrarian, geopolitical lenses | A United States export control or allocation rule on helium, or a Cliffside or Hugoton outage coinciding with the Gulf outage. |
+| P5 | Helium moves in a fleet of roughly 500 to 700 40-foot ISO containers that hold liquid for about 35 to 48 days, with one maker behind most of them. | N23, N19 | Linde product page (read 11 Oct 2026); consultancy analysis (1 Apr 2026), AI-suggested on fleet size | A second container maker at scale, or a shift to air-shipped dewars; neither found. |
+| P6 | Niobium is 93 percent Brazilian from one family-controlled private producer; the United States is wholly import dependent; China takes 49 percent of Brazil's ferroniobium exports. Leverage on wire sits with one producer state and one dominant buyer and reaches the OEM through the mill, not the ore. | N02, N03 | USGS (Feb 2026); geopolitical, financial, foreign trade lenses | A Canadian or other second producer at scale before 2031; none is on a published schedule. |
+| P7 | United States import duties on wire, cold heads, logic, memory and graphics rest on Section 232 and Section 301 measures with no expiry after the Supreme Court ended emergency-power tariffs on 20 February 2026: 10 percent combined for the European Union, United Kingdom, Taiwan and Canada, 12.5 percent for Japan, South Korea, China and Brazil from 24 July 2026. A 50 percent tariff on the copper content of worked copper has applied since 1 August 2025. Magnet-grade niobium-titanium wire in a copper matrix sits outside the copper annex and outside the control lists. | N03, N04, N05, N08, N10, N11, N12, N31 | Federal Register (5 Aug 2025); Supreme Court (20 Feb 2026); EY (Jul 2026); foreign trade, macroeconomic, contrarian lenses | A trade deal that removes Section 232 measures, or a reclassification of the wire into the copper annex. The wire classification is AI-suggested; Sourcing confirms the declared code. |
+| P8 | The Section 232 investigation into medical equipment opened on 2 September 2025 names MRI machines in scope, and no proclamation had followed by 11 October 2026. The tools for restricting trade in finished scanners exist and are court-proof; whether they are used, and at what rate, is open. | N18, N31, N35 | Federal Register (26 Sep 2025); customer, contrarian lenses | Not unmakeable as a tool. The outcome is uncertain (U-T1). |
+| P9 | The European Union has excluded Chinese-origin medical devices from public tenders at or above 5 million euros since 30 June 2025 with no expiry, and China barred European Union firms from imported-device procurement above 45 million yuan from 6 July 2025 while exempting products made in China. The China plant keeps Asian market access that a United States-built scanner loses, and is not a backup for Europe. | N17, N28, N29, N36 | Regulation (EU) 2025/1197 (20 Jun 2025); CMS (Jul 2025); customer, geopolitical lenses | Repeal of either measure; neither carries a sunset. Which plant serves which market is AI-suggested; the S&OP council confirms. |
+| P10 | Cyber duties with dates inside the horizon are law: United States device cyber law since March 2023 with final guidance February 2026; the European Union Cyber Resilience Act reporting from 11 September 2026 and full application 11 December 2027 for bought-in electronics; the United States Coast Guard port cyber plan deadline 16 July 2027; Japan mandatory reporting from 1 October 2026; China's amended law from 1 January 2026. | N08 to N12, N15, N17, N22, N26 | Cornell LII; EUR-Lex 2024/2847; National Law Review (28 Jan 2025); security lens | Repeal; none scheduled. |
+| P11 | An encrypted manufacturer takes five weeks or longer to restart on the 2025 record, which is past the 30-day tolerance line. Programmable logic was the most reported counterfeit part class in 2025 at more than 15 percent of reports. Cargo theft hit 2,646 confirmed incidents in 2025 with electronics the most targeted type. | N03, N05, N10, N16, N17, N18, N30 | BleepingComputer (15 Nov 2025); ERAI 2025 report; Verisk CargoNet (2026); security lens | The recovery figure comes from a vehicle maker and a brewer, not a magnet maker; the inference to this line is Panel judgement. |
+| P12 | The United States manufacturing workforce had a median age of 43.9 in 2025, about a quarter is 55 or older, and the cohort turning 65 between 2025 and 2027 is the largest on record. Union density in South Carolina (2.8 percent) and Wisconsin (6.4 percent) sits far below the national rate, so slow attrition of untracked trades is the likelier labour failure, not a strike. Japan and Germany, home to the sole cold-head and wire sources, are shrinking their working-age populations through the 2030s. | N03, N05, N16, N18, N20 | BLS tables 18b and 11b (2025); BLS union tables (2025, 2026); Statistics Bureau of Japan (2024); KfW (1 Jul 2025); labor lens | The contrarian notes welders' median age (39.3) is below the all-worker median, so the "retirement cliff" is a property of one roster, not of the trade. The OEM's roster age is AI-suggested; Human resources confirms. |
+| P13 | The East Coast longshore master contract covering the export port runs to 30 September 2030 with automation protections; the last stoppage (October 2024) lasted three days. The port's hurricane closures are two to three days on its own logs; the closure class that breaches 30 days is a blocked channel (Baltimore, 11 weeks in 2024). The port has spare berth after suspending its newest terminal on 1 August 2026. | N25, N26 | ILA (7 Feb 2025); SC Ports Authority (2019, 2024); Maritime Executive (25 Jun 2026); labor, infrastructure, natural disasters lenses | A channel blockage is a low-base-rate event with no schedule. Which terminal the oversize crates use is unconfirmed; Logistics confirms. |
+| P14 | Grid recovery after an inland storm in South Carolina ran about ten days after Helene (2024). The reliability body rates the Carolinas grid elevated from 2027 with winter-morning risk and the Midcontinent grid high from winter 2028 on coal retirements and contracted data-centre load. The Pee Dee basin behind the magnet plant had three 100-year rainfall events in 2015 to 2018, and the design rainfall that continuity plans use will be rewritten no earlier than September 2027. | N16, N18, N19, N21 | Duke Energy (30 Sep 2024); NERC Long-Term Reliability Assessment (29 Jan 2026); SC State Climatology Office; NOAA | Grid investment ahead of schedule. The plant's dependence on grid power for liquefaction is AI-suggested; Site operations confirms. |
+| P15 | The hazard classification over the Japanese cold-head source rose in September 2025 (Nankai Trough 30-year probability revised to roughly 60 to 90 percent or higher), and the China plant's city is a named subsidence hotspot with an unexplained 80 to 160 centimetre sea surge in October 2024. | N05, N06, N17, N29 | Headquarters for Earthquake Research Promotion (2024, 2025); Science via Asia Times (2024) | Plant locations are AI-suggested; Engineering and Site operations confirm. |
+| P16 | Memory makers roughly tripled DRAM contract prices across 2026 and are allocating capacity to AI and server buyers under agreements reported to run into 2028, and mature-node capacity moves partly out of Taiwan by 2028. The 25 percent Section 232 chip tariff of 15 January 2026 exempts non-data-centre industrial uses. | N10, N11, N12 | TrendForce (2 Feb, 8 Jul, 30 Sep 2026); Counterpoint (23 Jan 2026); EY (15 Jan 2026) | Allocation easing before 2028; the duration is Panel judgement. The exemption's application to reconstruction processors is AI-suggested; Sourcing confirms. |
+| P17 | The Federal Reserve policy rate is 3.75 to 4.00 percent (September 2026) with 4.1 percent projected through 2027; producer prices are up 5.4 percent a year; United States hospital margins are 2.5 percent year to date; Medicaid phases down from fiscal 2028 to 2032 by statute; Medicare 2026 rates carry a productivity cut. More than a quarter of Europe's MRI installed base was over ten years old in 2023 and every magnet installed 2016 to 2021 passes that line by 2031. | N19, N35, N36 | Federal Reserve (16 Sep 2026); BLS (10 Sep 2026); Kaufman Hall (27 Aug 2026); HANYS (Oct 2025); COCIR (2023) | Rate cuts or reimbursement reversal; replacement need is fixed, orders are not. |
+| P18 | The one United States cryocooler maker was bought in March 2023 by a quantum-cryogenics company that does not list MR among its markets, and the Western wire mills belong to listed parents whose superconductor order books are filling with fusion and physics work. | N03, N05, N06 | Bluefors (28 Mar 2023); Bruker 10-K FY2025; financial lens | A buyer or parent reaffirming MR supply; the OEM's qualified mill is AI-suggested; Sourcing confirms. |
+| P19 | No public tender framework retrieved scores delivery reliability explicitly; the English NHS ties purchasing to its net zero commitment before 2030, which brings helium and service carbon into scoring. | N33, N34, N36 | NHS England (Oct 2020); customer lens | A published reliability score; none found. The cost of a late delivery is paid through re-tender behaviour, which is Panel judgement. |
+
+## Contradictions between lenses, and how they are resolved
+
+1. **Is Qatari helium out for years or not?** Five lenses treat the three-to-five-year repair as predetermined; the macroeconomic lens found a satellite analysis saying main equipment was intact and no producer disclosure that the helium units were hit; the contrarian found that United States imports had already shifted toward Canada. Resolution: the strait closure and the force majeure are facts at the read date; the repair duration is an uncertainty (U-H1) and the United States plant's exposure runs through world price and the Asian plant more than through its own supply.
+2. **Is the technician cliff real?** The labor lens calls the retirement wave predetermined; the contrarian shows the welding trade is younger than the average worker. Resolution: the demographic wave is predetermined for manufacturing as a whole; whether it hits this plant depends on one roster, so N20 stays on the risk list as AI-suggested with Human resources named.
+3. **Is helium-free an uncertainty?** The scope packet treated it as one; the technology lens and the contrarian show the sealed class is cleared and sold. Resolution: dimension B is withdrawn. What remains open is adoption pace, the OEM's own conversion decision (which is an action, not an external uncertainty), and what sealed magnets do to the cold head's criticality.
+4. **Is the port the weak point?** The screen dropped the port; the infrastructure and labor lenses both found a quiet labour calendar and short hurricane closures. Resolution: the port stays off the top eight; a channel blockage is the only 30-day class and it has no schedule.
+
+## What is open for phase 3
+
+- U-H1: how long Qatari helium stays impaired and when Hormuz reopens (outcomes).
+- U-T1: whether the Section 232 medical-equipment investigation produces a tariff on finished scanners, at what rate, and whether the United States-China truce survives the 2027 sourcing cycle (outcomes).
+- U-T2: whether wider chip tariffs, mineral price floors and the refined copper duty land (outcomes).
+- U-S1: whether a wire mill or the cold-head maker exits MR through sale, allocation to fusion and physics, or parent decision (outcomes, with a causation element: is MR a priority for the parent).
+- U-G1: whether Taiwan Strait grey-zone pressure becomes interdiction of the Asian lanes and the foundry (outcomes).
+- U-A1: how fast sealed magnets take the installed base and the 3 tesla line, and what that does to the cold head and to service helium (actions mixed with outcomes).
+- U-C1: whether hospital margin pressure cuts orders or only delays them, and whether delivery reliability becomes a scored tender criterion (value).
+- U-L1: whether the magnet plant's roster carries a retirement cliff (an internal fact to confirm, not an external uncertainty; passed to the baseline).
+
+## Gaps the lenses reported
+
+The shared web search budget ran out during this round, so several lenses finished on direct fetches of known addresses. Unverified: the wire mill and cold-head plant locations (N03, N05), the China plant's power and port record (N17), the sealed-magnet installed-base count, QatarEnergy's own force majeure notice, and the United States semiconductor tariff rate as applied to reconstruction processors. These are carried into phase 3 as facts to treat at low confidence.
+
+## Checks
+
+All eleven transcripts and summaries exist with the required first lines. `lint:names` passes. Every element above names node ids. No recommendations were found in the transcripts. Two transcripts run slightly over 1,200 words; kept.
+
+
+### foreign_trade_payments_p2_r1_full.md
+
+# Foreign trade and payments, phase 2, round 1
+
+## Analysis
+
+Bottom line: by 2031 the rules at this map's border crossings are mostly already written. Helium has lost about a third of its supply to physical damage and producer export controls, and United States tariffs have moved from emergency powers to Section 232 and Section 301 measures with no expiry. Both will shape the 2027 sourcing cycle whatever else happens.
+
+Helium first. Qatar produced an estimated 63 million of 190 million cubic metres of world helium in 2025 (USGS, February 2026). A missile strike on Ras Laffan on 18 March 2026 took two LNG trains offline, helium stopped with them, and the producer put repairs at three to five years (Industrial Info, 26 March 2026). The Strait of Hormuz, the only export route, was still effectively closed on 9 October 2026, with four transits a day against a pre-crisis 85 (straits.live, 9 October 2026). The producers who could have filled the gap have fenced themselves off. Russia put helium under export licensing by Decree 404 on 14 April 2026, in force to 31 December 2027 (Interfax, 14 April 2026). China banned helium exports by MOFCOM Announcement 2026/29 on 10 July 2026 with no end date (Global Trade Alert, July 2026). The EU has banned Russian helium since 26 September 2024 (European Commission, 24 June 2024) and USGS records a matching United States ban through 2025. The United States is a net exporter, but 28 percent of its 2021 to 2024 imports came from Qatar (USGS, February 2026). I infer that helium cover at the United States plant (N19) is tested every month until Ras Laffan is rebuilt; that fails if the Strait reopens and the undamaged trains restore volume faster than the producer says.
+
+Tariffs second. The Supreme Court held on 20 February 2026 that the International Emergency Economic Powers Act does not authorise tariffs (K&L Gates, 20 February 2026). The 150-day Section 122 surcharge that replaced them expired on 24 July 2026, and the same day USTR imposed Section 301 duties on 60 economies: a combined 10 percent for the EU, United Kingdom, Taiwan and Canada and 12.5 percent for Japan, South Korea, China, Brazil, Chile and Peru, with Section 232 goods exempt and no expiry (EY, July 2026). Section 232 copper duties of 50 percent on semi-finished and derivative products have applied since 1 August 2025, cathodes and scrap excluded, with a refined copper duty of 15 percent from 1 January 2027 conditional on a Commerce report due 30 June 2026 whose outcome I could not find (Federal Register, 5 August 2025).
+
+## Critical factors
+
+Each predetermined element carries its nodes, its source and what would break it.
+
+1. Qatar's helium loss lasts into the 2029 to 2031 window. Nodes N01, N19, N21, N23, N27, N34. Industrial Info, 26 March 2026; USGS, February 2026. It fails only if turbine lead times of two to four years are beaten.
+
+2. Russian and Chinese helium is legally unavailable to the United States plant. Nodes N01, N19, N34. Interfax, 14 April 2026; Global Trade Alert 154600 and 157329; European Commission, 24 June 2024. The Russian measure lapses on 31 December 2027 by its own terms; the Chinese ban has no date. For the China plant (N17) the Chinese ban keeps domestic helium at home. AI-suggested; Site operations confirms.
+
+3. Duties on imported components now rest on Section 232 and Section 301, which carry no sunset. Nodes N03, N05, N08, N10, N11, N12, N31. EY, July 2026. A court ruling or a bilateral deal would unwind it; the European Commission called the 10 percent rate consistent with its agreement (MLex, 24 July 2026).
+
+4. Magnet-grade niobium-titanium wire in a copper matrix is outside the copper tariff and the export-control lists. Nodes N03, N17. Customs ruling HQ 950239 of 1991 put such MRI winding wire under 8544.11, absent from the copper annex, so wire from Germany, the United Kingdom or Japan carries the Section 301 rate (Federal Register, 5 August 2025; ruling summary via usebase.io). Control entry 1C005 reaches niobium-titanium only when the matrix is not copper and filaments are very fine (Trade Hub), and China's October 2025 package named no superconductors (Clark Hill, October 2025). AI-suggested; Sourcing confirms the declared classification. It stops holding the day any producer country lists superconducting wire.
+
+5. Niobium stays Brazilian. Node N02. Brazil mined 104,000 of 112,000 tonnes in 2025 and Canada 6,000; United States import reliance is 100 percent, ferroniobium carries a 5 percent duty, and 49 percent of Brazil's ferroniobium exports go to China (USGS, February 2026). Brazil faces a 25 percent Section 301 duty from 22 July 2026 (PIIE, July 2026); niobium's exemption status is unverified. Only a new mine changes this.
+
+6. The USMCA was not renewed on 1 July 2026 and sits on annual review until it expires on 1 July 2036 (White and Case, July 2026). Nodes N02, N31.
+
+7. China rewards production inside China. Nodes N17, N29. The Ministry of Finance notice of 6 July 2025 bars EU firms from device tenders above 45 million yuan unless they operate in China (CTILS, July 2025), and China's 10 percent additional tariff on United States goods stands, with 24 percent suspended for a year from 10 November 2025 (Global Times, 5 November 2025).
+
+8. Finished MR scanners enter Japan and the United States duty free under 9018.13 (Japan Tariff Association; Wove); India's 7.5 percent basic duty comes from third-party sites I have not verified. Nodes N26, N28, N29. Confidence high for Japan and the United States, low for India.
+
+## Predetermined versus uncertain
+
+These are genuinely uncertain, left for phase 3, with the kind of not-knowing named.
+
+- Whether the Section 232 investigation into medical equipment including devices, open since 26 September 2025 with no report published (STR, 2026), ends in a tariff on scanners. Outcomes. N17, N18.
+- Whether the critical minerals Section 232 process, report due 13 July 2026, yields price floors or tariffs reaching niobium. Outcomes. N02.
+- Whether the 15 percent refined copper duty starts on 1 January 2027. Outcomes. N04.
+- Whether the narrow 25 percent chip tariff of 14 January 2026 widens to FPGAs. Outcomes. N10, N12.
+- Whether the China tariff truce is renewed around 10 November 2026. Outcomes. N17, N31.
+- When Hormuz reopens and how fast Qatari volume returns. Outcomes. N01, N27.
+- Whether China lifts its helium ban and what Russia does after 2027. Actions. N01, N34.
+- Whether a court strikes the Section 301 tariffs. Outcomes. N31.
+- Whether helium is valued as a cost line or a stop condition. Value. N19.
+
+## Contradictions with other lenses
+
+None yet; no other summaries have been read in round 1.
+
+## Blind spots of this lens
+
+I read rules, so I have described a fence around helium and said little about allocation inside it. One United States distributor reportedly prioritised healthcare in March 2026 (AGBI, March 2026); I cannot verify how widely that holds. I treat Section 301 rates as stable because they have no expiry, while their political life may be short. The wire classification rests on a 1991 ruling I could not open at source.
+
+## Sources
+
+- USGS, Mineral Commodity Summaries 2026, helium chapter, February 2026: https://pubs.usgs.gov/periodicals/mcs2026/mcs2026-helium.pdf
+- USGS, Mineral Commodity Summaries 2026, niobium chapter, February 2026: https://pubs.usgs.gov/periodicals/mcs2026/mcs2026-niobium.pdf
+- Industrial Info, QatarEnergy force majeure and three to five year repair estimate, 26 March 2026: https://www.industrialinfo.com/news/article/qatarenergy-declares-force-majeure-on-long-term-lng-contracts--355444
+- IUMI newsletter, Qatari helium shortages, 9 June 2026: https://iumi.com/newsletter-june-2026/qatari-helium-shortages/
+- straits.live, Hormuz brief, 9 October 2026: https://straits.live/briefs/2026-10-09
+- Interfax, Russia helium export authorisation, 14 April 2026: https://interfax.com/newsroom/top-stories/117116/
+- Global Trade Alert, Russia Decree 404 helium licensing, 14 April 2026: https://globaltradealert.org/intervention/154600-russia-helium-added-to-the-export-licensing-list
+- Global Trade Alert, China temporary helium export ban, 10 July 2026: https://globaltradealert.org/intervention/157329-china-temporary-export-ban-on-helium
+- CIRS, China temporarily bans helium exports, July 2026: https://www.cirs-group.com/en/chemicals/china-temporarily-bans-helium-exports-effective-immediately
+- European Commission, 14th sanctions package including helium import ban, 24 June 2024: https://cyprus.representation.ec.europa.eu/news/eu-adopts-14th-package-sanctions-against-russia-its-continued-illegal-war-against-ukraine-2024-06-24_en
+- BLM, completion of Federal Helium System sale, June 2024: https://blm.gov/press-release/blm-completes-sale-federal-helium-system
+- AGBI, United States helium distributor force majeure, March 2026: https://www.agbi.com/industry/2026/03/us-helium-distributor-hit-after-qatar-suspends-lng-output/
+- K&L Gates, Supreme Court IEEPA decision summary, 20 February 2026: https://www.klgates.com/Summary-Supreme-Court-Decision-on-IEEPA-Tariffs-2-20-2026
+- American Bar Association, IEEPA struck down and replacement tariffs expired, fall 2026: https://www.americanbar.org/groups/public_contract_law/resources/procurement-lawyer/2026-fall/ieepa-tariffs-struck-down-replacement-tariffs-expired/
+- EY, USTR Section 301 forced-labour tariffs on 60 economies, July 2026: https://taxnews.ey.com/news/2026-1607-ustr-finalizes-section-301-forced-labor-tariffs-on-60-economies-additional-tariffs-of-10-percent-or-125-percent-take-effect-24-july-2026
+- MLex, Commission welcomes new United States rate as within the agreement, 24 July 2026: https://www.mlex.com/mlex/amp/articles/2505317
+- Federal Register, copper Section 232 proclamation, 5 August 2025: https://www.govinfo.gov/content/pkg/FR-2025-08-05/pdf/2025-14893.pdf
+- Federal Register, Section 232 investigation into PPE, medical consumables and medical equipment, 26 September 2025: https://www.federalregister.gov/documents/full_text/xml/2025/09/26/2025-18729.xml
+- Sandler, Travis and Rosenberg, status page for the medical equipment investigation, 2026: https://www.strtrade.com/trade-news-resources/tariff-actions-resources/section-232-investigation-ppe-medical
+- Thompson Hine, no Section 232 tariff now on processed critical minerals, January 2026: https://www.thompsonhinesmartrade.com/2026/01/no-section-232-tariff-now-on-processed-critical-minerals-and-their-derivative-products/
+- EY, Section 232 proclamation on certain semiconductors, 15 January 2026: https://taxnews.ey.com/news/2026-0209-us-section-232-proclamation-imposes-25-percent-tariff-on-certain-semiconductors
+- Baker McKenzie, United States and Taiwan trade agreement, 20 January 2026: https://globalimportblog.bakermckenzie.com/2026/01/20/us-and-taiwan-finalize-trade-agreement-with-focus-on-boosting-semiconductor-collaboration/
+- PIIE, new Section 301 tariffs on Brazil, July 2026: https://www.piie.com/blogs/realtime-economics/2026/trumps-new-tariffs-brazil-reflect-weakness-us-trade-strategy
+- White and Case, USMCA 2026 joint review not extended, July 2026: https://www.whitecase.com/insight-alert/usmca-2026-joint-review-united-states-declines-extend-agreement-triggering-annual
+- CTILS, China Ministry of Finance notice on EU medical devices in procurement, 6 July 2025: https://en.ctils.com/en/articles/5280
+- Global Times via GlobalSecurity, China suspends 24 percent tariff for one year, 5 November 2025: https://www.globalsecurity.org/wmd/library/news/china/2025/11/china-251105-globaltimes04.htm
+- Clark Hill, China's October 2025 export control package, October 2025: https://www.clarkhill.com/news-events/news/china-expands-export-controls-on-rare-earths-magnets-and-high-tech-materials-what-companies-need-to-know
+- Trade Hub, EU dual-use control entry 1C005, current: https://www.thetradehub.eu/en/customs/export-control/annex-i/1c005
+- usebase.io, CBP ruling HQ 950239 on niobium-titanium MRI winding wire, 1991: https://open-gov.usebase.io/rulings/950239
+- Japan Tariff Association, 9018.13 rates: https://www.kanzei.or.jp/statistical/tariff/detail/index/e/9018130004
+- Wove, United States tariff page for 9018.13, 2026: https://tariffs.wove.com/us/tariff/9018.13
+- Eximguru, India customs duty for 90181300 (unverified third party): https://eximguru.com/indian-customs-duty/90181300-ultrasonic-scanning-apparatus-magnetic-resonance.aspx
+- US Treasury, Gazprombank designation and SPFS alert, 21 November 2024: https://content.govdelivery.com/accounts/USTREAS/bulletins/3c32d96
+- Council of the EU, critical raw materials list including helium and niobium, 2024: https://www.consilium.europa.eu/en/infographics/critical-raw-materials/
+
+
+## The question for this round (phase 3, round 1)
+
+Phase 3, critical uncertainties, round 1 (isolated). Phase 2 is done; its synthesis is attached and it withdrew the scope packet's second dimension (helium-free magnets are already cleared products). For the nodes your lens can reach, what could plausibly go two or more ways by 2031 and would change whether the line delivers inside the tolerance line? Start from the open list in the phase 2 synthesis but add what your lens sees that it misses. For each uncertainty: name it as a question a product owner can read without a glossary; say which of the eight risks in 02-risk-screen.md it moves and how; say which kind of not-knowing it is (actions, outcomes, causation, value); give the two or three directions it could go; say why it is uncertain rather than predetermined; and name the observable thing that would show it resolving, with where it is published. Rank your uncertainties by how many of the eight risks they move at once. End the full transcript with a table: one row per uncertainty, columns for the eight risks (R1 to R8 in the screen's order), a mark where it moves that risk, and the count. Research note: the shared web search budget for this run is spent. Work from the phase 2 transcripts, which carry sources, and from direct fetches of known addresses where you need a date or a figure. Do not invent sources.
+
+## What to produce
+
+Do the research with web search before you write. Every fact carries a link and a date. Write the full transcript, then the summary, exactly in the format COMMON.md gives. Begin the full transcript with the line `# <lens name>, phase 3, round 1` and the summary with the line `# <lens name>, phase 3, round 1, summary`. Target paths: full transcript `scenarios/MR-CONV-2031/conversations/foreign_trade_payments_p3_r1_full.md`, summary `scenarios/MR-CONV-2031/conversations/foreign_trade_payments_p3_r1_summary.md`. If you can write files, write them there; if you cannot, print the full transcript, then a line containing only `=====SUMMARY=====`, then the summary.
