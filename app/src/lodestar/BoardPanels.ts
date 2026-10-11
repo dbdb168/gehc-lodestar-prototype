@@ -7,6 +7,7 @@ import { extLink } from './links';
 import { groupRecalls, installsAtRisk, HOT, type Evidence, type ExposureResult, type Hotspot } from './exposure';
 import type { FamilyFilter, Indexed } from './network';
 import { scoreColor } from './overlay';
+import { openPremortem } from './premortem';
 
 const rgb = (s: number) => { const [r, g, b] = scoreColor(s); return `rgb(${r},${g},${b})`; };
 const money = (usd: number) => (usd >= 1e9 ? `$${(usd / 1e9).toFixed(1)}B` : usd >= 1e6 ? `$${Math.round(usd / 1e6)}M` : usd > 0 ? `$${Math.round(usd / 1e3)}K` : '$0');
@@ -78,6 +79,7 @@ export class LodestarProductsPanel extends Panel {
 
   update(ix: Indexed, result: ExposureResult, filter: FamilyFilter): void {
     const hist = recordHistory(result);
+    const pm = (productId: string) => ix.net.premortems?.find((x) => x.product === productId);
     const rows = result.products
       .filter((p) => filter === 'ALL' || p.family === filter)
       .sort((a, b) => b.score - a.score);
@@ -88,7 +90,11 @@ export class LodestarProductsPanel extends Panel {
         const installs = installsAtRisk(prod.installs_next_90d ?? 0, p.score);
         const [lo, hi] = prod.price_usd ?? [0, 0];
         return h('tr', { className: 'lodestar-row', onClick: () => this.onPick?.(p.family, p.topDriver) },
-          h('td', null, h('div', { className: 'lodestar-hotspot-title' }, prod.name), h('div', { className: 'lodestar-hotspot-sub' }, p.family)),
+          h('td', null, h('div', { className: 'lodestar-hotspot-title' }, prod.name), h('div', { className: 'lodestar-hotspot-sub' }, p.family),
+            pm(prod.id) ? h('button', {
+              type: 'button', className: 'lodestar-pm-link', title: 'Open the five-year pre-mortem',
+              onClick: (e: Event) => { e.stopPropagation(); openPremortem(ix, pm(prod.id)!, result); },
+            }, 'Pre-mortem →') : null),
           h('td', null, h('span', { className: 'lodestar-score', style: `background:${rgb(p.score)}` }, String(p.score)),
             p.gapPenalty ? h('div', { className: 'lodestar-hotspot-sub' }, `incl. +${p.gapPenalty} cover gap `, synth()) : null),
           h('td', { style: `color:${rgb(p.score)}` }, sparkline(hist[p.productId] ?? [])),

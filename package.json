@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {
     "lint:names": "bash scripts/lint-names.sh",
-    "deploy:command": "bash scripts/deploy-command.sh"
+    "deploy:command": "bash scripts/deploy-command.sh",
+    "check:premortems": "node scripts/check-premortems.mjs"
   }
 }

@@ -74,6 +74,64 @@ export interface Lane {
   note?: string;
 }
 
+export type Level = 'high' | 'medium' | 'low';
+
+/** A pre-mortem weakness: internal, tagged inferred or confirmed, joined to live hotspots by its refs. */
+export interface PremortemVulnerability {
+  id: string;
+  title: string;
+  text: string;
+  why_internal?: string;
+  status: 'inferred' | 'confirmed';
+  confirmed_by?: string;
+  /** Internal-vulnerability group: Product, Process, Supplier/Vendor or Logistics. */
+  category?: string;
+  confidence: Level;
+  basis?: string;
+  links?: Array<{ label: string; url: string }>;
+  inputs?: string[];
+  sites?: string[];
+  lanes?: string[];
+  /** PortWatch names, as the lanes use them. */
+  chokepoints?: string[];
+  /** Regulatory hotspot ids, e.g. reg:us-trade. */
+  regulatory?: string[];
+}
+
+export interface PremortemScenario {
+  id: string;
+  name: string;
+  quadrant: { x: 'low' | 'high'; y: 'low' | 'high' };
+  story: string;
+  stresses: Record<string, Level>;
+  early_signs: string[];
+  /** External threat types this world draws on. */
+  threats?: string[];
+  /** Hotspot refs to show today's reading: input:<id>, site:<id>, cp:<PortWatch name>. */
+  watch?: string[];
+}
+
+export interface Premortem {
+  id: string;
+  product: string;
+  family: Family;
+  title: string;
+  horizon: string;
+  status: string;
+  drafted: string;
+  method: string;
+  story: string[];
+  story_note?: string;
+  value: Array<{ label: string; text: string; prov: string; basis?: string }>;
+  vulnerabilities: PremortemVulnerability[];
+  scenario_axes: { x: { label: string; low: string; high: string }; y: { label: string; low: string; high: string }; note?: string };
+  scenarios: PremortemScenario[];
+  levers: Array<{ title: string; text: string; addresses: string[]; shifts_to?: string[]; owner_function: string; horizon: string; principle?: string }>;
+  tolerance: { heading?: string; statement: string; metric: string; line_days: number; prov: string; basis?: string; inputs: string[] };
+  glossary: Array<[string, string]>;
+  taxonomy?: { categories: string[]; threats: string[]; principles: string[] };
+}
+
 export interface Network {
   meta: { as_of: string; provenance_legend: Record<string, string> };
   products: Product[];
@@ -84,6 +142,8 @@ export interface Network {
   /** Long-run normal transits per day by PortWatch name (2025 average, sourced). */
   chokepoint_norms?: { period: string; basis: string; src: string; prov: string; per_day: Record<string, number> };
   regulatory_watch?: { federal_register_terms?: string[] };
+  /** Per-product pre-mortems (vulnerability-first, five-year view). */
+  premortems?: Premortem[];
 }
 
 let cached: Promise<Network> | null = null;
