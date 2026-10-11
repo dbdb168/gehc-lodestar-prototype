@@ -127,7 +127,7 @@ export interface Premortem {
   scenario_axes: { x: { label: string; low: string; high: string }; y: { label: string; low: string; high: string }; note?: string };
   scenarios: PremortemScenario[];
   levers: Array<{ title: string; text: string; addresses: string[]; shifts_to?: string[]; owner_function: string; horizon: string; principle?: string }>;
-  tolerance: { heading?: string; statement: string; metric: string; line_days: number; prov: string; basis?: string; inputs: string[] };
+  tolerance: { heading?: string; statement: string; value_basis?: string; metric: string; line_days: number; prov: string; basis?: string; inputs: string[] };
   glossary: Array<[string, string]>;
   taxonomy?: { categories: string[]; threats: string[]; principles: string[] };
 }

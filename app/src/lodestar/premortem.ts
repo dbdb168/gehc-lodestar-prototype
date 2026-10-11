@@ -249,6 +249,7 @@ function toleranceSection(ix: Indexed, pm: Premortem): HTMLElement {
   return h('section', { className: 'ld-sec' },
     h('div', { className: 'ld-h4' }, t.heading ?? 'Tolerance line', h('em', null, 'a first tolerance line, drafted for the product team to set')),
     h('p', { className: 'pm-tol-s' }, t.statement, ' ', provChip(t.prov, 'The line and the gaps are synthetic for now')),
+    t.value_basis ? h('p', { className: 'pm-intro' }, h('b', null, 'Why this line: '), t.value_basis) : null,
     h('div', { className: 'pm-tol' },
       h('div', { className: 'pm-tol-axis' },
         h('span', { style: `left:${pos(0)}%` }, '0'),

@@ -1957,7 +1957,7 @@
         }
       ],
       "tolerance": {
-        "statement": "What we care about most for MR conventional: installs arrive when promised. As a first line to argue with, that holds while no critical input takes more than 30 days longer to recover than its stock lasts.",
+        "statement": "What we care about most for MR conventional: installs arrive when promised. The line is set by what MR is worth, not by any one risk. It carries high revenue per unit and high public-health value, so it gets a tight line: no critical input may take more than 30 days longer to recover than its stock lasts. A low-value, easily substituted product would get a looser one.",
         "metric": "Recovery gap: time to recover minus time to survive, in days",
         "line_days": 30,
         "prov": "synth",
@@ -1971,7 +1971,8 @@
           "fpga",
           "gpu"
         ],
-        "heading": "What we care about most"
+        "heading": "What we care about most",
+        "value_basis": "High revenue per unit (about $1.0M to $3.5M list, est) and high public-health value (stroke, cancer and neurology imaging). A product's value sets how much disruption it can tolerate, the way you protect a sports car from hail more carefully than a runabout."
       },
       "glossary": [
         [
