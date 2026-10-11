@@ -18,6 +18,7 @@ api="https://api.vercel.com"
 team="teamId=$VERCEL_ORG_ID"
 
 npm run -s lint:names
+npm run -s check:premortems
 
 work="$(mktemp -d)"
 trap 'rm -rf "$work"' EXIT

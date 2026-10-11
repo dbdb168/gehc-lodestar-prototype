@@ -1553,5 +1553,594 @@
       "Philips",
       "Canon Medical"
     ]
-  }
+  },
+  "premortems": [
+    {
+      "id": "mr_conv",
+      "product": "mr_conv",
+      "family": "MR",
+      "title": "How the MR conventional magnet line fails by 2031",
+      "horizon": "Five years, to 2031",
+      "status": "Draft for the product team to correct",
+      "drafted": "2026-10-11",
+      "method": "A pre-mortem: imagine it is 2031 and MR deliveries have failed, then work back to the internal weaknesses that let it happen. Weaknesses come first, because the OEM can act on them; outside events only make them better or worse. Each one is tagged inferred or confirmed, and stays inferred until the product team confirms it. Weaknesses use the four internal-vulnerability groups (Product, Process, Supplier/Vendor, Logistics), scenarios draw on the external threat types, and levers sit under the five resiliency principles. It is a story to sit beside a fragility score, not a replacement for one.",
+      "story": [
+        "It is October 2031, and the MR conventional magnet line has missed its delivery promises for two years running. Looking back, no single event did it.",
+        "Helium was the obvious risk, and it did hurt. Each magnet needed about 1,500 litres, and a third of the world's supply sat behind one strait. But the deeper problem was structural. We built magnets in only two plants and could not quickly move work between them. Memory and logic chips came from two places and were rationed to bigger buyers. And when a new export rule landed, nobody could say which parts it caught.",
+        "The sealed low-helium magnet was the hedge, and it worked for helium. It also moved the pressure onto cold heads, superconducting wire and a single plant. Because an MR suite takes 9 to 15 months from order to install, every slip showed up as a late install long after its cause, and by then the customer had stopped asking why."
+      ],
+      "story_note": "A drafted story, not a forecast. It is built from the weaknesses below, so change them and the story should change too.",
+      "value": [
+        {
+          "label": "Revenue",
+          "text": "A conventional MR system lists at about $1.0M to $3.5M (est). 112 installs are due in the next 90 days, with 410 units in backlog (synth).",
+          "prov": "est/synth",
+          "basis": "List price is an estimate from public information; installs and backlog are synthetic demo values."
+        },
+        {
+          "label": "Patients",
+          "text": "MR is how hospitals stage cancer, read strokes and image the brain and spine. A late install delays diagnosis for everyone that scanner would have served.",
+          "prov": "est",
+          "basis": "General clinical use of MR imaging; not OEM data."
+        },
+        {
+          "label": "Customers",
+          "text": "On-time delivery (OTD) of installs is what customers see. Some public health systems now weigh a supplier's resiliency and delivery record when they choose a vendor.",
+          "prov": "est",
+          "basis": "Raised in discovery in October 2026; not yet checked against a public tender."
+        }
+      ],
+      "vulnerabilities": [
+        {
+          "id": "helium",
+          "title": "Every conventional magnet needs a helium fill",
+          "text": "Each conventional magnet takes about 1,500 litres of liquid helium (S). World supply is concentrated: Qatar about a third, the United States about 40% (S). Russia restricted helium exports from 14 April 2026 and China from 10 July 2026 (S). The magnet plant in Florence, South Carolina has helium liquefaction on site (S).",
+          "why_internal": "The dependence is a design choice we control: the product needs the fill, and helium stock covers fewer days than re-sourcing takes (synth).",
+          "status": "confirmed",
+          "confirmed_by": "Public sources",
+          "confidence": "high",
+          "links": [
+            {
+              "label": "Interfax: Russia helium export licensing",
+              "url": "https://interfax.com/newsroom/top-stories/117116/"
+            },
+            {
+              "label": "Caixin: China helium export ban",
+              "url": "https://www.caixinglobal.com/2026-07-11/china-bans-helium-exports-as-global-supply-crunch-hits-chipmaking-gas-102462943.html"
+            }
+          ],
+          "inputs": [
+            "helium"
+          ],
+          "sites": [
+            "florence"
+          ],
+          "chokepoints": [
+            "Strait of Hormuz"
+          ],
+          "category": "Product"
+        },
+        {
+          "id": "magnet_plants",
+          "title": "Two magnet plants, and no proven way to swap work between them",
+          "text": "Superconducting magnets are built in Florence, South Carolina and Tianjin, China (S). The sealed low-helium magnet is built only in Florence (est). Public data does not say whether either plant could take on the other's volume, or how long requalifying would take.",
+          "why_internal": "Where we build, and whether each plant is qualified for the other's work, is ours to decide.",
+          "status": "inferred",
+          "confidence": "medium",
+          "basis": "Plant roles are sourced; the lack of a tested swap is our inference from the absence of public evidence either way.",
+          "sites": [
+            "florence",
+            "tianjin"
+          ],
+          "lanes": [
+            "L07",
+            "L08"
+          ],
+          "category": "Product"
+        },
+        {
+          "id": "superconducting_wire",
+          "title": "Superconducting wire from a short list of makers",
+          "text": "Magnets are wound with niobium-titanium (NbTi) wire. A handful of industry makers produce it, in Germany, Finland and Japan among other places, and most niobium comes from Araxá, Brazil (est). These are industry suppliers, not confirmed as the OEM's. Stock covers about 150 days against 60 to recover (synth).",
+          "why_internal": "How many qualified wire sources we hold, and how much stock, is ours to set.",
+          "status": "inferred",
+          "confidence": "low",
+          "basis": "The OEM's link to these makers is unverified.",
+          "inputs": [
+            "nbti"
+          ],
+          "category": "Supplier/Vendor"
+        },
+        {
+          "id": "cold_heads",
+          "title": "One likely source for cryocooler cold heads",
+          "text": "Cold heads keep the magnet cold. The industry's main maker is in Japan, and the OEM's use of it is an estimate. Stock covers about 120 days against 90 to recover (synth). Installed magnets also need replacement cold heads in service.",
+          "why_internal": "Single-sourcing a part every magnet needs, new and in service, is a choice we can revisit.",
+          "status": "inferred",
+          "confidence": "medium",
+          "basis": "Industry supplier structure is public; the OEM link is an estimate; the service need is general practice, not OEM data.",
+          "inputs": [
+            "cryocooler"
+          ],
+          "category": "Supplier/Vendor"
+        },
+        {
+          "id": "chips",
+          "title": "Memory and logic chips made in two places and rationed",
+          "text": "Memory (DRAM and NAND) comes from Korea and Taiwan, where AI demand is driving allocation and lead times of 12 to 18 months or more (est). Field-programmable gate arrays (FPGAs) and graphics processors (GPUs) come from foundries in Taiwan (est). For all three, recovery is slower than stock lasts: memory 95 days against 180, FPGAs 120 against 200, GPUs 60 against 120 (synth).",
+          "why_internal": "Buffer stock, long-term agreements and design choices that allow substitute parts are ours to make.",
+          "status": "inferred",
+          "confidence": "medium",
+          "basis": "Memory was named a sector cost driver in 2026 (S); the OEM's exposure to allocation is inferred.",
+          "inputs": [
+            "memory",
+            "fpga",
+            "gpu"
+          ],
+          "chokepoints": [
+            "Taiwan Strait"
+          ],
+          "category": "Supplier/Vendor"
+        },
+        {
+          "id": "export_lanes",
+          "title": "Heavy magnets on long sea lanes through chokepoints",
+          "text": "Magnets ship by sea (est) and weigh 8,000 to 18,000 lb (est). Export lanes cross chokepoints: Waukesha, Wisconsin to Gulf hospitals through Suez, Bab el-Mandeb and Hormuz (route to be confirmed by the owner), Tianjin to India through the Taiwan and Malacca straits, and Waukesha to the UK through the Dover Strait. Order to install already takes 9 to 15 months (S), so a slow lane shows up as a late install months later.",
+          "why_internal": "Routes, ports, pre-booked alternatives and where we hold finished magnets are ours to choose.",
+          "status": "inferred",
+          "confidence": "medium",
+          "basis": "Lanes are modelled from public plant and port information; the Gulf route needs owner confirmation.",
+          "links": [
+            {
+              "label": "MR suite planning and lead times",
+              "url": "https://www.qualityshielding.com/knowledge-base/mri-suite-project-planning-budget"
+            }
+          ],
+          "lanes": [
+            "L04",
+            "L05",
+            "L06",
+            "L07",
+            "L08"
+          ],
+          "category": "Logistics"
+        },
+        {
+          "id": "material_map",
+          "title": "We cannot see what is in every part",
+          "text": "Material content is not mapped part by part, so exposure to a new export control or tariff is worked out by hand, and some engineering records are still on paper. For MR, copper is the only controlled material in this model (US Section 232 tariffs, est). Whether any MR parts carry rare earths or other controlled metals is unknown.",
+          "why_internal": "The map is our own data. Building it, inferred first and confirmed over time, is within our control.",
+          "status": "confirmed",
+          "confirmed_by": "Discovery conversation, October 2026",
+          "confidence": "high",
+          "inputs": [
+            "copper"
+          ],
+          "regulatory": [
+            "reg:us-trade"
+          ],
+          "category": "Process"
+        }
+      ],
+      "scenario_axes": {
+        "x": {
+          "label": "Trade",
+          "low": "Blocs harden",
+          "high": "Trade reopens"
+        },
+        "y": {
+          "label": "Magnet technology",
+          "low": "Conventional magnets stay the workhorse",
+          "high": "Low-helium magnets take over fast"
+        },
+        "note": "Two uncertainties that matter most for MR and that nobody controls, crossed to give four worlds. No world is a forecast or a favourite. The axes are a first draft; the product team should pick their own."
+      },
+      "scenarios": [
+        {
+          "id": "leverage",
+          "name": "Helium as leverage",
+          "quadrant": {
+            "x": "low",
+            "y": "low"
+          },
+          "story": "Trade blocs harden and helium becomes a bargaining chip. Gulf shipping is disrupted again and again, Russian and Chinese helium stays restricted, and the Tianjin plant's output stays inside its own bloc. Tariffs on copper and chips stack up.",
+          "stresses": {
+            "helium": "high",
+            "magnet_plants": "high",
+            "export_lanes": "high",
+            "chips": "medium",
+            "material_map": "medium",
+            "superconducting_wire": "low",
+            "cold_heads": "low"
+          },
+          "early_signs": [
+            "Hormuz transits stay well below their 2025 normal for months",
+            "New helium export licences or bans",
+            "Rules on medical-device components traded between the US and China"
+          ],
+          "watch": [
+            "cp:Strait of Hormuz",
+            "input:helium"
+          ],
+          "threats": [
+            "Geopolitical",
+            "Foreign trade & payments",
+            "Security",
+            "Infrastructure"
+          ]
+        },
+        {
+          "id": "split",
+          "name": "Split networks",
+          "quadrant": {
+            "x": "low",
+            "y": "high"
+          },
+          "story": "Blocs harden, but sealed low-helium magnets take over, so helium matters less. Each bloc now wants its own magnets, wire and chips. With one sealed-magnet plant, the constraint moves to Florence, to superconducting wire and to cold heads.",
+          "stresses": {
+            "magnet_plants": "high",
+            "superconducting_wire": "high",
+            "cold_heads": "high",
+            "chips": "high",
+            "material_map": "medium",
+            "export_lanes": "medium",
+            "helium": "low"
+          },
+          "early_signs": [
+            "Local-content rules in hospital tenders",
+            "Export controls on superconducting wire or cryogenics",
+            "Sealed magnets passing half of new MR orders"
+          ],
+          "watch": [
+            "input:nbti",
+            "input:cryocooler",
+            "site:florence"
+          ],
+          "threats": [
+            "Geopolitical",
+            "Foreign trade & payments",
+            "Financial"
+          ]
+        },
+        {
+          "id": "calm",
+          "name": "Calm water, thin margins",
+          "quadrant": {
+            "x": "high",
+            "y": "low"
+          },
+          "story": "Trade reopens and helium is cheap again, so attention drifts and buffers are cut. The AI boom keeps memory and logic tight whatever happens to trade. Delivery erodes from inside, through parts shortages and capacity, not from outside events. When an earthquake or storm does hit a supplier, the thinner buffers turn a short outage into missed installs.",
+          "stresses": {
+            "chips": "high",
+            "material_map": "medium",
+            "helium": "medium",
+            "magnet_plants": "medium",
+            "export_lanes": "low",
+            "superconducting_wire": "low",
+            "cold_heads": "low"
+          },
+          "early_signs": [
+            "Memory lead times still over 12 months while freight eases",
+            "Buffer stock targets cut in planning cycles",
+            "On-time delivery slipping with no outside event to blame",
+            "A natural hazard near a single-source supplier with buffers already cut"
+          ],
+          "watch": [
+            "input:memory",
+            "input:fpga"
+          ],
+          "threats": [
+            "Macroeconomic",
+            "Financial",
+            "Natural disasters"
+          ]
+        },
+        {
+          "id": "switch",
+          "name": "The fast switch",
+          "quadrant": {
+            "x": "high",
+            "y": "high"
+          },
+          "story": "Trade reopens and customers switch to sealed low-helium magnets faster than the plants can ramp. The installed base of conventional magnets still needs helium in service. Demand for cold heads and wire jumps, and one plant carries the new product.",
+          "stresses": {
+            "cold_heads": "high",
+            "superconducting_wire": "high",
+            "magnet_plants": "high",
+            "helium": "medium",
+            "chips": "medium",
+            "export_lanes": "low",
+            "material_map": "low"
+          },
+          "early_signs": [
+            "Sealed-magnet backlog growing faster than conventional",
+            "Competitors launching low-helium systems",
+            "Cold-head or wire lead times stretching"
+          ],
+          "watch": [
+            "input:cryocooler",
+            "input:nbti"
+          ],
+          "threats": [
+            "Macroeconomic",
+            "Labor",
+            "Infrastructure"
+          ]
+        }
+      ],
+      "levers": [
+        {
+          "title": "Steer quotes to the sealed low-helium magnet where the site fits",
+          "text": "Uses under 1% of the helium. It exists today in the same product family, so it is the fastest lever, but it moves load onto one plant, wire and cold heads.",
+          "addresses": [
+            "helium"
+          ],
+          "shifts_to": [
+            "magnet_plants",
+            "cold_heads",
+            "superconducting_wire"
+          ],
+          "owner_function": "Commercial with the S&OP council",
+          "horizon": "Now",
+          "principle": "Resilient Products & Processes"
+        },
+        {
+          "title": "Fill magnets with helium only when the site is ready",
+          "text": "Stops helium being tied up in magnets waiting for delayed sites.",
+          "addresses": [
+            "helium"
+          ],
+          "owner_function": "Install PMO with the S&OP council",
+          "horizon": "Now",
+          "principle": "Inventory & Planning"
+        },
+        {
+          "title": "Hold a second helium source off the Gulf route, plus a strategic buffer",
+          "text": "US and Algerian supply both avoid Hormuz.",
+          "addresses": [
+            "helium"
+          ],
+          "owner_function": "Procurement",
+          "horizon": "Within a year",
+          "principle": "Sourcing Strategy"
+        },
+        {
+          "title": "Test whether each magnet plant can build the other's top configurations",
+          "text": "Includes the regulatory change-control time (QMSR and 510(k)) a move would need.",
+          "addresses": [
+            "magnet_plants"
+          ],
+          "owner_function": "Operations with Quality/RA",
+          "horizon": "One to two years",
+          "principle": "Production Flexibility"
+        },
+        {
+          "title": "Long-term agreements and buffer stock for memory and logic",
+          "text": "Plus last-time buys for parts nearing end of life, and designs that accept substitute parts.",
+          "addresses": [
+            "chips"
+          ],
+          "owner_function": "Procurement with Engineering",
+          "horizon": "Within a year",
+          "principle": "Inventory & Planning"
+        },
+        {
+          "title": "Qualify a second source for cold heads and superconducting wire",
+          "text": "Or hold buffer stock sized to the sealed-magnet ramp.",
+          "addresses": [
+            "cold_heads",
+            "superconducting_wire"
+          ],
+          "owner_function": "Procurement with Engineering",
+          "horizon": "One to two years",
+          "principle": "Sourcing Strategy"
+        },
+        {
+          "title": "Pre-book alternative sea routes",
+          "text": "For the Gulf: round the Cape of Good Hope to Salalah or Duqm. Agree the trigger in advance.",
+          "addresses": [
+            "export_lanes"
+          ],
+          "owner_function": "Logistics",
+          "horizon": "Now",
+          "principle": "Network Design"
+        },
+        {
+          "title": "Map MR material content, inferred first and confirmed over time",
+          "text": "Have a model read the bill of materials and engineering documents, tag every finding inferred with a confidence, and let engineers confirm it.",
+          "addresses": [
+            "material_map"
+          ],
+          "owner_function": "Engineering with the resiliency team",
+          "horizon": "Within a year",
+          "principle": "Resilient Products & Processes"
+        }
+      ],
+      "tolerance": {
+        "statement": "What we care about most for MR conventional: installs arrive when promised. The line is set by what MR is worth, not by any one risk. It carries high revenue per unit and high public-health value, so it gets a tight line: no critical input may take more than 30 days longer to recover than its stock lasts. A low-value, easily substituted product would get a looser one.",
+        "metric": "Recovery gap: time to recover minus time to survive, in days",
+        "line_days": 30,
+        "prov": "synth",
+        "basis": "A draft line for the product team to set. The gaps use synthetic stock and recovery times.",
+        "inputs": [
+          "helium",
+          "nbti",
+          "copper",
+          "cryocooler",
+          "memory",
+          "fpga",
+          "gpu"
+        ],
+        "heading": "What we care about most",
+        "value_basis": "High revenue per unit (about $1.0M to $3.5M list, est) and high public-health value (stroke, cancer and neurology imaging). A product's value sets how much disruption it can tolerate, the way you protect a sports car from hail more carefully than a runabout."
+      },
+      "glossary": [
+        [
+          "MR",
+          "Magnetic resonance (imaging)"
+        ],
+        [
+          "T",
+          "Tesla, the unit of magnet strength (1.5T, 3T)"
+        ],
+        [
+          "OEM",
+          "Original equipment manufacturer"
+        ],
+        [
+          "OTD",
+          "On-time delivery"
+        ],
+        [
+          "TTS",
+          "Time to survive: how many days stock and buffers last if supply stops"
+        ],
+        [
+          "TTR",
+          "Time to recover: how many days it takes to restore supply"
+        ],
+        [
+          "NbTi",
+          "Niobium-titanium, the superconducting wire in the magnet"
+        ],
+        [
+          "DRAM",
+          "Dynamic random-access memory (working memory)"
+        ],
+        [
+          "NAND",
+          "Flash memory used for storage (named after the NOT-AND logic gate)"
+        ],
+        [
+          "FPGA",
+          "Field-programmable gate array, a reconfigurable logic chip"
+        ],
+        [
+          "GPU",
+          "Graphics processing unit, used for image reconstruction"
+        ],
+        [
+          "AI",
+          "Artificial intelligence"
+        ],
+        [
+          "S&OP",
+          "Sales and operations planning"
+        ],
+        [
+          "PMO",
+          "Project management office"
+        ],
+        [
+          "RA",
+          "Regulatory affairs"
+        ],
+        [
+          "QMSR",
+          "Quality Management System Regulation, the US Food and Drug Administration's quality rule for devices"
+        ],
+        [
+          "510(k)",
+          "US Food and Drug Administration premarket notification, needed for some device changes"
+        ],
+        [
+          "US",
+          "United States"
+        ],
+        [
+          "UK",
+          "United Kingdom"
+        ],
+        [
+          "SC",
+          "South Carolina"
+        ],
+        [
+          "WI",
+          "Wisconsin"
+        ],
+        [
+          "OH",
+          "Ohio"
+        ],
+        [
+          "IMF",
+          "International Monetary Fund (source of PortWatch shipping data)"
+        ],
+        [
+          "lb",
+          "Pounds (weight)"
+        ],
+        [
+          "UTC",
+          "Coordinated Universal Time"
+        ],
+        [
+          "km",
+          "Kilometres"
+        ],
+        [
+          "M",
+          "Earthquake magnitude (for example M5.2)"
+        ],
+        [
+          "NGA",
+          "US National Geospatial-Intelligence Agency (navigational warnings)"
+        ],
+        [
+          "USGS",
+          "US Geological Survey (earthquakes)"
+        ],
+        [
+          "GDELT",
+          "Global Database of Events, Language and Tone (news volume)"
+        ],
+        [
+          "OSINT",
+          "Open-source intelligence"
+        ],
+        [
+          "MU, SOXX, HG=F",
+          "Market tickers used as price signals: a memory maker's shares, a semiconductor share index, copper futures"
+        ],
+        [
+          "S",
+          "Provenance tag: sourced public fact"
+        ],
+        [
+          "est",
+          "Provenance tag: estimate from public information"
+        ],
+        [
+          "synth",
+          "Provenance tag: synthetic demo value, not company data"
+        ]
+      ],
+      "taxonomy": {
+        "categories": [
+          "Product",
+          "Process",
+          "Supplier/Vendor",
+          "Logistics"
+        ],
+        "threats": [
+          "Natural disasters",
+          "Geopolitical",
+          "Security",
+          "Financial",
+          "Infrastructure",
+          "Labor",
+          "Foreign trade & payments",
+          "Macroeconomic"
+        ],
+        "principles": [
+          "Network Design",
+          "Sourcing Strategy",
+          "Inventory & Planning",
+          "Resilient Products & Processes",
+          "Production Flexibility"
+        ]
+      }
+    }
+  ]
 }

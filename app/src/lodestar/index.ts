@@ -11,6 +11,7 @@ import type { LodestarHotspotsPanel } from './HotspotsPanel';
 import type { LodestarBriefPanel } from './BriefPanel';
 import type { LodestarProductsPanel, LodestarInputClockPanel, LodestarRegWatchPanel, LodestarTelegramPanel } from './BoardPanels';
 import { openDrawer } from './drawer';
+import { openPremortem, updatePremortem, premortemFor, premortemFromUrl } from './premortem';
 import './lodestar.css';
 
 const REFRESH_MS = 5 * 60 * 1000;
@@ -83,16 +84,24 @@ export async function startLodestar(ctx: AppContext): Promise<void> {
       (ctx.panels['lodestar-regwatch'] as LodestarRegWatchPanel | undefined)?.update(ix, state.result);
       (ctx.panels['lodestar-telegram'] as LodestarTelegramPanel | undefined)?.update(ix, state.result, state.filter);
     }
+    updatePremortem(state.result);
     for (const fn of listeners) fn({ filter: state.filter, result: state.result, ix });
     syncFilterButtons();
   };
 
   // Product filter in the top bar: All / MR / CT / MI / US / XR.
   const buttons = new Map<FamilyFilter, HTMLButtonElement>();
+  let premortemBtn: HTMLButtonElement | null = null;
   const syncFilterButtons = () => {
     for (const [k, b] of buttons) {
       b.classList.toggle('active', k === state.filter);
       b.setAttribute('aria-pressed', k === state.filter ? 'true' : 'false');
+    }
+    // The pre-mortem button shows for a product line that has one.
+    const pm = state.filter === 'ALL' ? undefined : premortemFor(ix, state.filter);
+    if (premortemBtn) {
+      premortemBtn.hidden = !pm;
+      premortemBtn.textContent = pm ? `${pm.family} pre-mortem` : 'Pre-mortem';
     }
   };
   const mountFilter = () => {
@@ -110,6 +119,16 @@ export async function startLodestar(ctx: AppContext): Promise<void> {
         return b;
       }));
     host.appendChild(group);
+    premortemBtn = h('button', {
+      type: 'button',
+      className: 'lodestar-filter-btn lodestar-premortem-btn',
+      title: 'Five-year pre-mortem: weaknesses, today\'s signals, scenarios, levers',
+      onClick: () => {
+        const pm = state.filter === 'ALL' ? undefined : premortemFor(ix, state.filter);
+        if (pm) openPremortem(ix, pm, state.result);
+      },
+    }, 'Pre-mortem') as HTMLButtonElement;
+    host.appendChild(premortemBtn);
     syncFilterButtons();
   };
 
@@ -135,6 +154,9 @@ export async function startLodestar(ctx: AppContext): Promise<void> {
 
   mountFilter();
   render();
+  // ?premortem=<id> opens the pre-mortem page straight away; signals fill in on the first refresh.
+  const linked = premortemFromUrl(ix);
+  if (linked) openPremortem(ix, linked, state.result);
   await refresh();
   setInterval(() => { if (!document.hidden) void refresh(); }, REFRESH_MS);
   // The hotspots panel is lazily created; hand it the current result when it appears.

@@ -232,11 +232,15 @@ export function buildMapUrl(
     params.set('chokepoint', state.chokepoint);
   }
 
-  // Lodestar: keep the product filter (?product=MR) through map-state rewrites,
-  // so demo links and copied URLs open on the same product line.
+  // Lodestar: keep the product filter (?product=MR) and an open pre-mortem
+  // (?premortem=mr_conv) through map-state rewrites, so demo links and copied
+  // URLs open on the same view.
   if (import.meta.env.VITE_LODESTAR === 'true' && typeof window !== 'undefined') {
-    const product = new URLSearchParams(window.location.search).get('product');
-    if (product) params.set('product', product);
+    const current = new URLSearchParams(window.location.search);
+    for (const key of ['product', 'premortem']) {
+      const value = current.get(key);
+      if (value) params.set(key, value);
+    }
   }
 
   url.search = params.toString();
