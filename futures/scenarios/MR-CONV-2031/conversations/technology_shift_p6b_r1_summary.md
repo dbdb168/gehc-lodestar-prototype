@@ -8,7 +8,7 @@ Confirming the Placeholders (A10), above all the sealed test draw in litres, ran
 
 The manual fallback test (A9) ranks third as the only other action that holds in all four futures at trivial cost. N16, N17, N03, N05, N22; Panel judgement.
 
-Two missing actions are a map of the cold head's own sub-suppliers, so A1 does not buy false diversity, and a quarterly read of helium-free clearances and installed base to date the conversion decision (A11). N05, N03, N22; Panel judgement.
+One missing action is a map of the cold head's own sub-suppliers, so that A1 does not buy false diversity from a second maker fed by the same alloys. N05; Panel judgement.
 
 ## In one hundred words
 
