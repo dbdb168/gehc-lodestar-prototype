@@ -1,0 +1,9 @@
+# Technology shift, phase 4, round 2, summary
+
+## Key points
+
+F2 is the future in which trade stays a cost and helium no longer decides, because a 3 tesla sealed clearance and tender pull take sealed designs to most new builds by 2029 while the wire and cold head stay the same sole-source parts (N03, N05, N19; openFDA product code LNH, read 11 October 2026). The first break is the cold head, because a sealed fleet with no helium reserve makes one Japanese maker the supplier of every new magnet and every service spare, so an earthquake, an outage or a parent allocating output elsewhere stops both plants and the installed base at once, in a window from 2029 to 2031 (N05, N16, N17, N34; Panel judgement, moderate). Labor and the Contrarian put the first break on the technicians instead; this lens holds that a trade swap delays installs while the magnet still ships, and only a lost cold head crosses the 30-day line (N20, N05; Panel judgement). The future stays unbroken only if a second cold-head source is qualified on the sealed design by Engineering with Sourcing, started by mid-2027 (N05; Panel judgement). Infrastructure, Security, Financial and Foreign trade write F2 as if helium still buys time after a cold-head failure, which a sealed fleet does not allow (N05, N10, N16; Panel judgement).
+
+## In one hundred words
+
+In F2 the borders stay open and the magnet stops needing a helium delivery, but it still needs the same wire from one mill and the same cold head from one Japanese maker. Dropping helium moves the single point of failure rather than removing it: the cold head now keeps every new magnet and much of the installed base cold, with no reserve behind it. It breaks from 2029 through earthquake, outage or parent choice, stopping both plants. The cluster split is technicians against cold head; a roster delays installs, a lost cold head stops them. Everything assumes N22 intact.
