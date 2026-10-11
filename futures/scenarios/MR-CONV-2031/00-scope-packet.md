@@ -28,6 +28,8 @@ Two dimensions sit behind the question, and the panel decides whether they are t
 - Dimension A: how the world treats trade in the parts this product needs (open, restricted, or something in between).
 - Dimension B: how fast the product's own dependencies change (does a helium-free or wholly different magnet reach the market and at what pace).
 
+**Outcome of phase 3 (11 October 2026):** the panel kept dimension A as the first axis, worded as "Does something outside the OEM stop a part or a lane for more than 30 days before 2031?", and replaced dimension B with its external half, "In 2031, does helium still decide whether a magnet ships?". The OEM's own conversion pace is a decision in phase 6b (A11), not an axis. See `phases/P3-uncertainties.md`.
+
 ## Horizon and decision context
 
 - Horizon: five years, to 2031. Climate at 30 to 50 years is a separate exercise and is out of scope here, except where a climate effect is already observable.
