@@ -1,0 +1,1084 @@
+{
+  "method": "Screen the node map down to the biggest risks for the product.\n\nThree questions per node, in the OEM's own vocabulary (fragility = external threat x internal vulnerability,\njudged against the value being protected):\n  1. Would losing this node breach the tolerance line?      (loss_breaches_tolerance)\n  2. Is it hard to replace in time?                          (qualified_sources <= 1 or replace_months > 12)\n  3. Is at least one external threat plausible against it?   (len(threats) >= 1)\n\nA node survives only if all three are true. Survivors are ranked by how hard they are to replace\n(months), then by how many threat categories can reach them. The top eight are the product's risk list.\n\nWrites:\n  futures/scenarios/MR-CONV-2031/02-risk-screen.json\n  futures/scenarios/MR-CONV-2031/02-risk-screen.md",
+  "node_count": 36,
+  "survivors": 10,
+  "risks": [
+    {
+      "id": "N16",
+      "name": "Magnet winding, assembly and test plant, US (with helium liquefaction)",
+      "stage": "site",
+      "breaches": true,
+      "hard": true,
+      "threatened": true,
+      "survives": true,
+      "replace_months": 36,
+      "qualified_sources": 1,
+      "threats": [
+        "natural_disasters",
+        "labor",
+        "security",
+        "infrastructure"
+      ],
+      "tag": "AI-suggested",
+      "prov": "S",
+      "confirm_by": "Site operations",
+      "why": "One plant makes the magnets for the Western Hemisphere; a hurricane season or a strike stops the line."
+    },
+    {
+      "id": "N17",
+      "name": "Magnet and system plant, China",
+      "stage": "site",
+      "breaches": true,
+      "hard": true,
+      "threatened": true,
+      "survives": true,
+      "replace_months": 36,
+      "qualified_sources": 1,
+      "threats": [
+        "geopolitical",
+        "foreign_trade_payments",
+        "natural_disasters",
+        "security"
+      ],
+      "tag": "AI-suggested",
+      "prov": "S",
+      "confirm_by": "Site operations",
+      "why": "Serves Asia; export controls or a trade rupture would strand the Eastern Hemisphere supply."
+    },
+    {
+      "id": "N18",
+      "name": "Final assembly and global hub, US",
+      "stage": "site",
+      "breaches": true,
+      "hard": true,
+      "threatened": true,
+      "survives": true,
+      "replace_months": 36,
+      "qualified_sources": 1,
+      "threats": [
+        "natural_disasters",
+        "labor",
+        "security",
+        "infrastructure"
+      ],
+      "tag": "AI-suggested",
+      "prov": "est",
+      "confirm_by": "Site operations",
+      "why": "Single final-assembly site for two regions."
+    },
+    {
+      "id": "N03",
+      "name": "Niobium-titanium superconducting wire (magnet grade)",
+      "stage": "component",
+      "breaches": true,
+      "hard": true,
+      "threatened": true,
+      "survives": true,
+      "replace_months": 18,
+      "qualified_sources": 1,
+      "threats": [
+        "geopolitical",
+        "foreign_trade_payments",
+        "financial",
+        "security",
+        "labor"
+      ],
+      "tag": "AI-suggested",
+      "prov": "est",
+      "confirm_by": "Engineering",
+      "why": "Every conventional magnet is wound from this wire. Qualifying a new mill takes longer than the backlog covers."
+    },
+    {
+      "id": "N05",
+      "name": "Cryocooler cold heads (Gifford-McMahon type)",
+      "stage": "component",
+      "breaches": true,
+      "hard": true,
+      "threatened": true,
+      "survives": true,
+      "replace_months": 18,
+      "qualified_sources": 1,
+      "threats": [
+        "natural_disasters",
+        "geopolitical",
+        "financial",
+        "infrastructure"
+      ],
+      "tag": "AI-suggested",
+      "prov": "est",
+      "confirm_by": "Engineering",
+      "why": "Without the cold head the magnet boils off helium in the field and cannot ship."
+    },
+    {
+      "id": "N10",
+      "name": "Field-programmable logic (FPGA) for control and spectrometer",
+      "stage": "component",
+      "breaches": true,
+      "hard": true,
+      "threatened": true,
+      "survives": true,
+      "replace_months": 18,
+      "qualified_sources": 1,
+      "threats": [
+        "geopolitical",
+        "foreign_trade_payments",
+        "natural_disasters",
+        "security"
+      ],
+      "tag": "AI-suggested",
+      "prov": "est",
+      "confirm_by": "Engineering",
+      "why": "A foundry interruption stops the control electronics for every system, not one magnet."
+    },
+    {
+      "id": "N20",
+      "name": "Skilled magnet winding and cryogenic technicians, US plant",
+      "stage": "labour",
+      "breaches": true,
+      "hard": true,
+      "threatened": true,
+      "survives": true,
+      "replace_months": 18,
+      "qualified_sources": 1,
+      "threats": [
+        "labor",
+        "macroeconomic"
+      ],
+      "tag": "AI-suggested",
+      "prov": "est",
+      "confirm_by": "Human resources",
+      "why": "A strike or a retirement cliff cuts output without any supplier failing."
+    },
+    {
+      "id": "N19",
+      "name": "Helium cover at the US magnet plant",
+      "stage": "process",
+      "breaches": true,
+      "hard": true,
+      "threatened": true,
+      "survives": true,
+      "replace_months": 12,
+      "qualified_sources": 1,
+      "threats": [
+        "infrastructure",
+        "geopolitical",
+        "foreign_trade_payments"
+      ],
+      "tag": "Placeholder",
+      "prov": "synth",
+      "confirm_by": "Site operations",
+      "why": "Cover shorter than the time to reroute a helium shipment means any interruption reaches the line."
+    }
+  ],
+  "watch_items": [
+    {
+      "id": "N01",
+      "name": "Liquid helium supply",
+      "stage": "material",
+      "breaches": true,
+      "hard": false,
+      "threatened": true,
+      "survives": false,
+      "replace_months": 6,
+      "qualified_sources": 3,
+      "threats": [
+        "geopolitical",
+        "foreign_trade_payments",
+        "infrastructure",
+        "macroeconomic"
+      ],
+      "tag": "AI-suggested",
+      "prov": "S",
+      "confirm_by": "Sourcing",
+      "why": "A conventional magnet is filled, ramped and tested with liquid helium. No helium, no shipment."
+    },
+    {
+      "id": "N02",
+      "name": "Niobium (feedstock for superconducting wire)",
+      "stage": "material",
+      "breaches": false,
+      "hard": true,
+      "threatened": true,
+      "survives": false,
+      "replace_months": 24,
+      "qualified_sources": 2,
+      "threats": [
+        "geopolitical",
+        "foreign_trade_payments",
+        "natural_disasters",
+        "financial"
+      ],
+      "tag": "AI-suggested",
+      "prov": "S",
+      "confirm_by": "Sourcing",
+      "why": "Wire mills hold inventory and niobium is traded; a loss would bite through the wire mill, not directly."
+    },
+    {
+      "id": "N12",
+      "name": "Graphics processors for reconstruction and AI",
+      "stage": "component",
+      "breaches": false,
+      "hard": true,
+      "threatened": true,
+      "survives": false,
+      "replace_months": 12,
+      "qualified_sources": 1,
+      "threats": [
+        "geopolitical",
+        "macroeconomic",
+        "foreign_trade_payments"
+      ],
+      "tag": "AI-suggested",
+      "prov": "est",
+      "confirm_by": "Sourcing",
+      "why": "Older-generation parts can substitute for reconstruction at a performance cost."
+    },
+    {
+      "id": "N14",
+      "name": "Radio-frequency receive coils",
+      "stage": "component",
+      "breaches": false,
+      "hard": true,
+      "threatened": true,
+      "survives": false,
+      "replace_months": 12,
+      "qualified_sources": 1,
+      "threats": [
+        "natural_disasters",
+        "labor",
+        "security"
+      ],
+      "tag": "AI-suggested",
+      "prov": "S",
+      "confirm_by": "Sourcing",
+      "why": "Systems can ship with a reduced coil set; coils follow by air."
+    },
+    {
+      "id": "N15",
+      "name": "Reconstruction and control software",
+      "stage": "process",
+      "breaches": false,
+      "hard": true,
+      "threatened": true,
+      "survives": false,
+      "replace_months": 0,
+      "qualified_sources": 1,
+      "threats": [
+        "security"
+      ],
+      "tag": "AI-suggested",
+      "prov": "est",
+      "confirm_by": "Sourcing",
+      "why": "Owned IP; a cyber event is a security exposure, not a supply one."
+    },
+    {
+      "id": "N21",
+      "name": "Magnet ramp and test capacity (helium-intensive)",
+      "stage": "process",
+      "breaches": false,
+      "hard": true,
+      "threatened": true,
+      "survives": false,
+      "replace_months": 24,
+      "qualified_sources": 2,
+      "threats": [
+        "infrastructure",
+        "natural_disasters"
+      ],
+      "tag": "AI-suggested",
+      "prov": "est",
+      "confirm_by": "Sourcing",
+      "why": "Two plants; bottleneck only if one is down."
+    },
+    {
+      "id": "N22",
+      "name": "Magnet design ownership and qualification records",
+      "stage": "process",
+      "breaches": false,
+      "hard": true,
+      "threatened": true,
+      "survives": false,
+      "replace_months": 0,
+      "qualified_sources": 1,
+      "threats": [
+        "security"
+      ],
+      "tag": "AI-suggested",
+      "prov": "est",
+      "confirm_by": "Sourcing",
+      "why": "Owned, but the record is what makes every other replacement slow."
+    },
+    {
+      "id": "N33",
+      "name": "Field service engineers for install, ramp and helium top-up",
+      "stage": "labour",
+      "breaches": false,
+      "hard": true,
+      "threatened": true,
+      "survives": false,
+      "replace_months": 12,
+      "qualified_sources": 1,
+      "threats": [
+        "labor",
+        "macroeconomic"
+      ],
+      "tag": "AI-suggested",
+      "prov": "est",
+      "confirm_by": "Sourcing",
+      "why": "Delays installs at the margin; the magnet still ships."
+    },
+    {
+      "id": "N35",
+      "name": "Hospital capital budgets and reimbursement for MR",
+      "stage": "customer",
+      "breaches": false,
+      "hard": true,
+      "threatened": true,
+      "survives": false,
+      "replace_months": 0,
+      "qualified_sources": 0,
+      "threats": [
+        "macroeconomic",
+        "financial"
+      ],
+      "tag": "AI-suggested",
+      "prov": "est",
+      "confirm_by": "Sourcing",
+      "why": "Moves demand, not delivery."
+    },
+    {
+      "id": "N36",
+      "name": "Tender criteria that read late delivery as unreliability",
+      "stage": "customer",
+      "breaches": false,
+      "hard": true,
+      "threatened": true,
+      "survives": false,
+      "replace_months": 0,
+      "qualified_sources": 0,
+      "threats": [
+        "macroeconomic"
+      ],
+      "tag": "AI-suggested",
+      "prov": "est",
+      "confirm_by": "Sourcing",
+      "why": "Turns a late delivery into lost share; it is why the tolerance line matters."
+    }
+  ],
+  "all": [
+    {
+      "id": "N01",
+      "name": "Liquid helium supply",
+      "stage": "material",
+      "breaches": true,
+      "hard": false,
+      "threatened": true,
+      "survives": false,
+      "replace_months": 6,
+      "qualified_sources": 3,
+      "threats": [
+        "geopolitical",
+        "foreign_trade_payments",
+        "infrastructure",
+        "macroeconomic"
+      ],
+      "tag": "AI-suggested",
+      "prov": "S",
+      "confirm_by": "Sourcing",
+      "why": "A conventional magnet is filled, ramped and tested with liquid helium. No helium, no shipment."
+    },
+    {
+      "id": "N02",
+      "name": "Niobium (feedstock for superconducting wire)",
+      "stage": "material",
+      "breaches": false,
+      "hard": true,
+      "threatened": true,
+      "survives": false,
+      "replace_months": 24,
+      "qualified_sources": 2,
+      "threats": [
+        "geopolitical",
+        "foreign_trade_payments",
+        "natural_disasters",
+        "financial"
+      ],
+      "tag": "AI-suggested",
+      "prov": "S",
+      "confirm_by": "Sourcing",
+      "why": "Wire mills hold inventory and niobium is traded; a loss would bite through the wire mill, not directly."
+    },
+    {
+      "id": "N03",
+      "name": "Niobium-titanium superconducting wire (magnet grade)",
+      "stage": "component",
+      "breaches": true,
+      "hard": true,
+      "threatened": true,
+      "survives": true,
+      "replace_months": 18,
+      "qualified_sources": 1,
+      "threats": [
+        "geopolitical",
+        "foreign_trade_payments",
+        "financial",
+        "security",
+        "labor"
+      ],
+      "tag": "AI-suggested",
+      "prov": "est",
+      "confirm_by": "Engineering",
+      "why": "Every conventional magnet is wound from this wire. Qualifying a new mill takes longer than the backlog covers."
+    },
+    {
+      "id": "N04",
+      "name": "High-purity copper (gradient coils, windings, bus bars)",
+      "stage": "material",
+      "breaches": false,
+      "hard": false,
+      "threatened": true,
+      "survives": false,
+      "replace_months": 3,
+      "qualified_sources": 4,
+      "threats": [
+        "foreign_trade_payments",
+        "macroeconomic",
+        "natural_disasters"
+      ],
+      "tag": "AI-suggested",
+      "prov": "S",
+      "confirm_by": "Sourcing",
+      "why": "Copper is a cost and tariff exposure, not a single point of failure; many refiners."
+    },
+    {
+      "id": "N05",
+      "name": "Cryocooler cold heads (Gifford-McMahon type)",
+      "stage": "component",
+      "breaches": true,
+      "hard": true,
+      "threatened": true,
+      "survives": true,
+      "replace_months": 18,
+      "qualified_sources": 1,
+      "threats": [
+        "natural_disasters",
+        "geopolitical",
+        "financial",
+        "infrastructure"
+      ],
+      "tag": "AI-suggested",
+      "prov": "est",
+      "confirm_by": "Engineering",
+      "why": "Without the cold head the magnet boils off helium in the field and cannot ship."
+    },
+    {
+      "id": "N06",
+      "name": "Cryocooler helium compressors",
+      "stage": "component",
+      "breaches": false,
+      "hard": false,
+      "threatened": true,
+      "survives": false,
+      "replace_months": 12,
+      "qualified_sources": 2,
+      "threats": [
+        "natural_disasters",
+        "financial"
+      ],
+      "tag": "AI-suggested",
+      "prov": "est",
+      "confirm_by": "Sourcing",
+      "why": "Second source exists and compressors are less design-specific than cold heads."
+    },
+    {
+      "id": "N07",
+      "name": "Cryostat vessels and steel yoke (large welded stainless)",
+      "stage": "component",
+      "breaches": false,
+      "hard": false,
+      "threatened": true,
+      "survives": false,
+      "replace_months": 12,
+      "qualified_sources": 2,
+      "threats": [
+        "financial",
+        "labor",
+        "infrastructure"
+      ],
+      "tag": "AI-suggested",
+      "prov": "est",
+      "confirm_by": "Sourcing",
+      "why": "Second fabricator and twelve-month requalification keep this inside tolerance in most futures."
+    },
+    {
+      "id": "N08",
+      "name": "Gradient amplifiers and power semiconductors",
+      "stage": "component",
+      "breaches": false,
+      "hard": false,
+      "threatened": true,
+      "survives": false,
+      "replace_months": 9,
+      "qualified_sources": 2,
+      "threats": [
+        "foreign_trade_payments",
+        "geopolitical",
+        "security",
+        "macroeconomic"
+      ],
+      "tag": "AI-suggested",
+      "prov": "est",
+      "confirm_by": "Sourcing",
+      "why": "Nine-month replacement and two makers; a tariff shock raises cost more than it stops shipments."
+    },
+    {
+      "id": "N09",
+      "name": "Radio-frequency power amplifiers",
+      "stage": "component",
+      "breaches": false,
+      "hard": false,
+      "threatened": true,
+      "survives": false,
+      "replace_months": 9,
+      "qualified_sources": 2,
+      "threats": [
+        "financial",
+        "security"
+      ],
+      "tag": "AI-suggested",
+      "prov": "est",
+      "confirm_by": "Sourcing",
+      "why": "Two makers; not design-locked to the magnet."
+    },
+    {
+      "id": "N10",
+      "name": "Field-programmable logic (FPGA) for control and spectrometer",
+      "stage": "component",
+      "breaches": true,
+      "hard": true,
+      "threatened": true,
+      "survives": true,
+      "replace_months": 18,
+      "qualified_sources": 1,
+      "threats": [
+        "geopolitical",
+        "foreign_trade_payments",
+        "natural_disasters",
+        "security"
+      ],
+      "tag": "AI-suggested",
+      "prov": "est",
+      "confirm_by": "Engineering",
+      "why": "A foundry interruption stops the control electronics for every system, not one magnet."
+    },
+    {
+      "id": "N11",
+      "name": "Memory (DRAM, NAND) for consoles and reconstruction",
+      "stage": "component",
+      "breaches": false,
+      "hard": false,
+      "threatened": true,
+      "survives": false,
+      "replace_months": 3,
+      "qualified_sources": 3,
+      "threats": [
+        "macroeconomic",
+        "geopolitical",
+        "financial"
+      ],
+      "tag": "AI-suggested",
+      "prov": "S",
+      "confirm_by": "Sourcing",
+      "why": "Allocation raises cost and lead time; three makers keep it from stopping shipments."
+    },
+    {
+      "id": "N12",
+      "name": "Graphics processors for reconstruction and AI",
+      "stage": "component",
+      "breaches": false,
+      "hard": true,
+      "threatened": true,
+      "survives": false,
+      "replace_months": 12,
+      "qualified_sources": 1,
+      "threats": [
+        "geopolitical",
+        "macroeconomic",
+        "foreign_trade_payments"
+      ],
+      "tag": "AI-suggested",
+      "prov": "est",
+      "confirm_by": "Sourcing",
+      "why": "Older-generation parts can substitute for reconstruction at a performance cost."
+    },
+    {
+      "id": "N13",
+      "name": "Patient table, covers and mechanical assemblies",
+      "stage": "component",
+      "breaches": false,
+      "hard": false,
+      "threatened": true,
+      "survives": false,
+      "replace_months": 6,
+      "qualified_sources": 3,
+      "threats": [
+        "financial",
+        "labor"
+      ],
+      "tag": "AI-suggested",
+      "prov": "synth",
+      "confirm_by": "Sourcing",
+      "why": "Many suppliers, short requalification."
+    },
+    {
+      "id": "N14",
+      "name": "Radio-frequency receive coils",
+      "stage": "component",
+      "breaches": false,
+      "hard": true,
+      "threatened": true,
+      "survives": false,
+      "replace_months": 12,
+      "qualified_sources": 1,
+      "threats": [
+        "natural_disasters",
+        "labor",
+        "security"
+      ],
+      "tag": "AI-suggested",
+      "prov": "S",
+      "confirm_by": "Sourcing",
+      "why": "Systems can ship with a reduced coil set; coils follow by air."
+    },
+    {
+      "id": "N15",
+      "name": "Reconstruction and control software",
+      "stage": "process",
+      "breaches": false,
+      "hard": true,
+      "threatened": true,
+      "survives": false,
+      "replace_months": 0,
+      "qualified_sources": 1,
+      "threats": [
+        "security"
+      ],
+      "tag": "AI-suggested",
+      "prov": "est",
+      "confirm_by": "Sourcing",
+      "why": "Owned IP; a cyber event is a security exposure, not a supply one."
+    },
+    {
+      "id": "N16",
+      "name": "Magnet winding, assembly and test plant, US (with helium liquefaction)",
+      "stage": "site",
+      "breaches": true,
+      "hard": true,
+      "threatened": true,
+      "survives": true,
+      "replace_months": 36,
+      "qualified_sources": 1,
+      "threats": [
+        "natural_disasters",
+        "labor",
+        "security",
+        "infrastructure"
+      ],
+      "tag": "AI-suggested",
+      "prov": "S",
+      "confirm_by": "Site operations",
+      "why": "One plant makes the magnets for the Western Hemisphere; a hurricane season or a strike stops the line."
+    },
+    {
+      "id": "N17",
+      "name": "Magnet and system plant, China",
+      "stage": "site",
+      "breaches": true,
+      "hard": true,
+      "threatened": true,
+      "survives": true,
+      "replace_months": 36,
+      "qualified_sources": 1,
+      "threats": [
+        "geopolitical",
+        "foreign_trade_payments",
+        "natural_disasters",
+        "security"
+      ],
+      "tag": "AI-suggested",
+      "prov": "S",
+      "confirm_by": "Site operations",
+      "why": "Serves Asia; export controls or a trade rupture would strand the Eastern Hemisphere supply."
+    },
+    {
+      "id": "N18",
+      "name": "Final assembly and global hub, US",
+      "stage": "site",
+      "breaches": true,
+      "hard": true,
+      "threatened": true,
+      "survives": true,
+      "replace_months": 36,
+      "qualified_sources": 1,
+      "threats": [
+        "natural_disasters",
+        "labor",
+        "security",
+        "infrastructure"
+      ],
+      "tag": "AI-suggested",
+      "prov": "est",
+      "confirm_by": "Site operations",
+      "why": "Single final-assembly site for two regions."
+    },
+    {
+      "id": "N19",
+      "name": "Helium cover at the US magnet plant",
+      "stage": "process",
+      "breaches": true,
+      "hard": true,
+      "threatened": true,
+      "survives": true,
+      "replace_months": 12,
+      "qualified_sources": 1,
+      "threats": [
+        "infrastructure",
+        "geopolitical",
+        "foreign_trade_payments"
+      ],
+      "tag": "Placeholder",
+      "prov": "synth",
+      "confirm_by": "Site operations",
+      "why": "Cover shorter than the time to reroute a helium shipment means any interruption reaches the line."
+    },
+    {
+      "id": "N20",
+      "name": "Skilled magnet winding and cryogenic technicians, US plant",
+      "stage": "labour",
+      "breaches": true,
+      "hard": true,
+      "threatened": true,
+      "survives": true,
+      "replace_months": 18,
+      "qualified_sources": 1,
+      "threats": [
+        "labor",
+        "macroeconomic"
+      ],
+      "tag": "AI-suggested",
+      "prov": "est",
+      "confirm_by": "Human resources",
+      "why": "A strike or a retirement cliff cuts output without any supplier failing."
+    },
+    {
+      "id": "N21",
+      "name": "Magnet ramp and test capacity (helium-intensive)",
+      "stage": "process",
+      "breaches": false,
+      "hard": true,
+      "threatened": true,
+      "survives": false,
+      "replace_months": 24,
+      "qualified_sources": 2,
+      "threats": [
+        "infrastructure",
+        "natural_disasters"
+      ],
+      "tag": "AI-suggested",
+      "prov": "est",
+      "confirm_by": "Sourcing",
+      "why": "Two plants; bottleneck only if one is down."
+    },
+    {
+      "id": "N22",
+      "name": "Magnet design ownership and qualification records",
+      "stage": "process",
+      "breaches": false,
+      "hard": true,
+      "threatened": true,
+      "survives": false,
+      "replace_months": 0,
+      "qualified_sources": 1,
+      "threats": [
+        "security"
+      ],
+      "tag": "AI-suggested",
+      "prov": "est",
+      "confirm_by": "Sourcing",
+      "why": "Owned, but the record is what makes every other replacement slow."
+    },
+    {
+      "id": "N23",
+      "name": "Cryogenic helium transport (ISO containers, trailers)",
+      "stage": "logistics",
+      "breaches": false,
+      "hard": false,
+      "threatened": true,
+      "survives": false,
+      "replace_months": 6,
+      "qualified_sources": 2,
+      "threats": [
+        "infrastructure",
+        "geopolitical",
+        "natural_disasters"
+      ],
+      "tag": "AI-suggested",
+      "prov": "est",
+      "confirm_by": "Sourcing",
+      "why": "Delays helium rather than stopping it; bites through N19."
+    },
+    {
+      "id": "N24",
+      "name": "Inbound magnet lane, US magnet plant to US final assembly (road, oversize)",
+      "stage": "logistics",
+      "breaches": false,
+      "hard": false,
+      "threatened": true,
+      "survives": false,
+      "replace_months": 1,
+      "qualified_sources": 2,
+      "threats": [
+        "infrastructure",
+        "natural_disasters"
+      ],
+      "tag": "AI-suggested",
+      "prov": "S",
+      "confirm_by": "Sourcing",
+      "why": "Domestic road; many carriers."
+    },
+    {
+      "id": "N25",
+      "name": "Outbound lanes, US hub to US regions (road, oversize permits)",
+      "stage": "logistics",
+      "breaches": false,
+      "hard": false,
+      "threatened": true,
+      "survives": false,
+      "replace_months": 1,
+      "qualified_sources": 3,
+      "threats": [
+        "infrastructure",
+        "natural_disasters",
+        "labor"
+      ],
+      "tag": "AI-suggested",
+      "prov": "S",
+      "confirm_by": "Sourcing",
+      "why": "Permit delays are days, not months."
+    },
+    {
+      "id": "N26",
+      "name": "Export port for Atlantic sea lanes (US south-east)",
+      "stage": "logistics",
+      "breaches": true,
+      "hard": true,
+      "threatened": true,
+      "survives": true,
+      "replace_months": 2,
+      "qualified_sources": 1,
+      "threats": [
+        "natural_disasters",
+        "infrastructure",
+        "labor",
+        "security"
+      ],
+      "tag": "AI-suggested",
+      "prov": "S",
+      "confirm_by": "Logistics",
+      "why": "One hurricane closure or a port strike holds every export magnet for weeks."
+    },
+    {
+      "id": "N27",
+      "name": "Sea lane to the Gulf via Suez, Bab el-Mandeb and Hormuz",
+      "stage": "logistics",
+      "breaches": false,
+      "hard": false,
+      "threatened": true,
+      "survives": false,
+      "replace_months": 1,
+      "qualified_sources": 2,
+      "threats": [
+        "geopolitical",
+        "security",
+        "infrastructure"
+      ],
+      "tag": "AI-suggested",
+      "prov": "S",
+      "confirm_by": "Sourcing",
+      "why": "Rerouting adds weeks, inside a 30-day line for most orders."
+    },
+    {
+      "id": "N28",
+      "name": "Sea lane to Europe via the Channel",
+      "stage": "logistics",
+      "breaches": false,
+      "hard": false,
+      "threatened": true,
+      "survives": false,
+      "replace_months": 1,
+      "qualified_sources": 2,
+      "threats": [
+        "infrastructure",
+        "labor"
+      ],
+      "tag": "AI-suggested",
+      "prov": "S",
+      "confirm_by": "Sourcing",
+      "why": "Several ports of entry."
+    },
+    {
+      "id": "N29",
+      "name": "Sea lanes from the China plant to Japan and India",
+      "stage": "logistics",
+      "breaches": true,
+      "hard": true,
+      "threatened": true,
+      "survives": true,
+      "replace_months": 2,
+      "qualified_sources": 1,
+      "threats": [
+        "geopolitical",
+        "security",
+        "natural_disasters"
+      ],
+      "tag": "AI-suggested",
+      "prov": "S",
+      "confirm_by": "Logistics",
+      "why": "A strait closure stops Eastern Hemisphere deliveries with no second plant able to cover."
+    },
+    {
+      "id": "N30",
+      "name": "Air freight for electronics and coils",
+      "stage": "logistics",
+      "breaches": false,
+      "hard": false,
+      "threatened": true,
+      "survives": false,
+      "replace_months": 0,
+      "qualified_sources": 4,
+      "threats": [
+        "infrastructure",
+        "macroeconomic"
+      ],
+      "tag": "AI-suggested",
+      "prov": "est",
+      "confirm_by": "Sourcing",
+      "why": "Many carriers."
+    },
+    {
+      "id": "N31",
+      "name": "Customs clearance and payment rails for cross-border parts",
+      "stage": "logistics",
+      "breaches": false,
+      "hard": false,
+      "threatened": true,
+      "survives": false,
+      "replace_months": 1,
+      "qualified_sources": 3,
+      "threats": [
+        "foreign_trade_payments",
+        "geopolitical",
+        "security"
+      ],
+      "tag": "AI-suggested",
+      "prov": "est",
+      "confirm_by": "Sourcing",
+      "why": "Delays and cost; rarely a stop."
+    },
+    {
+      "id": "N32",
+      "name": "Site preparation and rigging contractors",
+      "stage": "install",
+      "breaches": false,
+      "hard": false,
+      "threatened": true,
+      "survives": false,
+      "replace_months": 2,
+      "qualified_sources": 4,
+      "threats": [
+        "labor",
+        "macroeconomic"
+      ],
+      "tag": "AI-suggested",
+      "prov": "synth",
+      "confirm_by": "Sourcing",
+      "why": "Many contractors."
+    },
+    {
+      "id": "N33",
+      "name": "Field service engineers for install, ramp and helium top-up",
+      "stage": "labour",
+      "breaches": false,
+      "hard": true,
+      "threatened": true,
+      "survives": false,
+      "replace_months": 12,
+      "qualified_sources": 1,
+      "threats": [
+        "labor",
+        "macroeconomic"
+      ],
+      "tag": "AI-suggested",
+      "prov": "est",
+      "confirm_by": "Sourcing",
+      "why": "Delays installs at the margin; the magnet still ships."
+    },
+    {
+      "id": "N34",
+      "name": "Helium for field service and installed-base top-up",
+      "stage": "material",
+      "breaches": false,
+      "hard": false,
+      "threatened": true,
+      "survives": false,
+      "replace_months": 6,
+      "qualified_sources": 3,
+      "threats": [
+        "geopolitical",
+        "foreign_trade_payments",
+        "macroeconomic"
+      ],
+      "tag": "AI-suggested",
+      "prov": "est",
+      "confirm_by": "Sourcing",
+      "why": "Service, not delivery; matters to the installed-base value, not the tolerance line."
+    },
+    {
+      "id": "N35",
+      "name": "Hospital capital budgets and reimbursement for MR",
+      "stage": "customer",
+      "breaches": false,
+      "hard": true,
+      "threatened": true,
+      "survives": false,
+      "replace_months": 0,
+      "qualified_sources": 0,
+      "threats": [
+        "macroeconomic",
+        "financial"
+      ],
+      "tag": "AI-suggested",
+      "prov": "est",
+      "confirm_by": "Sourcing",
+      "why": "Moves demand, not delivery."
+    },
+    {
+      "id": "N36",
+      "name": "Tender criteria that read late delivery as unreliability",
+      "stage": "customer",
+      "breaches": false,
+      "hard": true,
+      "threatened": true,
+      "survives": false,
+      "replace_months": 0,
+      "qualified_sources": 0,
+      "threats": [
+        "macroeconomic"
+      ],
+      "tag": "AI-suggested",
+      "prov": "est",
+      "confirm_by": "Sourcing",
+      "why": "Turns a late delivery into lost share; it is why the tolerance line matters."
+    }
+  ]
+}
