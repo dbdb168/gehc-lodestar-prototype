@@ -1,0 +1,9 @@
+# Labor, phase 6a, round 1, summary
+
+## Key points
+
+No future breaks first on a labour node; people decide how long a stop lasts, not whether it starts (N20, N16, N17; Panel judgement). In F2 the mid-run trade swap from helium handling to vacuum and cryocooler work is the second break, putting installs two to three quarters late in 2029 with no line stop, and a Human resources read of the vacuum trade at a fifth of winding headcount removes it (N20, N33; Panel judgement, low confidence). In F4 an 18-month stop exceeds any trade's retention horizon, so the 18-month technician replacement runs after the cold head returns and the plants break again in 2030 (N16, N17, N20, N05; Panel judgement, moderate). In F3 a stopped China plant loses its technicians to a tight labour market and restarts on rehiring time, not licence time (N17, N20; Panel judgement, moderate on mechanism). The one dated labour event is the longshore master contract expiry on 30 September 2030, a days-long cost at the port in every future (N26; phase 2 Labor record, Logistics confirms); the shared encryption event is a 35-day stop at either plant in all four, because winding is instrumented and test is a digital record, removed only by a tested manual fallback that this lens doubts exists (N16, N17, N05, N23, N26; Panel judgement, moderate).
+
+## In one hundred words
+
+Labour never breaks first. The futures reach the eight risks through helium cover, logic and the cold head, and labour sets the length of each stop. F1 and F3 stop on helium; technicians keep their trade and the port contract in 2030 costs days. F2 swaps the plant's trade mid-run and installs slip two to three quarters in 2029. F4 stops both plants for 18 months, long enough to lose the winders, so the technician risk breaks in 2030 after the cold head returns. Shared by all four: the 35-day encryption stop, and three one-town trades ageing on no axis.

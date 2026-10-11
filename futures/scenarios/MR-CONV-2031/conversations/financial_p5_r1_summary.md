@@ -4,7 +4,7 @@
 
 Owner exit from the sole wire mill will appear first in its listed parent's SEC filings, which can be read as a feed today; the FY2025 10-K shows backlog rising on fusion and physics work with no disposal announced through August 2026, leaning U1 toward end A (N03, N02; AI-suggested, Engineering confirms; SEC EDGAR, Feb and Aug 2026).
 
-The cold-head second source has belonged to a quantum-cryogenics owner since March 2023, so half of U1's owner-exit route is already walked; the incumbent's parent must be read each quarter and Sourcing holds its address (N05, N06; AI-suggested, Sourcing confirms; Bluefors, 28 Mar 2023).
+The cold-head second source has belonged to a quantum-cryogenics owner since March 2023, so half of U1's owner-exit route is already walked; the incumbent's parent must be read each quarter and Sourcing holds its address (N05, N06; AI-suggested, Sourcing confirms; owner's release, 28 Mar 2023).
 
 Bulk helium ran at $102,597 per tonne in the United States and up to $127,738 in France in Q1 2026 inside allocation frameworks; two quarters falling toward the USGS base with spot availability would settle U2 toward end B (N01, N19, N34; IMARC, 20 May 2026).
 

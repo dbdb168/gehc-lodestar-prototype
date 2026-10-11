@@ -1,0 +1,323 @@
+[
+  {
+    "id": "I01",
+    "uncertainty": "U1",
+    "name": "Federal Register actions naming the parts",
+    "what_is_measured": "Any proclamation or Commerce rule naming finished MR scanners, superconducting wire, niobium, cryocoolers or cold heads, including the Section 232 medical equipment investigation opened 26 September 2025.",
+    "source_name": "Federal Register documents interface",
+    "source_url": "https://www.federalregister.gov/api/v1/documents.json?conditions[term]=%22superconducting+wire%22+OR+cryocooler+OR+niobium&conditions[agencies][]=industry-and-security-bureau&order=newest&per_page=20",
+    "cadence": "Each publication day",
+    "mode": "live",
+    "settles_a_when": "The 2027 sourcing cycle closes with no document naming the parts, and the Section 232 medical action is confined to finished scanners or lapses.",
+    "settles_b_when": "A document names wire, niobium, cryocoolers or cold heads, or a proclamation imposes a quota or licence on MR parts; the stop reaches N03, N05 or N17 within a quarter.",
+    "false_signal": "Silence. A Section 232 report goes to the President unpublished, so no proclamation can mean a decision pending rather than no decision. An edit to the existing superconducting materials entry is not a new listing.",
+    "last_read": "Zero Bureau of Industry and Security documents naming the parts, and no Section 232 medical proclamation, on 11 October 2026.",
+    "leans_toward": "a",
+    "nodes": [
+      "N03",
+      "N02",
+      "N05",
+      "N17",
+      "N18"
+    ],
+    "proposed_by": [
+      "Foreign trade",
+      "Geopolitical",
+      "Technology shift",
+      "Macroeconomic",
+      "Customer and market",
+      "Contrarian"
+    ]
+  },
+  {
+    "id": "I02",
+    "uncertainty": "U1",
+    "name": "Entity List additions",
+    "what_is_measured": "Bureau of Industry and Security rules adding parties, read for the China plant, its logic supplier, a cryogenic parts route or a Chinese wire mill.",
+    "source_name": "Federal Register documents interface, Bureau of Industry and Security",
+    "source_url": "https://www.federalregister.gov/api/v1/documents.json?conditions[term]=%22Entity+List%22+additions&conditions[agencies][]=industry-and-security-bureau&order=newest&per_page=5",
+    "cadence": "On publication, several rules a quarter",
+    "mode": "live",
+    "settles_a_when": "The truce notice renews with no addition touching medical electronics or cryogenic parts by the close of the 2027 sourcing cycle.",
+    "settles_b_when": "A rule names the plant, its logic supplier or a logic distributor serving China; the stop follows within a quarter (future F3).",
+    "false_signal": "A rule that only removes parties, or adds defence end users unrelated to imaging.",
+    "last_read": "Newest action 24 August 2026, removals only; no addition touching the map.",
+    "leans_toward": "a",
+    "nodes": [
+      "N17",
+      "N10",
+      "N31"
+    ],
+    "proposed_by": [
+      "Geopolitical",
+      "Security"
+    ]
+  },
+  {
+    "id": "I03",
+    "uncertainty": "U1",
+    "name": "China truce notice and counter-listings",
+    "what_is_measured": "Whether the suspension of China's 24 percent additional tariff is renewed at its notice date, and whether a Ministry of Commerce announcement adds a wire mill, the cold-head maker, the OEM or a foreign-owned imaging plant to an export-control or unreliable-entity list.",
+    "source_name": "State Council Tariff Commission notices and Ministry of Commerce announcements, read through wire reports and a law-firm tracker",
+    "source_url": "https://www.mofcom.gov.cn/",
+    "cadence": "Event driven; several announcements a month, checked quarterly",
+    "mode": "manual",
+    "settles_a_when": "The suspension is renewed for a year or longer and no 2026 or 2027 announcement names cryogenic or superconducting items or an imaging plant.",
+    "settles_b_when": "The 24 percent duty returns, or an announcement names a cryocooler or wire maker or a foreign-owned imaging plant, or extends dual-use controls to cold heads bound for China.",
+    "false_signal": "Quota and anti-dumping announcements, and batches that stay on defence firms.",
+    "last_read": "Suspension in force from 10 November 2025 for one year, no renewal notice found; Announcement No. 46 of 9 October 2026 carries no export-control item. The truce end date reads 10 November 2026 or 10 January 2027 on two carried sources.",
+    "leans_toward": "neither",
+    "nodes": [
+      "N17",
+      "N03",
+      "N05",
+      "N31"
+    ],
+    "proposed_by": [
+      "Foreign trade",
+      "Geopolitical",
+      "Security"
+    ]
+  },
+  {
+    "id": "I04",
+    "uncertainty": "U1",
+    "name": "Sole-supplier parent filings",
+    "what_is_measured": "Filings and press releases by the listed parents of the qualified wire mill and the two cryocooler makers, read for a sale, closure or market exit of the superconductor or cryocooler unit, and for how much of the backlog is fusion or physics work.",
+    "source_name": "United States Securities and Exchange Commission EDGAR filing list; owners' press release pages",
+    "source_url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001109354&type=8-K&dateb=&owner=include&count=10",
+    "cadence": "Within four days of an event for the listed parent; quarterly read of the press pages",
+    "mode": "live",
+    "settles_a_when": "The 2027 sourcing cycle closes with no disposal and both parents still offer the MR part.",
+    "settles_b_when": "A filing or release announces a sale or closure of the unit, or restricts it to research markets; this is the owner-exit route to a stop in futures F4 and F2.",
+    "false_signal": "A backlog rise or a segment reshuffle that changes nothing on the shop floor.",
+    "last_read": "No disposal filed on 11 October 2026. The United States second cryocooler source was bought and allocated to research in 2023 (predetermined element P18). The Japanese parent's investor address is still owed by Sourcing.",
+    "leans_toward": "a",
+    "nodes": [
+      "N03",
+      "N05",
+      "N06"
+    ],
+    "proposed_by": [
+      "Financial",
+      "Labor",
+      "Macroeconomic"
+    ]
+  },
+  {
+    "id": "I05",
+    "uncertainty": "U1",
+    "name": "Export port closures and the longshore contract",
+    "what_is_measured": "Dated closure advisories from the one export port, major work stoppages at ports and carriers, and the status of the longshore master contract expiring 30 September 2030.",
+    "source_name": "Port authority advisories; Bureau of Labor Statistics Work Stoppages; longshore union site",
+    "source_url": "https://scspa.com/advisories/",
+    "cadence": "Per event, daily in a storm; monthly stoppages file",
+    "mode": "live",
+    "settles_a_when": "Closures stay at days through 2031 and the 2030 contract is renewed before expiry.",
+    "settles_b_when": "One closure or stoppage at the port, the oversize carriers or the gas carriers runs past 30 days, or 30 September 2030 passes with no agreement.",
+    "false_signal": "An inland-yard or gate-hours notice; a short strike with large headcount, such as the three-day port strike of October 2024.",
+    "last_read": "No weather closure in 2026; newest advisory is a gate-hours notice of 23 September 2026. Contract approved 7 February 2025, runs to 30 September 2030.",
+    "leans_toward": "a",
+    "nodes": [
+      "N26",
+      "N25",
+      "N23",
+      "N24"
+    ],
+    "proposed_by": [
+      "Infrastructure",
+      "Natural disasters",
+      "Labor"
+    ]
+  },
+  {
+    "id": "I06",
+    "uncertainty": "U1",
+    "name": "European origin rule on medical tenders",
+    "what_is_measured": "The status of Regulation (EU) 2025/1197, which bars Chinese-origin medical devices from tenders at or above 5 million euros, and any widening, counter-measure or withdrawal.",
+    "source_name": "EUR-Lex",
+    "source_url": "https://eur-lex.europa.eu/eli/reg_impl/2025/1197/oj/eng",
+    "cadence": "On amendment; read quarterly",
+    "mode": "manual",
+    "settles_a_when": "The measure stays at its threshold or is withdrawn after a settlement; nothing stops.",
+    "settles_b_when": "The threshold is removed, the measure extends to components, or a Chinese counter-rule bars foreign-built MR systems from Chinese hospitals.",
+    "false_signal": "A European preference clause in the procurement directives, which scores origin rather than barring it.",
+    "last_read": "In force since 20 June 2025 at the 5 million euro threshold; the page rendered empty on fetch on 11 October 2026, so the reading is carried from phase 2.",
+    "leans_toward": "a",
+    "nodes": [
+      "N17",
+      "N28",
+      "N36"
+    ],
+    "proposed_by": [
+      "Customer and market"
+    ]
+  },
+  {
+    "id": "I07",
+    "uncertainty": "U2",
+    "name": "Gulf strait daily transits",
+    "what_is_measured": "Ships broadcasting through the Strait of Hormuz each day, the lane Gulf helium leaves by, against a typical 85 a day.",
+    "source_name": "IMF PortWatch, republished by straits.live",
+    "source_url": "https://straits.live/data",
+    "cadence": "Daily rows, published weekly, last three days open to revision",
+    "mode": "live",
+    "settles_a_when": "The count stays below about 40 a day through 2028 and war-risk cover stays withdrawn, or a United States allocation rule arrives.",
+    "settles_b_when": "The count holds above about 70 a day for two consecutive quarters, insured container traffic resumes and allocation letters stop.",
+    "false_signal": "A one-week jump from convoyed tankers. The count is all ships, not helium carriers; transits can recover while Qatar's liquefaction is still being rebuilt.",
+    "last_read": "Four ships on 4 October 2026 against a typical 85.",
+    "leans_toward": "a",
+    "nodes": [
+      "N27",
+      "N23",
+      "N01",
+      "N19"
+    ],
+    "proposed_by": [
+      "Infrastructure",
+      "Geopolitical",
+      "Contrarian"
+    ],
+    "series": [
+      {
+        "date": "2026-10-04",
+        "value": 4,
+        "basis": "IMF PortWatch via straits.live"
+      }
+    ],
+    "threshold": 70
+  },
+  {
+    "id": "I08",
+    "uncertainty": "U2",
+    "name": "Helium price and import mix",
+    "what_is_measured": "The posted Grade-A base price per cubic metre and United States import shares by origin from the annual survey; the quarterly bulk contract price by region under allocation; the producer price index for industrial gases.",
+    "source_name": "United States Geological Survey Mineral Commodity Summaries, helium chapter; IMARC bulk helium price index; Bureau of Labor Statistics series PCU325120325120",
+    "source_url": "https://pubs.usgs.gov/periodicals/mcs2026/mcs2026-helium.pdf",
+    "cadence": "Annual in February; quarterly for the bulk index; monthly for the producer index",
+    "mode": "manual",
+    "settles_a_when": "The base price rises two editions running with surcharges still posted, the Qatari share falls further, and the United States bulk price holds above 100,000 dollars a tonne through 2027.",
+    "settles_b_when": "The surcharge sentence disappears, the base price falls two editions running, and the bulk price falls two quarters running with spot availability.",
+    "false_signal": "A lower posted base price with surcharges still posted, because allocation lives in the surcharge. A producer-index fall driven by argon and oxygen.",
+    "last_read": "About 12 dollars per cubic metre in 2025 from 14 in 2024, surcharges posted; Canada 47 percent, Qatar 28 percent of imports for 2021 to 2024 (USGS, February 2026, carried from phase 2). Producer index up 5.4 percent in the year to August 2026.",
+    "leans_toward": "a",
+    "nodes": [
+      "N01",
+      "N19",
+      "N34"
+    ],
+    "proposed_by": [
+      "Macroeconomic",
+      "Financial",
+      "Infrastructure",
+      "Contrarian"
+    ]
+  },
+  {
+    "id": "I09",
+    "uncertainty": "U2",
+    "name": "United States helium export or allocation rule",
+    "what_is_measured": "Any Federal Register rule or presidential document naming helium with export, allocation or Section 232.",
+    "source_name": "Federal Register documents interface",
+    "source_url": "https://www.federalregister.gov/api/v1/documents.json?conditions[term]=helium+export&order=newest&per_page=5",
+    "cadence": "On publication",
+    "mode": "live",
+    "settles_a_when": "A rule is proposed or signed; it also moves U1 toward a stop for the China plant, which cannot buy Chinese helium.",
+    "settles_b_when": "None appears while Gulf transits recover.",
+    "false_signal": "A Bureau of Land Management lease or royalty notice naming helium, which is land administration.",
+    "last_read": "No rule existed on 11 October 2026; the address is built on the confirmed interface pattern but was not fetched this round.",
+    "leans_toward": "neither",
+    "nodes": [
+      "N01",
+      "N16",
+      "N17",
+      "N19"
+    ],
+    "proposed_by": [
+      "Security",
+      "Foreign trade",
+      "Macroeconomic"
+    ]
+  },
+  {
+    "id": "I10",
+    "uncertainty": "U2",
+    "name": "Sealed magnets in new United States clearances",
+    "what_is_measured": "New 510(k) clearances in product code LNH (magnetic resonance diagnostic device), read for the first 3 tesla sealed magnet and for the sealed share of new clearances.",
+    "source_name": "openFDA device 510(k) endpoint; FDA 510(k) summaries",
+    "source_url": "https://api.fda.gov/device/510k.json?search=product_code:LNH&sort=decision_date:desc&limit=10",
+    "cadence": "Weekly refresh; quarterly read of each summary's cryostat section",
+    "mode": "live",
+    "settles_a_when": "No 3 tesla sealed clearance appears by the 2027 sourcing cycle and sealed designs stay a minority through 2028.",
+    "settles_b_when": "A 3 tesla sealed clearance lands, sealed designs pass half of new clearances in a rolling year, and Engineering confirms the test draw as a cylinder (Placeholder).",
+    "false_signal": "A 3 tesla clearance for a software or coil change on a conventional platform; several K numbers for one platform family; a run of low-field or portable clearances, which feed the fifth-future watch row rather than end B.",
+    "last_read": "21 clearances in 2026 to 16 September; five name a sealed or helium-light cryostat, all at or below 1.5 tesla; no 3 tesla sealed clearance.",
+    "leans_toward": "a",
+    "nodes": [
+      "N05",
+      "N19",
+      "N21",
+      "N34"
+    ],
+    "proposed_by": [
+      "Technology shift",
+      "Security",
+      "Labor",
+      "Customer and market"
+    ],
+    "series": [
+      {
+        "date": "2026-09-16",
+        "value": 5,
+        "basis": "sealed or helium-light records among 21 LNH clearances in 2026, read from summaries"
+      }
+    ]
+  },
+  {
+    "id": "I11",
+    "uncertainty": "U2",
+    "name": "Second 4 kelvin cold-head source",
+    "what_is_measured": "Whether any maker other than the sole Japanese group lists a 4 kelvin Gifford-McMahon cold head, which settles the six-to-five split on whether the cold head breaks or costs when helium no longer decides.",
+    "source_name": "Product pages of the United States cryocooler maker on the map",
+    "source_url": "https://bluefors.com/products/cryomech-products/",
+    "cadence": "Quarterly",
+    "mode": "manual",
+    "settles_a_when": "No second 4 kelvin Gifford-McMahon source exists, so at end B the cold head is a single point with no spare design.",
+    "settles_b_when": "A second maker lists a 4 kelvin cold head, or a sealed magnet is cleared on a pulse-tube cooler.",
+    "false_signal": "A 4 kelvin pulse-tube cryostat on the same page, which is not a drop-in cold head.",
+    "last_read": "On 11 October 2026 the second maker lists Gifford-McMahon coolers only at 20 to 80 kelvin and reaches 4 kelvin only as a pulse tube; no drop-in second source.",
+    "leans_toward": "a",
+    "nodes": [
+      "N05",
+      "N06",
+      "N22"
+    ],
+    "proposed_by": [
+      "Technology shift"
+    ]
+  },
+  {
+    "id": "I12",
+    "uncertainty": "U2",
+    "name": "Winter grid rating at the two United States sites",
+    "what_is_measured": "The winter risk rating and extreme-scenario reserve margin for the regions covering the magnet plant and the hub.",
+    "source_name": "North American Electric Reliability Corporation, Winter Reliability Assessment",
+    "source_url": "https://prod.nerc.com/globalassets/our-work/assessments/nerc_wra_2025.pdf",
+    "cadence": "Annual, each November; read each quarter against the plant's backup-power Placeholder",
+    "mode": "manual",
+    "settles_a_when": "A region is rated high and a multi-week curtailment reaches the plant while the Gulf is still impaired, because the liquefier stops and helium cover becomes the margin.",
+    "settles_b_when": "It cannot settle end B; a normal rating only removes one route to end A.",
+    "false_signal": "A cold-snap advisory that lifts in days.",
+    "last_read": "Carolinas rated elevated from 2027 and Midcontinent high from winter 2028 in the January 2026 long-term assessment; the 2025 winter assessment is the carried address.",
+    "leans_toward": "a",
+    "nodes": [
+      "N16",
+      "N18",
+      "N19"
+    ],
+    "proposed_by": [
+      "Natural disasters",
+      "Infrastructure"
+    ]
+  }
+]

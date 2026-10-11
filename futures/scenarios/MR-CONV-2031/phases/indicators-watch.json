@@ -1,0 +1,45 @@
+[
+  {
+    "id": "W1",
+    "uncertainty": "neither",
+    "name": "Low-field share of new MR clearances",
+    "what_is_measured": "The share of new product code LNH clearances below 1 tesla, the contrarian's fifth-future watch row.",
+    "source_name": "openFDA device 510(k) endpoint",
+    "source_url": "https://api.fda.gov/device/510k.json?search=product_code:LNH&count=decision_date&limit=1000",
+    "cadence": "Weekly count; quarterly read of field strength",
+    "mode": "manual",
+    "settles_a_when": "It settles no axis. If the low-field share passes one third for two years, the line delivers inside tolerance to a shrinking order book and the grid was the wrong grid.",
+    "settles_b_when": "Not applicable.",
+    "false_signal": "A rise in counts; most LNH clearances are coils and software, not magnets.",
+    "last_read": "21 clearances in 2026 to 16 September; field strength not yet tallied.",
+    "leans_toward": "neither",
+    "nodes": [
+      "N35",
+      "N36"
+    ],
+    "proposed_by": [
+      "Contrarian"
+    ]
+  },
+  {
+    "id": "W2",
+    "uncertainty": "neither",
+    "name": "MR on the regulator's shortage list",
+    "what_is_measured": "Whether any MR product code or helium-dependent imaging device appears on the FDA device shortages list under Section 506J, which is what a procurement team sees before accepting a longer lead time.",
+    "source_name": "FDA medical device shortages list",
+    "source_url": "https://www.fda.gov/medical-devices/medical-device-supply-chain-and-shortages/medical-device-shortages-list",
+    "cadence": "As notified; read monthly",
+    "mode": "manual",
+    "settles_a_when": "An MR code is listed with helium supply as the reason; this is a lagging confirmation of U2 end A, not a leading read.",
+    "settles_b_when": "No imaging code is listed through 2028 while Gulf transit normalises.",
+    "false_signal": "A discontinuance entry for an imaging device, which is a maker's choice.",
+    "last_read": "Updated 16 June 2026; no imaging code listed.",
+    "leans_toward": "neither",
+    "nodes": [
+      "N36"
+    ],
+    "proposed_by": [
+      "Customer and market"
+    ]
+  }
+]
