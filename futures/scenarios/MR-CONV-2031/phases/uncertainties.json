@@ -1,0 +1,51 @@
+[
+  {
+    "id": "U1",
+    "question": "Does something outside the OEM stop a part or a lane for more than 30 days before 2031?",
+    "end_a": "No. Every measure stays a cost. Tariffs, payment friction and customs time raise the bill and stay inside the 30-day line.",
+    "end_b": "Yes. A producer country lists wire, niobium or cold heads for export control, an entity listing cuts the parts flow through the China plant, or a sole supplier's owner leaves MR.",
+    "kind": "outcomes",
+    "moves_risks": [
+      "R2",
+      "R4",
+      "R5",
+      "R6",
+      "R3",
+      "R8"
+    ],
+    "lean": -0.3,
+    "lean_sentence": "Leaning weakly toward no. The Section 232 medical investigation had no proclamation on 11 October 2026, the China truce holds to its notice date, and no listing names wire or cold heads.",
+    "settles_a": "The 2027 sourcing cycle closes with the truce renewed, the Section 232 report confined to finished scanners, and no listing of wire, niobium or cold heads.",
+    "settles_b": "A Federal Register, MOFCOM or producer-country notice names any of those parts, an entity listing names the China plant or its logic supplier, or a parent announces the sale or closure of the wire mill or the cold-head plant.",
+    "reads": [
+      {
+        "date": "2026-10-11",
+        "lean": -0.3
+      }
+    ]
+  },
+  {
+    "id": "U2",
+    "question": "In 2031, does helium still decide whether a magnet ships?",
+    "end_a": "Yes. The Gulf route stays impaired or allocated, most new builds are still conventional, and a sealed magnet still needs a helium delivery at cool-down and test.",
+    "end_b": "No. Helium returns to a buyers' market or sealed magnets take most new builds with a small test draw, so the cold head becomes the part that keeps every magnet cold.",
+    "kind": "outcomes",
+    "moves_risks": [
+      "R1",
+      "R2",
+      "R8",
+      "R5",
+      "R7"
+    ],
+    "lean": -0.6,
+    "lean_sentence": "Leaning clearly toward yes. The Gulf strait saw four transits against a normal 85 on 11 October 2026, helium is bought on allocation letters, and no 3 tesla sealed magnet has been cleared.",
+    "settles_a": "A United States helium allocation or export rule is proposed, the Gulf repair slips past 2028, or the sealed test draw is confirmed as a delivery-sized quantity.",
+    "settles_b": "The Gulf strait reopens to insured traffic and the allocation letters stop, a 3 tesla sealed magnet is cleared, or the test draw is confirmed as a cylinder rather than a delivery.",
+    "reads": [
+      {
+        "date": "2026-10-11",
+        "lean": -0.6
+      }
+    ]
+  }
+]

@@ -1,0 +1,9 @@
+# Foreign trade and payments, phase 6b, round 1, summary
+
+## Key points
+
+Through this lens the top three actions are A10 (confirm the Placeholders), A1 (a second cold-head maker) and A9 (the 30-day manual fallback), because each works in all four futures and none depends on a rule landing either way; A1 carries the highest cost of waiting, both plants stopped in F4 (N05, N16, N17, N19; Panel judgement). A5, stock of logic and cold heads at the China plant, is a bet on F3 but is the only action that must move before the truce notice, first read 10 November 2026, because stock bought after a listing may itself need a licence (N17, N10, N05, N31; Placeholder on stock weeks). A6, a logic path not of United States origin, shortens the F3 stop rather than preventing it, and a foreign-made part can still be caught by the foreign direct product rule (N10, N17; AI-suggested, Quality and regulatory confirms). A2, a multi-year agreement with the cold-head parent, is a bet on F4 only, because a listing overrides a contract (N05; AI-suggested, Sourcing confirms). The missing action M1 is to confirm the control classification of wire, cold heads and logic and the China plant's licence approval rate, which costs nothing and decides whether A5 and A6 are bets or waste (N03, N05, N10, N17; AI-suggested).
+
+## In one hundred words
+
+Rank by futures covered, then by cost of waiting: confirm the Placeholders, qualify a second cold-head maker, test the manual fallback. All three work in every future. The trade-specific actions are bets on F3: stock at the China plant must be bought before the truce notice, and a non-United States logic path only shortens the stop. A contract with the cold-head parent does not survive a listing. One missing action: confirm the control classifications and the licence approval rate now, since F3 and F4 rest on them and nobody has checked. Confidence moderate; dates hang on unwritten notices.

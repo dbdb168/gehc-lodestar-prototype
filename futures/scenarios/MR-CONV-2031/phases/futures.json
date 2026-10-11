@@ -1,0 +1,138 @@
+[
+  {
+    "id": "F1",
+    "name": "Cost only, helium still decides",
+    "position": {
+      "u1": "a",
+      "u2": "a"
+    },
+    "leans_here": true,
+    "sentence": "Trade stays a cost and magnets still need helium, so the clock on every delivery is a container, a grid and a road, not a rule.",
+    "what_happens": "The truce is renewed and no part is listed. The Gulf route stays near closed and both plants buy helium on allocation, the United States plant from domestic and Canadian sources and the China plant at the back of the Asian spot queue. Conventional builds still dominate because no 3 tesla sealed magnet is cleared. Both United States sites run winters under elevated grid ratings from 2027, and the helium cover thins each year because it is inventory bought at a 4 percent rate against rising prices.",
+    "path": [
+      {
+        "period": "2026 to 2028",
+        "sentence": "The truce is renewed at its notice date, the Gulf route stays near closed, and a container fleet with a 35 to 48 day hold sets the helium cover at the United States plant while the Carolinas grid is rated elevated from 2027."
+      },
+      {
+        "period": "2028 to 2031",
+        "sentence": "Conventional builds still dominate, the Midcontinent grid is rated high from the winter of 2028, and the helium cover thins each budget round as rates and input prices stay up."
+      }
+    ],
+    "what_fails_first": {
+      "node": "N19",
+      "sentence": "Helium cover at the United States magnet plant. A winter curtailment or a flood takes the liquefier's power and the trailer road while the next container is still in its hold, and the cover runs out before the delivery lands.",
+      "tag": "Placeholder on the days of cover; Panel judgement on the path"
+    },
+    "how_soon": "The winter of 2028 to 2029. A storm of the 2018 inland flood class can bring it forward to any hurricane season from 2027. The China plant's allocation queue is the second break, pushing Asian installs past the 30-day line in the first half of 2028.",
+    "what_it_costs": "One line stop at the United States magnet plant of 30 to 45 days and one quarter of Western Hemisphere installs more than 30 days late. Asian installs breach on the allocation schedule. Share does not move, because every supplier is short of helium together.",
+    "what_prevents_it": "Logistics holds the cover at the United States plant above the container hold plus the ten-day grid rebuild, and Site operations puts the liquefier on backup power off the plant feeder, both in place before the winter of 2028, so started by the second quarter of 2027.",
+    "how_sure": {
+      "level": "low",
+      "basis": "Low to moderate. The fleet, the hold window, the grid ratings and the allocation letters are on dated public sources, but the path from an elevated grid rating to a multi-week curtailment has no record yet, the cover days are a Placeholder, and the panel split six to five on which plant breaks first."
+    },
+    "what_would_change_this": "A 3 tesla sealed clearance or the Gulf route reopening moves this to F2. A United States helium allocation rule moves it toward F3. A confirmed cover figure above 60 days removes the United States break and leaves the China plant's queue as the first break."
+  },
+  {
+    "id": "F2",
+    "name": "Cost only, helium no longer decides",
+    "position": {
+      "u1": "a",
+      "u2": "b"
+    },
+    "leans_here": false,
+    "sentence": "Trade stays a cost and by 2031 helium no longer decides whether a magnet ships, so the one part that keeps every magnet cold is a cold head from one maker.",
+    "what_happens": "The truce is renewed and parts flow at a tariff cost. The Gulf route reopens and the allocation letters stop. Sealed 1.5 tesla magnets build service history and European tenders pull sealed designs. A 3 tesla sealed magnet is cleared, the test draw proves to be a cylinder, and sealed designs take most new builds and the European replacement wave. The magnet is still wound from one mill's wire, and one Japanese cold head now carries the whole thermal load of every new magnet with no helium reserve behind it.",
+    "path": [
+      {
+        "period": "2026 to 2028",
+        "sentence": "The truce is renewed, the Gulf route reopens to insured traffic, and sealed 1.5 tesla magnets cleared at three makers build service history while European tenders pull sealed designs."
+      },
+      {
+        "period": "2028 to 2031",
+        "sentence": "A 3 tesla sealed magnet is cleared, sealed designs take most new builds, helium becomes a service matter, and the plant floor changes trade from helium handling to vacuum and cryocooler work."
+      }
+    ],
+    "what_fails_first": {
+      "node": "N05",
+      "sentence": "Cold heads. The sole maker supplies both new builds and the spares of a sealed fleet that warms when a cold head fails, so an earthquake or a plant outage at the maker stops both magnet plants at once.",
+      "tag": "Panel judgement; the maker's location is AI-suggested and Engineering confirms it against the Nankai Trough zone"
+    },
+    "how_soon": "The window opens once the sealed share passes half of output, placed in 2029, and runs to 2031. The event itself has no schedule.",
+    "what_it_costs": "A line stop longer than 30 days at both plants, because they share the cold head and 18 months of requalification outlasts any inventory. Installed sealed magnets that lose a cold head warm up while service competes with new builds for the part, so the hospital sees a dark scanner, not a slow install.",
+    "what_prevents_it": "Engineering with Sourcing qualifies a second cold-head source on the sealed design before the sealed share passes half, or the design carries a tested hold that buys 30 days without a working cold head, started by mid-2027 given 18 months of requalification.",
+    "how_sure": {
+      "level": "moderate",
+      "basis": "High that wire and the cold head are unchanged sole-source parts in 2031. Moderate that the cold head breaks rather than costs. Low on the date, because the trigger has no schedule."
+    },
+    "what_would_change_this": "A second cold-head maker cleared on the sealed design before 2029 turns the break into a cost. A delivery-sized test draw pulls this future back toward F1. No 3 tesla sealed clearance by 2028 defers it past the horizon."
+  },
+  {
+    "id": "F3",
+    "name": "A part stops, helium still decides",
+    "position": {
+      "u1": "b",
+      "u2": "a"
+    },
+    "leans_here": false,
+    "sentence": "A state stops a part before 2031 while magnets still need helium to ship, so the stop lands on the plant inside a counterparty's borders and the other plant cannot cover for it.",
+    "what_happens": "The truce lapses at its notice date and entity listings in 2027 name the China plant's logic supplier and a cryogenic parts route. The Gulf route stays near closed, so helium at both plants is bought on allocation letters. Two blocs harden. The China plant builds for Asia without United States-origin logic, the United States plant keeps shipping on allocated helium but cannot cover Asia because its ramp and test capacity is sized for one hemisphere, and payment rails and customs become a licence queue.",
+    "path": [
+      {
+        "period": "2026 to 2028",
+        "sentence": "The truce lapses at its notice date, entity listings in 2027 name the China plant's logic supplier and a cryogenic parts route, and helium at both plants stays on allocation."
+      },
+      {
+        "period": "2028 to 2031",
+        "sentence": "Two blocs harden, the China plant builds for Asia without United States-origin logic, its lanes to Japan and India run under grey-zone pressure, and payment rails split by bloc."
+      }
+    ],
+    "what_fails_first": {
+      "node": "N17",
+      "sentence": "The China plant. It sits inside a counterparty's borders and holds weeks of programmable logic, not months, so an entity listing on its logic supplier stops the control electronics for every system it builds.",
+      "tag": "AI-suggested on what the plant imports and how much it holds; Sourcing confirms"
+    },
+    "how_soon": "Within one quarter of the first entity listing, inside the 2027 sourcing cycle. The first read is the second half of 2027. An investigation under the amended Chinese cyber law with a payment freeze is the earlier door to the same stop.",
+    "what_it_costs": "A line stop at the China plant longer than 30 days with no second plant able to cover Asia. Asian installs run more than 30 days late for two quarters or more, and share moves in Japan and India because a competitor outside the bloc keeps delivering. Helium cover at the United States plant breaches second, by early 2028.",
+    "what_prevents_it": "Sourcing holds logic and cold-head inventory at the China plant longer than the licence queue, started before the truce notice date, and Engineering qualifies a logic path that is not United States-origin for the Asian build, started by the first quarter of 2027.",
+    "how_sure": {
+      "level": "moderate",
+      "basis": "The listing tools exist and were used on this sector in 2025, and geography fixes which plant a listing strands. The date rests on the truce notice and on an unpublished licence approval rate."
+    },
+    "what_would_change_this": "The truce renewed at its notice date with no listing naming the plant or its suppliers. A listing that names cold heads before logic moves the break to the cold head and delays it a quarter. The Gulf route reopening makes this a one-hemisphere future."
+  },
+  {
+    "id": "F4",
+    "name": "A part stops, helium no longer decides",
+    "position": {
+      "u1": "b",
+      "u2": "b"
+    },
+    "leans_here": false,
+    "sentence": "Sealed magnets take most new builds behind a trade wall, and the stop lands on the cold head that now keeps every magnet cold.",
+    "what_happens": "The truce lapses and the first measures are tariffs and a listing on control logic that the China plant absorbs with stock raised after the notice. The Gulf route reopens and helium becomes a cost line. Sealed magnets take most new builds and a 3 tesla clearance arrives by 2028. United States hospitals defer orders in 2027 and the OEM slips down its suppliers' queues. The cold-head maker's parent, for whom MR is a minority of revenue, fills its order book with fusion, physics and quantum work, and a producer-country notice lists 4 kelvin cryocoolers as dual use, closing the licence route for the China plant just as Europe's replacement orders rise.",
+    "path": [
+      {
+        "period": "2026 to 2028",
+        "sentence": "The truce lapses, tariffs and a logic listing are absorbed with stock, the Gulf route reopens, sealed magnets take most new builds and a 3 tesla clearance arrives by 2028 while United States hospitals defer orders."
+      },
+      {
+        "period": "2028 to 2031",
+        "sentence": "The cold-head maker's parent allocates capacity to better-paying buyers, a producer-country notice lists cryocoolers as dual use, and Europe's replacement peak lands on a line with no cold heads and no helium fallback."
+      }
+    ],
+    "what_fails_first": {
+      "node": "N05",
+      "sentence": "Cold heads. The one qualified maker's parent allocates capacity to better-paying buyers and the listing removes the licence route, and every magnet shipped or in the field depends on the part.",
+      "tag": "AI-suggested; Engineering confirms the maker's location and ownership, Sourcing confirms the parent's MR share"
+    },
+    "how_soon": "By 2029. Lead time passes 30 days within a quarter of the allocation letter, and a second maker takes 18 months to qualify, so the gap runs into 2030.",
+    "what_it_costs": "Both plants stop for longer than 30 days, for most of 18 months. Every backlog install runs past the tolerance line, the installed base breaches service cover because sealed magnets warm without a spare cold head, and the lateness lands on the European replacement peak so share moves. The highest bill of the four futures.",
+    "what_prevents_it": "Engineering and Sourcing qualify a second cold-head maker before 2029, which means starting by the second quarter of 2027, and Sourcing holds a multi-year supply agreement with the parent from the 2027 sourcing cycle.",
+    "how_sure": {
+      "level": "moderate",
+      "basis": "The sole source, the parent's revenue mix and the 18-month requalification are carried from phase 2, and eight of eleven lenses land on this node. The date rests on an allocation nobody has announced and a listing that does not exist."
+    },
+    "what_would_change_this": "A producer-country notice naming wire before cryocoolers moves the first break to the wire. No 3 tesla sealed clearance by 2028 collapses this future into F3. A parent announcing the sale or closure of the cold-head plant pulls the date to the announcement."
+  }
+]
