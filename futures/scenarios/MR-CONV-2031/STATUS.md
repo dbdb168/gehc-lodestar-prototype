@@ -6,7 +6,7 @@ Read date 11 October 2026. All phases complete. Research model: Claude Fable 5.1
 |---|---|---|---|
 | 1 Focal question | scope packet | `00-scope-packet.md` | done, tolerance line is a Placeholder |
 | 2 Predetermined elements | 1 | `phases/P2-predetermined.md` (19 elements) | done |
-| 3 Critical uncertainties | 2 | `phases/P3-uncertainties.md` (two axes, 11 of 11) | done |
+| 3 Critical uncertainties | 2 | `phases/P3-uncertainties.md` (two axes: 11 of 11 on trade, 10 of 11 on helium) | done |
 | 4 Futures | 3 | `phases/P4-future-F1.md` to `F4.md`, `P4-futures-synthesis.md` | done |
 | 5 Indicators | 1 | `phases/P5-indicators.md`, `indicators.json` (12), `indicators-watch.json` (2) | done, all leans toward end A or neither |
 | 6a Impact | 1 | `phases/P6a-impact.md` | done |

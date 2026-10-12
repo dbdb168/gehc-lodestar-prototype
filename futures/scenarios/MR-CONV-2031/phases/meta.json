@@ -4,8 +4,8 @@
   "horizon": "2026 to 2031",
   "read_date": "2026-10-11",
   "next_read": "2027-01-11",
-  "tolerance_line": "An install more than 30 days late breaches tolerance, and a line stop longer than 30 days breaches tolerance.",
+  "tolerance_line": "An install more than 30 days late, or a line stop longer than 30 days, goes past the 30-day limit.",
   "tolerance_tag": "Placeholder",
   "confidence": "moderate",
-  "confidence_basis": "Eleven lenses agreed on both axes and on which node each future breaks on. The dates after 2028 are votes on undated events, and the numbers that decide whether a break is real, helium cover days, logic stock weeks and the cold-head parent's revenue share, are Placeholders that no owner has confirmed. Every internal value in this run is synthetic."
+  "confidence_basis": "All 11 panel members agreed on both questions and on which site or supplier fails in each future. The dates after 2028 are votes on undated events, and the numbers that decide whether a failure is real (days of helium on hand, weeks of logic stock and the cold-head parent's share of revenue) are Placeholders that no owner has confirmed. Every internal value in this run is synthetic."
 }
