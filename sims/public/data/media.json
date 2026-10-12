@@ -7,11 +7,10 @@
   },
   "futures": {
     "F1": {
-      "title": "Future 1 in two minutes",
-      "src": "",
-      "poster": "",
-      "length": "",
-      "webm": ""
+      "title": "Future 1 in four minutes",
+      "src": "media/future-1.mp4",
+      "poster": "media/future-1-poster.jpg",
+      "length": "4 minutes 24 seconds"
     }
   }
 }

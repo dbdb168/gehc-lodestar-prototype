@@ -13,6 +13,6 @@ A five-step guided exploration of run MR-CONV-2031: choose a future, set its out
 
 Videos are listed in `public/data/media.json`.
 
-- `demo` is the walkthrough behind the "Watch the demo" button (`public/media/demo.mp4`).
-- `futures.F1` is the slot for the Future 1 video. It shows "Video coming soon" until it has a source. To add the video, put the file in `public/media/` (for example `future-1.mp4`), set `src` to `media/future-1.mp4`, optionally add a WebM copy as `webm` (for browsers without H.264) and set `poster` and `length` (for example "2 minutes"), then commit and deploy.
+- `demo` is the walkthrough behind the "Watch the demo" button (`public/media/demo.mp4`, with a WebM copy). It is narrated in the ElevenLabs voice used for the futures videos, with on-screen captions and no music.
+- `futures.F1` is the Future 1 video (`public/media/future-1.mp4`), the voiced cut with music from the futures-videos work. A slot with no `src` shows "Video coming soon". To replace a video, put the file in `public/media/` (for example `future-1.mp4`), set `src` to `media/future-1.mp4`, optionally add a WebM copy as `webm` (for browsers without H.264) and set `poster` and `length` (for example "2 minutes"), then commit and deploy.
 - To add a slot for another future, add an entry such as `futures.F2` with the same fields.

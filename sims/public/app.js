@@ -421,7 +421,7 @@ function step2(){
     }).join('')}</div>`).join('');
   return `<div class="screen-head">
       <p class="bluf">${esc(lead)}</p>
-      <p class="lede">These are the conditions outside the OEM's control in ${FNUM[START]}. Change any of them to see what fails and when. Each one belongs to a panel member, and you can read that member's view under it.</p>
+      <p class="lede">These are the conditions outside the control of the OEM (original equipment manufacturer) in ${FNUM[START]}. Change any of them to see what fails and when. Each one belongs to a panel member, and you can read that member's view under it.</p>
     </div>
     ${MEDIA.futures && MEDIA.futures[START] ? videoSlot(START, 'wide') : ''}
     <div class="split">
@@ -588,7 +588,6 @@ function render(){
   const ga = s.querySelector('#goActs'); if (ga) ga.onclick = () => go(3);
 }
 $('#readDate').textContent = fmtDate(D.meta.read_date);
-$('#subline').textContent = 'The MR (magnetic resonance) conventional magnet line of the OEM (original equipment manufacturer). A cold head is the part that keeps a magnet cold, and a sealed magnet is a magnet that needs almost no helium.';
 const demo = $('#demoBtn');
 if (MEDIA.demo && MEDIA.demo.src){ demo.hidden = false; demo.onclick = () => openVideo('demo'); }
 $('#player').querySelector('[data-close]').onclick = () => $('#player').close();
