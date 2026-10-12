@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="A guided exploration of four futures for the MR conventional magnet line, the outside conditions that shape them, and the actions the OEM can take.">
+<title>MR line stress test</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230284c7'/%3E%3Cpath d='M16 6l2.6 7.4L26 16l-7.4 2.6L16 26l-2.6-7.4L6 16l7.4-2.6z' fill='white'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="head">
+    <div class="head-row">
+      <div class="brand"><span class="mark" aria-hidden="true"></span><span class="kicker">Lodestar futures lab</span></div>
+      <button class="btn small-btn" id="demoBtn" hidden><span class="play-sm" aria-hidden="true"></span>Watch the demo</button>
+    </div>
+    <h1>MR conventional magnet line: stress test to 2031</h1>
+    <p class="muted" id="subline"></p>
+  </header>
+
+  <div class="stepbar">
+    <nav aria-label="Steps"><ol class="steps" id="steps"></ol></nav>
+    <div class="so-far" id="sofar" aria-live="polite"></div>
+  </div>
+
+  <main id="screen" class="screen"><p class="muted">Loading the scenario data.</p></main>
+
+  <footer>
+    <p>The futures, actions, indicators and panel votes come from run MR-CONV-2031, read on <span id="readDate"></span>. Panel summaries are quoted word for word from the run files, with plain names added in brackets.</p>
+    <p>The timing, spend, stop lengths and action effects are rules written for this prototype. They are synthetic or estimates, they are labelled that way, and they are not the OEM's data.</p>
+  </footer>
+</div>
+
+<dialog id="player" aria-labelledby="playerTitle">
+  <div class="player-head"><h2 id="playerTitle">Video</h2><button class="btn" data-close>Close video</button></div>
+  <video controls playsinline preload="metadata"></video>
+</dialog>
+
+<script src="app.js"></script>
+</body>
+</html>

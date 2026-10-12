@@ -1,0 +1,15 @@
+{
+  "demo": {
+    "title": "How to use the MR line stress test",
+    "src": "media/demo.mp4",
+    "poster": "media/demo-poster.jpg"
+  },
+  "futures": {
+    "F1": {
+      "title": "Future 1 in two minutes",
+      "src": "",
+      "poster": "",
+      "length": ""
+    }
+  }
+}
