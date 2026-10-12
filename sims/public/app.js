@@ -338,7 +338,11 @@ function openVideo(path){
   const d = document.getElementById('player');
   d.querySelector('h2').textContent = m.title;
   const v = d.querySelector('video');
-  v.src = m.src; if (m.poster) v.poster = m.poster; else v.removeAttribute('poster');
+  // MP4 (H.264) for Safari and Chrome, WebM (VP9) for browsers without H.264.
+  const srcs = [m.src, m.webm].filter(Boolean);
+  v.innerHTML = srcs.map(s => `<source src="${esc(s)}" type="video/${s.endsWith('.webm') ? 'webm' : 'mp4'}">`).join('');
+  if (m.poster) v.poster = m.poster; else v.removeAttribute('poster');
+  v.load();
   d.showModal(); v.play().catch(() => {});
 }
 
