@@ -1,8 +1,8 @@
 // An MRI scanner, cut back layer by layer along its bore.
 // World units are centimetres: x runs along the bore (the patient end is +x), y across, z up.
-// Built with the Anatomy skill (skills.wheresryan.sh/anatomy): copy this file to the skill's
-// examples/mri-scanner/ folder and run `node build.mjs` (add --light for the light theme).
-import { writeFileSync } from "node:fs";
+// Built with the Anatomy skill (skills.wheresryan.sh/anatomy): copy this file and cutaway.js to
+// the skill's examples/mri-scanner/ folder and run `node build.mjs` (add --light for the light theme).
+import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import * as k from "../../kit/iso-kit.mjs";
@@ -92,15 +92,6 @@ const byDepth = (points) => [...points].sort((a, b) => k.depthOf([a[0], a[1], 0]
 // The bore frame: s along +x, angle 0 toward +y, angle 90° straight up.
 const BORE = G.frameOf([0, 0, Z0], [1, 0, 0], [0, 1, 0], [0, 0, 1]);
 const ring = (s0, s1, rIn, rOut, opts = {}) => G.ringBand(s0, s1, rIn, rOut, BORE, P, opts);
-const voidOf = (s, r) => `<path class="mr-void" d="${G.circleOf(BORE, s, r, P)}"/>` + Ln(G.arcOf(BORE, s, r, P, { inward: true, least: -1 }), { tone: "lo" });
-// Content seen through a round opening: clipped to the opening, in the cavity's own darker tones.
-let clips = 0;
-const through = (s, r, inside) => {
-  const id = `mr-clip-${++clips}`;
-  const d = G.circleOf(BORE, s, r, P);
-  return `<clipPath id="${id}"><path d="${d}"/></clipPath><g class="mr-cavity" clip-path="url(#${id})"><path class="mr-void" d="${d}"/>${inside}</g>` + Ln(d, { tone: "lo" });
-};
-
 const out = [];
 
 // ---- Plinth ------------------------------------------------------------
@@ -214,90 +205,35 @@ function turret() {
   return o.join("");
 }
 
-// ---- The magnet, back to front along the bore --------------------------
-function magnet() {
-  const o = [];
-  const back = -HALF;
-  // Cover: the outer shell, with two seams and a front lip.
-  o.push(S(ring(back, L.cover.front, ...L.cover.r, { bevel: 0.8 }), { tone: "mid", inner: Ln(G.arcOf(BORE, -72, COVER_R, P) + G.arcOf(BORE, -58, COVER_R, P), { tone: "faint" }) }));
-  o.push(Ln(G.circleOf(BORE, L.cover.front, 104, P), { tone: "faint" }));
-  return o.join("");
+// ---- The cutaway: stages and the layers' front edges ------------------
+// Each stage cuts its layers back from the magnet's front face to where they
+// stop in the full cutaway; outer layers go first, so a layer never pokes out
+// of one inside it.
+const STAGES = [
+  { name: "Closed", tick: "Closed", layers: [], say: `closed · B₀ ${MODEL.field.toFixed(1)} T · ${larmor.toFixed(1)} MHz` },
+  { name: "Cover", tick: "Cover", layers: ["cover"], say: "cover cut back" },
+  { name: "Vacuum vessel", tick: "Vacuum", layers: ["vacuum"], say: "vacuum vessel · insulating vacuum" },
+  { name: "Thermal shield", tick: "Shield", layers: ["thermal"], say: `thermal shield · about ${MODEL.shield} K` },
+  { name: "Helium vessel", tick: "Helium", layers: ["helium"], say: `helium vessel · coils at ${MODEL.helium} K` },
+  { name: "Warm bore", tick: "Bore", layers: ["former", "thermalIn", "warmBore"], say: "warm bore · room temperature" },
+  { name: "Gradient coil", tick: "Gradient", layers: ["gradient"], say: `gradient coil · up to ${MODEL.gradient} mT/m` },
+  { name: "RF coil", tick: "RF coil", layers: ["screen", "rf"], say: `RF body coil · ${MODEL.rungs} rungs at ${larmor.toFixed(1)} MHz` },
+];
+const LAST = STAGES.length - 1;
+const CFG = { L, PACKS, PACK_R, HE_BACK, HALF, COVER_R, Z0, shims: MODEL.shims, rungs: MODEL.rungs };
+const ease = (x) => x * x * (3 - 2 * x);
+function frontsAt(v) {
+  const F = {};
+  STAGES.forEach((stage, index) => {
+    const share = ease(Math.min(1, Math.max(0, v - (index - 1))));
+    for (const id of stage.layers) F[id] = HALF + (L[id].front - HALF) * share;
+  });
+  return F;
 }
-function cryostat() {
-  const o = [];
-  // Vacuum vessel outer wall: steel, bolted end flange.
-  o.push(S(ring(L.cover.front, L.vacuum.front, ...L.vacuum.r), { tone: "mid" }));
-  o.push(Dots(G.dotsOf(BORE, L.vacuum.front, 98, 64, P, { all: true }), { size: 0.4 }));
-  // Thermal shield: aluminium wrapped in layers of foil insulation.
-  o.push(S(ring(L.vacuum.front, L.thermal.front, ...L.thermal.r), { tone: "lo", inner: Ln([-38, -36, -34, -32].map((s) => G.arcOf(BORE, s, 96, P)).join(""), { tone: "faint" }) }));
-  o.push(Ln(G.circleOf(BORE, L.thermal.front, 94, P), { tone: "faint" }));
-  // Helium vessel outer wall, cut to show the coils inside.
-  o.push(S(ring(L.thermal.front, L.helium.front, ...L.helium.r), { tone: "mid" }));
-  o.push(Dots(G.dotsOf(BORE, L.helium.front, 89.5, 56, P, { all: true }), { size: 0.4 }));
-  // Through the cut: the back end plate, the far coils and the vessel's inner wall.
-  const [fIn, fOut] = L.former.r;
-  const inner = [S(ring(HE_BACK - 4, HE_BACK, fOut, L.helium.r[0]), { tone: "mid" })];
-  inner.push(Ln([-70, -52].map((t) => G.arcOf(BORE, t, L.helium.r[0], P, { inward: true })).join(""), { tone: "faint" }));
-  let s = HE_BACK;
-  for (const [a, b] of PACKS.filter(([, b]) => b < L.helium.front)) {
-    inner.push(S(ring(s, a, fIn, fOut), { tone: "mid" }), pack(a, b));
-    s = b;
-  }
-  inner.push(S(ring(s, L.helium.front, fIn, fOut), { tone: "mid" }));
-  o.push(through(L.helium.front, L.helium.r[0], inner.join("")));
-  return o.join("");
-}
-// A pack of niobium-titanium windings: a faint line every few turns, layer rings on its face.
-function pack(a, b) {
-  const turns = [];
-  for (let t = a + 1.1; t < b - 0.5; t += 1.3) turns.push(G.arcOf(BORE, t, PACK_R[1], P));
-  return S(ring(a, b, ...PACK_R, { bevel: 0.4 }), { tone: "hi", lit: true, inner: Ln(turns.join(""), { tone: "lo" }) }) + Ln(G.circleOf(BORE, b, 51.4, P) + G.circleOf(BORE, b, 53.8, P), { tone: "faint" });
-}
-function coldMass() {
-  const o = [];
-  const [fIn, fOut] = L.former.r;
-  let s = L.helium.front;
-  for (const [a, b] of PACKS.filter(([a]) => a > L.helium.front)) {
-    o.push(S(ring(s, a, fIn, fOut), { tone: "mid" }), pack(a, b));
-    s = b;
-  }
-  o.push(S(ring(s, L.former.front, fIn, fOut), { tone: "mid" }));
-  return o.join("");
-}
-function bore() {
-  const o = [];
-  o.push(S(ring(L.former.front, L.thermalIn.front, ...L.thermalIn.r), { tone: "lo" }));
-  o.push(S(ring(L.thermalIn.front, L.warmBore.front, ...L.warmBore.r), { tone: "mid" }));
-  // Gradient coil: three coils potted in one epoxy cylinder, with shim pockets in its face.
-  const zTurns = [55, 57.5, 61, 63.5].map((t) => G.arcOf(BORE, t, L.gradient.r[1], P)).join("");
-  o.push(S(ring(L.warmBore.front, L.gradient.front, ...L.gradient.r, { bevel: 0.5 }), { tone: "hi", inner: Ln(zTurns, { tone: "faint" }) }));
-  const pockets = [];
-  for (let i = 0; i < MODEL.shims; i++) {
-    const t = (i / MODEL.shims) * Math.PI * 2;
-    const w = 0.06;
-    const corners = [
-      [36.2, t - w],
-      [38.8, t - w],
-      [38.8, t + w],
-      [36.2, t + w],
-    ].map(([r, a]) => at(G.pointOf(BORE, L.gradient.front, r, a)));
-    pockets.push(`M${corners.map(([px, py]) => `${px.toFixed(1)} ${py.toFixed(1)}`).join("L")}Z`);
-  }
-  o.push(Ln(pockets.join(""), { tone: "lo" }));
-  // RF screen: copper foil between the gradient and the body coil.
-  o.push(S(ring(L.gradient.front, L.screen.front, ...L.screen.r), { tone: "lo" }));
-  // RF body coil: a 16-rung birdcage between two end rings, a capacitor on every rung.
-  const [rIn, rOut] = L.rf.r;
-  o.push(S(ring(L.screen.front, L.screen.front + 2, rIn, rOut + 0.6), { tone: "hi" }));
-  const rungs = G.ribsOf(BORE, L.screen.front + 2, L.rf.front - 2, rOut, MODEL.rungs, P, { fade: [0.1, 0.55], phase: Math.PI / MODEL.rungs });
-  o.push(S(ring(L.screen.front + 2, L.rf.front - 2, rIn, rOut), { tone: "mid", inner: Faded(rungs, { tone: "hi" }) }));
-  o.push(Dots(G.dotsOf(BORE, (L.screen.front + L.rf.front) / 2, rOut + 0.2, MODEL.rungs, P, { phase: Math.PI / MODEL.rungs, fade: FADE }), { size: 0.55, tone: "hi" }));
-  o.push(S(ring(L.rf.front - 2, L.rf.front, rIn, rOut + 0.6), { tone: "hi" }));
-  // Bore liner: the smooth tube the patient sees, and the dark bore itself.
-  o.push(S(ring(L.rf.front, L.liner.front, ...L.liner.r, { bevel: 0.4 }), { tone: "mid" }));
-  o.push(through(L.liner.front, L.liner.r[0], Ln([62, 30, 0].map((t) => G.arcOf(BORE, t, L.liner.r[0], P, { inward: true })).join(""), { tone: "faint" })));
-  return o.join("");
-}
+const CUTAWAY_SRC = readFileSync(join(HERE, "cutaway.js"), "utf8");
+const cutaway = new Function(`${CUTAWAY_SRC}\nreturn cutaway;`)();
+const START = LAST;
+const first = cutaway(k, G, P, CFG, frontsAt(START));
 
 // ---- Patient table -----------------------------------------------------
 function table() {
@@ -340,10 +276,10 @@ function table() {
   return o.join("");
 }
 
-out.push(plinth(), compressor(), feet(), hoses(), magnet(), turret(), cryostat(), coldMass(), bore(), table());
+out.push(plinth(), compressor(), feet(), hoses(), `<g data-part="cover">${first.cover}</g>`, turret(), `<g data-part="layers">${first.rest}</g>`, table());
 
 const LABEL =
-  `A ${MODEL.field} tesla MRI scanner on a plinth, cut back layer by layer along its ${MODEL.bore} cm bore. From the outside in: the cover; the cryostat's vacuum vessel, ${MODEL.shield} kelvin thermal shield and helium vessel; the superconducting main coils on their former; the warm bore; the gradient coil with shim pockets; the RF screen; a ${MODEL.rungs}-rung birdcage body coil; and the bore liner. A cold head turret with its helium lines and quench vent sits on top, and a patient table with a head coil waits in front of the bore.`;
+  `A ${MODEL.field} tesla MRI scanner on a plinth, with a slider that cuts it back layer by layer along its ${MODEL.bore} cm bore. From the outside in: the cover; the cryostat's vacuum vessel, ${MODEL.shield} kelvin thermal shield and helium vessel; the superconducting main coils on their former; the warm bore; the gradient coil with shim pockets; the RF screen; a ${MODEL.rungs}-rung birdcage body coil; and the bore liner. A cold head turret with its helium lines and quench vent sits on top, and a patient table with a head coil waits in front of the bore.`;
 
 const svg = k.figureSvg({ width: W, height: H, label: LABEL, body: out });
 const CSS = `
@@ -352,12 +288,29 @@ const CSS = `
 .iso[data-theme="light"]{--mr-void:#bdbdb9}
 .iso .mr-cavity{--mr-void:#060607;--anatomy-paper:#0d0d0d;--anatomy-face:#121212;--anatomy-top:#141414;--anatomy-shade-0:#0a0a0a;--anatomy-shade-1:#0c0c0c;--anatomy-shade-2:#0e0e0e;--anatomy-shade-3:#101010;--anatomy-hi:#8c8c8c;--anatomy-mid:#4a4a4a;--anatomy-lo:#2c2c2c;--anatomy-faint:#1e1e1e;--anatomy-lit:#b8b8b8}
 .iso[data-theme="light"] .mr-cavity{--mr-void:#b9b9b5;--anatomy-paper:#c6c6c2;--anatomy-face:#d0d0cc;--anatomy-top:#d4d4d0;--anatomy-shade-0:#b6b6b2;--anatomy-shade-1:#bcbcb8;--anatomy-shade-2:#c2c2be;--anatomy-shade-3:#c8c8c4;--anatomy-hi:#4a4a4e;--anatomy-mid:#86868a;--anatomy-lo:#a2a2a5;--anatomy-faint:#b0b0b2;--anatomy-lit:#2a2a2e}
+.mr-cut{position:relative;z-index:2;margin:-6px 28px 22px;font:500 10px/1.2 var(--anatomy-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--anatomy-muted)}
+.mr-cut input{display:block;width:100%;margin:0;height:22px;background:none;-webkit-appearance:none;appearance:none;cursor:pointer;touch-action:pan-y}
+.mr-cut input:focus-visible{outline:1px solid var(--anatomy-muted);outline-offset:6px;border-radius:2px}
+.mr-cut input::-webkit-slider-runnable-track{height:2px;background:var(--anatomy-lo);border-radius:1px}
+.mr-cut input::-moz-range-track{height:2px;background:var(--anatomy-lo);border-radius:1px}
+.mr-cut input::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;margin-top:-6px;border-radius:50%;background:var(--anatomy-card);border:1.5px solid var(--anatomy-strong)}
+.mr-cut input::-moz-range-thumb{width:12px;height:12px;border-radius:50%;background:var(--anatomy-card);border:1.5px solid var(--anatomy-strong)}
+.mr-ticks{display:flex;justify-content:space-between;margin:2px 7px 0;padding:0;list-style:none}
+.mr-ticks li{position:relative;width:0;display:flex;justify-content:center;white-space:nowrap}
+.mr-ticks li::before{content:"";position:absolute;top:-9px;left:-.5px;width:1px;height:4px;background:var(--anatomy-lo)}
+.mr-ticks button{all:unset;cursor:pointer;padding:6px 2px;color:var(--anatomy-muted);transition:color .2s var(--anatomy-ease)}
+.mr-ticks button:hover,.mr-ticks button[aria-current="true"]{color:var(--anatomy-strong)}
+.mr-ticks button:focus-visible{outline:1px solid var(--anatomy-muted);outline-offset:2px}
+.mr-ticks li:first-child{justify-content:flex-start}.mr-ticks li:last-child{justify-content:flex-end}
+@media (max-width:560px){.mr-ticks button span{display:none}.mr-ticks button::after{content:attr(data-n)}.mr-cut{margin:-2px 18px 18px}}
 `;
-const body = k.plateHtml({
+const ticks = STAGES.map((stage, i) => `<li><button type="button" data-stage="${i}" data-n="${i}" aria-label="${stage.name}"${i === START ? ' aria-current="true"' : ""}><span>${stage.tick}</span></button></li>`).join("");
+const control = `<div class="mr-cut"><input type="range" min="0" max="${LAST}" step="0.01" value="${START}" aria-label="Cutaway: how many layers to cut back, from closed to the RF coil" aria-valuetext="${STAGES[START].name}"><ol class="mr-ticks">${ticks}</ol></div>`;
+const plate = k.plateHtml({
   fig: "Fig 1",
   title: "MRI scanner",
-  hint: "Cut back, outside in",
-  readout: `B₀ ${MODEL.field.toFixed(1)} T · ${larmor.toFixed(1)} MHz · ${MODEL.helium} K`,
+  hint: "Slide to cut back each layer",
+  readout: STAGES[START].say,
   keys: [
     { mark: "lit", label: `Main coils: niobium-titanium, superconducting at ${MODEL.helium} K` },
     { mark: "raised", label: "Gradient and RF body coils, closest to the patient" },
@@ -366,7 +319,101 @@ const body = k.plateHtml({
   caption: `A ${MODEL.field} T scanner, drawn in centimetres. Current circulating without loss in the main coils makes a steady field along the bore, so hydrogen nuclei precess at ${larmor.toFixed(1)} MHz (${MODEL.gamma} MHz per tesla). The gradient coil adds fields up to about ${MODEL.gradient} mT/m that make that frequency depend on position, and the birdcage body coil sends and hears the ${larmor.toFixed(1)} MHz pulses. The coils sit in liquid helium at ${MODEL.helium} K; a ${MODEL.shield} K shield and a vacuum keep the room's heat out, and the two-stage cold head on top recondenses the helium that boils off. If the coils ever warm and quench, the helium leaves through the vent stack.`,
   body: `<div class="iso-stage">${svg}</div>`,
 });
+// The slider sits inside the card, under the drawing.
+const body = plate.replace(`<div class="iso-stage">${svg}</div>`, `<div class="iso-stage">${svg}</div>${control}`);
+
+// The kit and its lathe, namespaced as k and G so the page can run cutaway().
+const KIT = join(HERE, "..", "..", "kit");
+const namespace = (name, file, prelude = "") => {
+  const src = readFileSync(join(KIT, file), "utf8").replace(/^import .*$/gm, "");
+  const names = [...src.matchAll(/^export (?:const|function|let|class) (\w+)/gm)].map((m) => m[1]);
+  return `const ${name} = (() => {\n${prelude}\n${src.replace(/^export /gm, "")}\nreturn { ${names.join(", ")} };\n})();\n`;
+};
+const DATA = { P, CFG, STAGES: STAGES.map(({ name, layers, say }) => ({ name, layers, say })), LAST, START, cuts: Object.fromEntries(Object.entries(L).map(([id, layer]) => [id, layer.front])), HALF };
+const live = `
+const D = ${JSON.stringify(DATA)};
+const { P, CFG, STAGES, LAST, HALF } = D;
+const ease = (x) => x * x * (3 - 2 * x);
+function frontsAt(v) {
+  const F = {};
+  STAGES.forEach((stage, index) => {
+    const share = ease(Math.min(1, Math.max(0, v - (index - 1))));
+    for (const id of stage.layers) F[id] = HALF + (D.cuts[id] - HALF) * share;
+  });
+  return F;
+}
+const plate = document.querySelector(".iso-plate");
+const stage = plate.querySelector(".iso-stage");
+const coverG = stage.querySelector('[data-part="cover"]');
+const layersG = stage.querySelector('[data-part="layers"]');
+const input = plate.querySelector(".mr-cut input");
+const buttons = [...plate.querySelectorAll(".mr-ticks button")];
+const readout = plate.querySelector("[data-readout]");
+const still = matchMedia("(prefers-reduced-motion: reduce)");
+let v = D.START, target = D.START, drawn = D.START, said = D.START;
+let frame = 0, last = 0, visible = false, touring = !still.matches, clock = 0, idle = 0, dragging = false;
+// Idle tour: close it, then cut one layer every 1.6 s, hold, and close again.
+const STEP = 1.6, HOLD = 3.4;
+const tourAt = (t) => { const c = t % (STEP * (LAST + 1) + HOLD); return Math.min(LAST, Math.floor(c / STEP)); };
+function draw() {
+  if (Math.abs(v - drawn) > 0.0015 || v === target) {
+    const g = cutaway(k, G, P, CFG, frontsAt(v));
+    coverG.innerHTML = g.cover;
+    layersG.innerHTML = g.rest;
+    drawn = v;
+  }
+  if (!dragging) input.value = String(v);
+  const near = Math.round(v);
+  const text = Math.abs(v - target) > 0.02 ? (target > v ? "cutting back · " : "closing up · ") + STAGES[near].name.toLowerCase() : STAGES[near].say;
+  if (readout.textContent !== text) readout.textContent = text;
+  if (near !== said) { said = near; buttons.forEach((b, i) => b.setAttribute("aria-current", String(i === near))); }
+}
+function tick(now) {
+  const dt = last ? Math.min((now - last) / 1000, 1 / 30) : 1 / 60;
+  last = now;
+  if (touring) { clock += dt; target = tourAt(clock); }
+  // Ease toward the target, but no faster than 2.6 stages a second, so a long jump still peels layer by layer.
+  const pace = 2.6 * dt;
+  v = still.matches ? target : v + Math.max(-pace, Math.min(pace, (target - v) * (1 - Math.exp(-dt / 0.32))));
+  if (Math.abs(target - v) < 0.002) v = target;
+  draw();
+  const settled = !touring && v === target;
+  frame = visible && !settled ? requestAnimationFrame(tick) : 0;
+}
+const run = () => { if (!frame && visible) { last = 0; frame = requestAnimationFrame(tick); } };
+const describe = (value) => input.setAttribute("aria-valuetext", STAGES[Math.round(value)].name);
+const steer = (next, snap) => {
+  touring = false;
+  target = Math.min(LAST, Math.max(0, snap ? Math.round(next) : next));
+  describe(target);
+  clearTimeout(idle);
+  idle = setTimeout(() => { if (still.matches) return; touring = true; clock = Math.round(v) * STEP; run(); }, 6000);
+  run();
+};
+new IntersectionObserver((entries) => { visible = entries[entries.length - 1].isIntersecting; if (visible) run(); }, { rootMargin: "120px 0px" }).observe(stage);
+input.addEventListener("pointerdown", () => { dragging = true; });
+input.addEventListener("input", () => steer(Number(input.value), false));
+input.addEventListener("change", () => { dragging = false; steer(Number(input.value), true); });
+window.addEventListener("pointerup", () => { if (dragging) { dragging = false; steer(Number(input.value), true); } });
+input.addEventListener("keydown", (event) => {
+  const here = Math.round(target);
+  let to = null;
+  if (event.key === "ArrowRight" || event.key === "ArrowUp") to = here + 1;
+  if (event.key === "ArrowLeft" || event.key === "ArrowDown") to = here - 1;
+  if (event.key === "Home") to = 0;
+  if (event.key === "End") to = LAST;
+  if (event.key === "Escape") to = 0;
+  if (to === null) return;
+  event.preventDefault();
+  steer(to, true);
+});
+buttons.forEach((button, i) => button.addEventListener("click", () => steer(i, true)));
+stage.addEventListener("pointerenter", () => { if (touring) steer(target, true); });
+window.__mrTime = (n = 20) => { const t = performance.now(); for (let i = 0; i < n; i++) cutaway(k, G, P, CFG, frontsAt(3.5 + i * 0.01)); return (performance.now() - t) / n; };
+draw();
+`;
+const script = namespace("k", "iso-kit.mjs") + namespace("G", "lathe.mjs", "const { cameraOf, iso, pathOf } = k;") + CUTAWAY_SRC + live;
 
 const name = THEME === "light" ? "mri-scanner-light.html" : "mri-scanner.html";
-writeFileSync(join(HERE, name), k.pageHtml({ title: "MRI scanner", theme: THEME, body: `<style>${CSS}</style>${body}`, width: 820 }));
+writeFileSync(join(HERE, name), k.pageHtml({ title: "MRI scanner", theme: THEME, body: `<style>${CSS}</style>${body}`, script, width: 820 }));
 console.log("wrote", name);
